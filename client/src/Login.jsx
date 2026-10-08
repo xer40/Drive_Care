@@ -7,7 +7,6 @@ const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
 
 function Login() { 
 
-    
 
 
 }
