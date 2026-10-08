@@ -1,4 +1,4 @@
-# Drive Care
+# Drive_Care
 
 A full-stack web app for tracking your car's maintenance and getting help with car problems from an AI diagnostic chatbot. Users create an account, log in, and ask the chatbot about symptoms. The chatbot answers using that user's vehicle details and service history.
 
@@ -22,7 +22,7 @@ A full-stack web app for tracking your car's maintenance and getting help with c
 ## Project structure
 
 ```
-DASSK/
+Drive_Care/
 ├── client/                 # React frontend (Vite)
 │   └── src/
 │       ├── App.jsx         # Picks which page to show for each URL
@@ -46,8 +46,8 @@ DASSK/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/xer40/DASSK.git
-cd DASSK
+git clone https://github.com/xer40/Drive_Care.git
+cd Drive_Care
 ```
 
 ### 2. Set up the database
