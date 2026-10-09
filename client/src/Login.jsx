@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import './Login.css'
 
 const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
 
