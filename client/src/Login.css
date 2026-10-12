@@ -1,17 +1,82 @@
- body {
 
-    background-image: url('./assets/loginbg.jpg');
-    background-position: right center;
+body {
+
+    background-image: url('./assets/desertcar.avif');
+    background-size: 98%;
+    background-position: center;
     background-repeat: no-repeat;
-    background-size: 50% 100%;
-    background-color: #2e496a;
+    background-color: rgba(15,23, 42, 0.15);
+
+}
+
+#center {
     
+    position: relative;
+    margin-left: auto;
+    margin-right: 20%;
+    margin-top: 2.1%;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 3px;
+    border-color: #ffffff2e;
+    max-width: 500px;
+    backdrop-filter: blur(14px);
+    padding-top: 0px;
+    max-width: 300px;
+    
+
+
+}
+
+#center h1 {
+
+    font-family: inter;
+    font-size: 42px;
+    font-weight: 750;
+    color: #f8fafc;
+    letter-spacing: 0.5px;
 }
 
 
-#center {
+#center p {
+    font-family: inter;
+    color: #f1f5f9;
+    font-size: 20px;
+    font-weight: 400;
+}
 
-    position: relative;
-    right: 120px
 
+#center h6 {
+    
+    font-family: inter;
+     color: rgba(255,255,255,0.95);
+    font-weight: 400;
+    font-size: 18px;
+    margin-top: -15px;
+}
+
+.input-group input {
+
+    font-size: 18px;
+    margin-top: 15px;
+    margin-bottom: 3px;
+    color:#00000069;
+    font-family: inter;
+}
+
+.submit-btn {
+    color: #334155;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    font-family: inter;
+    font-size: 20px;
+    font-weight: 600px;
+    border-radius: 12px;
+    border: none;
+    width: 120px;
+    height: 50px;
+    cursor: pointer;
 }

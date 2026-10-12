@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import './Login.css'
 
+
 const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
 
 function Login() {
@@ -53,6 +54,7 @@ function Login() {
 
   return (
     <>
+    
       <section id="center">
         <div>
           <h1>Log In</h1>
@@ -90,12 +92,12 @@ function Login() {
 
         {loginMessage && <p className="status-msg">{loginMessage}</p>}
 
-        <p>
+        <h6>
           Don't have an account? <Link to="/register">Create one</Link>
-        </p>
+        </h6>
       </section>
 
-      <div className="ticks"></div>
+
       <section id="spacer"></section>
     </>
   )

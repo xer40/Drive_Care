@@ -1,0 +1,71 @@
+body {
+
+    background-image: url('./assets/registerbg.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 95%;
+    background-color: #1b2430;
+    backdrop-filter: blur(8px);
+}
+
+#center {
+
+    position: relative;
+    margin-left: auto;
+    margin-right: 20%;
+    margin-top: 2.1%;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 3px;
+    border-color: #ffffff2e;
+    max-width: 500px;
+    backdrop-filter: blur(8px);
+    padding-top: 0px;
+
+}
+
+#center h1 {
+
+    font-family: inter;
+    font-size: 42px;
+    font-weight: 750;
+    color: #f8fafc;
+    letter-spacing: 0.5px;
+}
+
+#center p {
+
+    font-family: inter;
+    font-size: 16px;
+    color: #e2e8f0;
+    font-weight: 400;
+}
+
+#center h6 {
+    font-family: inter;
+     color: rgba(255,255,255,0.95);
+    font-weight: 400;
+    font-size: 18px;
+    margin-top: -15px;
+    padding-top: 15px;
+
+}
+
+.submit-btn { 
+
+    cursor: pointer;
+
+}
+
+.rstmsg {
+
+    cursor: pointer;
+}
+
+.input-group input {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}

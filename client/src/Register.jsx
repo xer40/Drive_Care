@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import './Register.css'
 
 const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
 
@@ -134,9 +135,9 @@ function Register() {
 
         {statusMessage && <p className="status-msg">{statusMessage}</p>}
 
-        <p>
+        <h6>
           Already have an account? <Link to="/">Log in</Link>
-        </p>
+        </h6>
       </section>
 
       <div className="ticks"></div>
