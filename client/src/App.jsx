@@ -1,18 +1,17 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Login from './Login.jsx'
-import Register from './Register.jsx'
-import './App.css'
+import Register from './register.jsx'
+import Maintenance from './maint&diag.jsx'
 
 function App() {
   return (
     <Routes>
-      {/* Login is the landing page; new users follow its link to /register */}
       <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      {/* Send any unknown URL back to the login page */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/maintenance" element={<Maintenance />} />
     </Routes>
   )
 }
-export default App
 
+export default App
