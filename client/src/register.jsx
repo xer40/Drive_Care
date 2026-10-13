@@ -93,7 +93,7 @@ function Register() {
           </p>
         </div>
         {rstmsg && <p className="rst-msg">{rstmsg}</p>}
-        <button className= "Reset-DB" onClick={wipeDB}>Reset DB</button>
+  
 
         {/* 4. Registration form interface targeting onSubmit */}
         <form onSubmit={handleRegister} className="register-form">
