@@ -1,122 +1,134 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  // 1. Unified state variable for tracking credentials
+  const [formData, setFormData] = useState({
+    id: '',
+    password: '',
+    email:'',
+  })
+
+  // Status tracker to show feedback to your user
+  const [statusMessage, setStatusMessage] = useState('')
+  const [rstmsg, setResetStatus] = useState('')
+
+  // 2. Dynamic input handler that updates tracking state as user types
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  // 3. Asynchronous registration request handler
+  const wipeDB = async () => {
+    try {
+      // Points directly to the local backend port hosting your API routes
+      const response = await fetch('http://localhost:5001/del_db', {
+        method: 'DELETE',
+      })
+
+      const data = await response.json()
+      setResetStatus("Database Cleared 🫪")
+
+    }
+    catch (error) {
+      console.error('Network Error:', error)
+      setStatusMessage('Network error. Is your backend server running?')
+    }
+  }
+
+  const handleRegister = async (event) => {
+    event.preventDefault() // Prevents fallback page reload
+    setStatusMessage('Registering...')
+
+    try {
+      // Points directly to the local backend port hosting your API routes
+      const response = await fetch('http://localhost:5001/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData) // Destructures seamlessly into req.body
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setStatusMessage(`Successfully registered ${data.user.id}`)
+        setFormData({ id: '', password: '',email:''}) // Clears inputs upon success
+      } else {
+        setStatusMessage(`Registration failed: ${data.message || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Network Error:', error)
+      setStatusMessage('Network error. Is your backend server running?')
+    }
+  }
 
   return (
     <>
       <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
         <div>
-          <h1>Get started</h1>
+          <h1>Create Account</h1>
           <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+            Sign up below to access your development dashboard.
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
+        {rstmsg && <p className="rst-msg">{rstmsg}</p>}
+        <button onClick={wipeDB}>Reset DB</button>
+
+        {/* 4. Registration form interface targeting onSubmit */}
+        <form onSubmit={handleRegister} className="register-form">
+          <div className="input-group">
+            <input
+              type="text"
+              name="id"
+              placeholder="Username or ID"
+              value={formData.id}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <button type="submit" className="submit-btn">
+            Register
+          </button>
+        </form>
+
+        {statusMessage && <p className="status-msg">{statusMessage}</p>}
       </section>
 
       <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
       <div className="ticks"></div>
       <section id="spacer"></section>
     </>
   )
 }
-
 export default App
