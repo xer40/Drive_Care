@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./maint&diag.css";
 
 function Maintenance() {
+  const [activeTab, setActiveTab] = useState("overview");
   const [records, setRecords] = useState([
     {
       id: 1,
@@ -53,17 +54,74 @@ function Maintenance() {
 
   return (
     <div className="maintenance-page">
-      <h1>Maintenance & Diagnostics</h1>
-      <p>Track and manage your vehicle's maintenance history.</p>
 
-      {/* Vehicle Selection */}
-      <section>
-        <h2>Selected Vehicle</h2>
-        <select>
-          <option>2022 Dodge Charger</option>
-          <option>2020 Honda Civic</option>
-        </select>
-      </section>
+  {/* Page Header */}
+  <div className="maintenance-header">
+
+    <div className="maintenance-header-text">
+      <h1>Maintenance & Diagnostics</h1>
+
+      <p>
+        Track your maintenance history, get reminders,
+        and diagnose issues with AI.
+      </p>
+    </div>
+
+    {/* Vehicle Selector */}
+    <div className="maintenance-vehicle-selector">
+      <select>
+        <option>2022 Dodge Charger</option>
+        <option>2020 Honda Civic</option>
+        <option>2025 Hyundai Gray</option>
+      </select>
+    </div>
+
+  </div>
+
+  {/* Maintenance Navigation Tabs */}
+  <div className="maintenance-tabs">
+
+    <button
+      type="button"
+      className={activeTab === "overview" ? "active" : ""}
+      onClick={() => setActiveTab("overview")}
+    >
+      Overview
+    </button>
+
+    <button
+      type="button"
+      className={activeTab === "records" ? "active" : ""}
+      onClick={() => setActiveTab("records")}
+    >
+      Maintenance Records
+    </button>
+
+    <button
+      type="button"
+      className={activeTab === "add" ? "active" : ""}
+      onClick={() => setActiveTab("add")}
+    >
+      Add Record
+    </button>
+
+    <button
+      type="button"
+      className={activeTab === "diagnostics" ? "active" : ""}
+      onClick={() => setActiveTab("diagnostics")}
+    >
+      Diagnose Issue
+    </button>
+
+    <button
+      type="button"
+      className={activeTab === "schedule" ? "active" : ""}
+      onClick={() => setActiveTab("schedule")}
+    >
+      Service Schedule
+    </button>
+
+  </div>
 
       {/* Add Maintenance */}
       <section>
