@@ -1,0 +1,85 @@
+body {
+
+    background-image: url('./assets/registerbg.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 95%;
+    background-color: rgba(32, 42, 55, 0.45);
+}
+
+#center {
+
+    position: relative;
+    margin-left: auto;
+    margin-right: 10%;
+    margin-top: 2.1%;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    border-color: #ffffff2e;
+    max-width: 500px;
+    backdrop-filter: blur(50px);
+    padding-top: 2px;
+
+}
+
+#center h1 {
+
+    font-family: inter;
+    font-size: 42px;
+    font-weight: 750;
+    color: #f8fafc;
+    letter-spacing: 0.5px;
+}
+
+#center p {
+
+    font-family: inter;
+    font-size: 20px;
+    color: #e2e8f0;
+    font-weight: 400;
+    padding-bottom: 15px;
+}
+
+#center h6 {
+    font-family: inter;
+     color: rgba(255,255,255,0.95);
+    font-weight: 400;
+    font-size: 22px;
+    margin-top: -10px;
+    padding-top: 20px;
+
+}
+
+.submit-btn { 
+
+    cursor: pointer;
+    font-family: inter;
+    font-size: 21px;
+    font-weight: 600px;
+    margin-top: 5px;
+}
+
+
+.input-group input {
+    margin-top: 15px;
+    margin-bottom: 13px;
+    font-size: 19px;
+    font-family: inter;
+}
+
+.Reset-DB {
+    cursor: pointer;
+    font-size: 19.5px;
+    font-family: inter;
+}
+
+.status-msg {
+
+    padding-top: 20px;
+    font-family: inter;
+    font-size: 20px;
+}
