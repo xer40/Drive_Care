@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Login from './Login.jsx'
-import Register from './register.jsx'
+import Register from './Register.jsx'
 import Maintenance from './maint&diag.jsx'
 
 function App() {
