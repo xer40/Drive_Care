@@ -1,0 +1,139 @@
+/* ==================================
+   DRIVECARE - REGISTRATION PAGE
+================================== */
+
+/* Main registration container */
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f3f6fa;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+/* Registration card */
+.register-page #center {
+  background-color: white;
+  width: 100%;
+  max-width: 440px;
+  padding: 40px;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+/* Page title */
+.register-page h1 {
+  color: #172b4d;
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+
+/* Description */
+.register-page p {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+/* Form layout */
+.register-page .register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 25px;
+}
+
+/* Input groups */
+.register-page .input-group {
+  width: 100%;
+}
+
+/* Input fields */
+.register-page .input-group input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #d5dce5;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f8fafc;
+  color: #172b4d;
+  box-sizing: border-box;
+  transition: 0.2s;
+}
+
+/* Input focus */
+.register-page .input-group input:focus {
+  outline: none;
+  border-color: #2563eb;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Register button */
+.register-page .submit-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* Register button hover */
+.register-page .submit-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Status messages */
+.register-page .status-msg {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #eff6ff;
+  color: #1e40af;
+}
+
+/* Database reset message */
+.register-page .rst-msg {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+/* Reset DB button - development only */
+.register-page #center > button {
+  padding: 9px 16px;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.register-page #center > button:hover {
+  background-color: #fecaca;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .register-page {
+    padding: 16px;
+  }
+
+  .register-page #center {
+    padding: 25px;
+  }
+
+  .register-page h1 {
+    font-size: 25px;
+  }
+}
