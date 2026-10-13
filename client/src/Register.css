@@ -1,13 +1,10 @@
-body {
+register-page {
 
     background-image: url('./assets/registerbg.png');
     background-position: left;
     background-repeat: no-repeat;
     background-size: 65% 100%;
-    background-color: #1b2430;
-
-   
-   
+    background-color: #1b2430; 
 }
 
 #center {
