@@ -22,7 +22,7 @@ body {
     padding-right: 20px;
     padding-bottom: 3px;
     border-color: #ffffff2e;
-    max-width: 500px;
+    max-width: 400px;
     backdrop-filter: blur(14px);
     padding-top: 0px;
     max-width: 300px;
@@ -54,7 +54,7 @@ body {
     font-family: inter;
      color: rgba(255,255,255,0.95);
     font-weight: 400;
-    font-size: 18px;
+    font-size: 20px;
     margin-top: -15px;
 }
 
@@ -70,7 +70,7 @@ body {
 .submit-btn {
     color: #334155;
     margin-top: 15px;
-    margin-bottom: 25px;
+    margin-bottom: 27px;
     font-family: inter;
     font-size: 20px;
     font-weight: 600px;
@@ -79,4 +79,12 @@ body {
     width: 120px;
     height: 50px;
     cursor: pointer;
+}
+
+.status-msg {
+
+    color: #f8fafc;
+    font-family: inter;
+    font-size: 18px;
+    text-align: center;
 }

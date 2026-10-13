@@ -52,7 +52,7 @@ function Register() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
     if (!emailRegex.test(formData.email)) {
-      setStatusMessage('Registration failed: Please enter a valid email address (e.g., name@domain.com or .net).')
+      setStatusMessage('Registration failed: enter a valid email address (e.g., name@domain.com or .net).')
       return // Stop the function here so it doesn't send the fetch request
     }
     // ------------------------------
@@ -93,7 +93,7 @@ function Register() {
           </p>
         </div>
         {rstmsg && <p className="rst-msg">{rstmsg}</p>}
-        <button onClick={wipeDB}>Reset DB</button>
+        <button className= "Reset-DB" onClick={wipeDB}>Reset DB</button>
 
         {/* 4. Registration form interface targeting onSubmit */}
         <form onSubmit={handleRegister} className="register-form">
