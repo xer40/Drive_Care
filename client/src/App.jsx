@@ -6,8 +6,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Register />} />
-      <Route path="/maintenance" element={<Maintenance />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/maintenance" element={<Maintenance />} />
     </Routes>
   )
 }
