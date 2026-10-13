@@ -1,139 +1,85 @@
-/* ==================================
-   DRIVECARE - REGISTRATION PAGE
-================================== */
+body {
 
-/* Main registration container */
-.register-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f3f6fa;
-  padding: 30px;
-  font-family: Arial, sans-serif;
+    background-image: url('./assets/registerbg.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 95%;
+    background-color: rgba(32, 42, 55, 0.45);
 }
 
-/* Registration card */
-.register-page #center {
-  background-color: white;
-  width: 100%;
-  max-width: 440px;
-  padding: 40px;
-  border-radius: 14px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-  text-align: center;
+#center {
+
+    position: relative;
+    margin-left: auto;
+    margin-right: 10%;
+    margin-top: 2.1%;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    border-color: #ffffff2e;
+    max-width: 500px;
+    backdrop-filter: blur(50px);
+    padding-top: 2px;
+
 }
 
-/* Page title */
-.register-page h1 {
-  color: #172b4d;
-  font-size: 30px;
-  margin-bottom: 12px;
+#center h1 {
+
+    font-family: inter;
+    font-size: 42px;
+    font-weight: 750;
+    color: #f8fafc;
+    letter-spacing: 0.5px;
 }
 
-/* Description */
-.register-page p {
-  color: #64748b;
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 25px;
+#center p {
+
+    font-family: inter;
+    font-size: 20px;
+    color: #e2e8f0;
+    font-weight: 400;
+    padding-bottom: 15px;
 }
 
-/* Form layout */
-.register-page .register-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-top: 25px;
+#center h6 {
+    font-family: inter;
+     color: rgba(255,255,255,0.95);
+    font-weight: 400;
+    font-size: 22px;
+    margin-top: -10px;
+    padding-top: 20px;
+
 }
 
-/* Input groups */
-.register-page .input-group {
-  width: 100%;
+.submit-btn { 
+
+    cursor: pointer;
+    font-family: inter;
+    font-size: 21px;
+    font-weight: 600px;
+    margin-top: 5px;
 }
 
-/* Input fields */
-.register-page .input-group input {
-  width: 100%;
-  padding: 14px 16px;
-  border: 1px solid #d5dce5;
-  border-radius: 8px;
-  font-size: 15px;
-  background-color: #f8fafc;
-  color: #172b4d;
-  box-sizing: border-box;
-  transition: 0.2s;
+
+.input-group input {
+    margin-top: 15px;
+    margin-bottom: 13px;
+    font-size: 19px;
+    font-family: inter;
 }
 
-/* Input focus */
-.register-page .input-group input:focus {
-  outline: none;
-  border-color: #2563eb;
-  background-color: white;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+.Reset-DB {
+    cursor: pointer;
+    font-size: 19.5px;
+    font-family: inter;
 }
 
-/* Register button */
-.register-page .submit-btn {
-  width: 100%;
-  padding: 14px;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
+.status-msg {
 
-/* Register button hover */
-.register-page .submit-btn:hover {
-  background-color: #1d4ed8;
-}
-
-/* Status messages */
-.register-page .status-msg {
-  margin-top: 20px;
-  padding: 12px;
-  border-radius: 8px;
-  background-color: #eff6ff;
-  color: #1e40af;
-}
-
-/* Database reset message */
-.register-page .rst-msg {
-  color: #16a34a;
-  font-weight: 600;
-}
-
-/* Reset DB button - development only */
-.register-page #center > button {
-  padding: 9px 16px;
-  background-color: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  margin-bottom: 10px;
-}
-
-.register-page #center > button:hover {
-  background-color: #fecaca;
-}
-
-/* Mobile responsiveness */
-@media (max-width: 600px) {
-  .register-page {
-    padding: 16px;
-  }
-
-  .register-page #center {
-    padding: 25px;
-  }
-
-  .register-page h1 {
-    font-size: 25px;
-  }
+    padding-top: 20px;
+    font-family: inter;
+    font-size: 20px;
 }
