@@ -85,6 +85,7 @@ function Register() {
 
   return (
     <>
+    <div className="register-page">
       <section id="center">
         <div>
           <h1>Create Account</h1>
@@ -144,6 +145,7 @@ function Register() {
 
       <div className="ticks"></div>
       <section id="spacer"></section>
+      </div>
     </>
   )
 }
