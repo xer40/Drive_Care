@@ -244,7 +244,47 @@ function Maintenance() {
           </button>
 
         </div>
+                {/* ===================================
+            CARD 3: QUICK DIAGNOSTICS
+        =================================== */}
 
+        <div className="quick-diagnostics-card">
+
+          <div className="quick-diagnostics-header">
+            <h2>Quick Diagnostics</h2>
+            <span className="diagnostics-icon">🤖</span>
+          </div>
+
+          <p className="quick-diagnostics-description">
+            Experiencing an issue with your vehicle?
+            Describe the symptoms and let AI help.
+          </p>
+
+          <textarea
+            className="quick-diagnostics-input"
+            placeholder="e.g., My car makes a squeaking noise when braking..."
+          />
+
+          <div className="diagnostics-suggestions">
+            <span>Common Issues</span>
+
+            <div className="diagnostics-chips">
+              <button type="button">Engine Noise</button>
+              <button type="button">Warning Light</button>
+              <button type="button">Braking Issues</button>
+              <button type="button">Battery</button>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="diagnostics-analyze-button"
+            onClick={() => setActiveTab("diagnostics")}
+          >
+            ✨ Diagnose with AI
+          </button>
+
+        </div>
       </div>
       {/* END OF MAINTENANCE DASHBOARD */}
 
