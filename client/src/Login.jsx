@@ -53,8 +53,8 @@ function Login() {
   }
 
   return (
-    <>
-    <div className = "login-page">
+    <div className="login-page">
+
       <section id="center">
         <div>
           <h1>Log In</h1>
@@ -97,13 +97,8 @@ function Login() {
         </h6>
       </section>
 
-
-      <section id="spacer"></section>
-      </div>
-    </>
+    </div>
   )
 }
 
 export default Login
-
-

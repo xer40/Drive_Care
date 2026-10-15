@@ -1,31 +1,79 @@
+/* Full-screen page: image fills the left half, card is centered in the right half */
 .register-page {
 
-    background-image: url('./assets/registerbg.png');
-    background-position: left;
-    background-repeat: no-repeat;
-    background-size: 65% 100%;
-    background-color: #1b2430; 
-    min-height: 100vh;
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 24px 24px calc(50% + 24px);
+    box-sizing: border-box;
+    background-color: #1b2430;
 }
 
+/* cover crops the image to fit instead of stretching it */
+.register-page::before {
+
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    background-image: url('./assets/registerbg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* .register-page prefix keeps these rules from leaking onto the login page's #center */
 .register-page #center {
 
-     margin-top: 14.5%;
+    margin: 0;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
     border-style: solid;
     border-width: 1px;
     border-radius: 24px;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-bottom: 3px;
+    padding: 2px 20px 24px 20px;
     border-color: #ffffff2e;
-    backdrop-filter: blur(14px);
-    padding-top: 0px;
-    max-width: 300px;
-    margin-left: 65%;
-
+    backdrop-filter: blur(13px);
 }
 
-.register-page #center h1 {
+.register-page .input-group input,
+.register-page .submit-btn {
+
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.register-page .input-group input {
+
+    padding: 10px 12px;
+}
+
+/* Phones and narrow windows: no image, form takes the whole screen, smaller text */
+@media (max-width: 800px) {
+    .register-page {
+        padding: 16px;
+    }
+
+    .register-page::before {
+        display: none;
+    }
+
+    .register-page #center h1 {
+        font-size: 32px;
+    }
+
+    .register-page #center p,
+    .register-page #center h6 {
+        font-size: 17px;
+    }
+}
+
+#center h1 {
 
     font-family: inter;
     font-size: 42px;
@@ -34,7 +82,7 @@
     letter-spacing: 0.5px;
 }
 
-.register-page #center p {
+#center p {
 
     font-family: inter;
     font-size: 20px;
@@ -43,7 +91,7 @@
     padding-bottom: 15px;
 }
 
-.register-page #center h6 {
+#center h6 {
     font-family: inter;
      color: rgba(255,255,255,0.95);
     font-weight: 400;
@@ -53,7 +101,7 @@
 
 }
 
-.register-page .submit-btn { 
+.submit-btn { 
 
     cursor: pointer;
     font-family: inter;
@@ -63,7 +111,7 @@
 }
 
 
-.register-page.input-group input {
+.input-group input {
     margin-top: 15px;
     margin-bottom: 13px;
     font-size: 19px;
@@ -71,7 +119,7 @@
 }
 
 
-    .status-msg {
+.status-msg {
 
     padding-top: 20px;
     font-family: inter;

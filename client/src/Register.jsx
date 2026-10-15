@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import './Register.css'
+import './register.css'
 
 const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
 
@@ -16,7 +16,6 @@ function Register() {
 
   // Status tracker to show feedback to your user
   const [statusMessage, setStatusMessage] = useState('')
-  const [rstmsg, setResetStatus] = useState('')
 
   // 2. Dynamic input handler that updates tracking state as user types
   const handleChange = (e) => {
@@ -24,24 +23,6 @@ function Register() {
       ...formData,
       [e.target.name]: e.target.value
     })
-  }
-
-  // 3. Asynchronous registration request handler
-  const wipeDB = async () => {
-    try {
-      // Points directly to the local backend port hosting your API routes
-      const response = await fetch(`${backend}/del_db`, {
-        method: 'DELETE',
-      })
-
-      const data = await response.json()
-      setResetStatus("Database Cleared 🫪")
-
-    }
-    catch (error) {
-      console.error('Network Error:', error)
-      setStatusMessage('Network error. Is your backend server running?')
-    }
   }
 
   const handleRegister = async (event) => {
@@ -72,8 +53,9 @@ function Register() {
       const data = await response.json()
 
       if (response.ok) {
-        // Send the new user back to the login page so they can sign in
-        navigate('/', { state: { message: `Account created for ${data.username}. Please log in.` } })
+        // Registering also logs the user in: keep the JWT so authenticated requests work right away
+        localStorage.setItem('token', data.token)
+        navigate('/maintenance')
       } else {
         setStatusMessage(`Registration failed: ${data.message || 'Unknown error'}`)
       }
@@ -85,7 +67,7 @@ function Register() {
 
   return (
     <>
-    <div className = "register-page">
+      <div className="register-page">
       <section id="center">
         <div>
           <h1>Create Account</h1>
@@ -93,9 +75,6 @@ function Register() {
             Sign up below to access your development dashboard.
           </p>
         </div>
-        {rstmsg && <p className="rst-msg">{rstmsg}</p>}
-  
-
         {/* 4. Registration form interface targeting onSubmit */}
         <form onSubmit={handleRegister} className="register-form">
           <div className="input-group">
@@ -140,12 +119,12 @@ function Register() {
           Already have an account? <Link to="/">Log in</Link>
         </h6>
       </section>
+      </div>
 
       <div className="ticks"></div>
 
       <div className="ticks"></div>
       <section id="spacer"></section>
-      </div>
     </>
   )
 }
