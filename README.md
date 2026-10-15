@@ -6,7 +6,7 @@ A full-stack web app for tracking your car's maintenance and getting help with c
 
 - **Accounts:** sign up and log in. Passwords are hashed with bcrypt and never stored in plain text.
 - **Logins with tokens:** signing up or logging in returns a JSON Web Token (JWT) that is valid for 1 hour, so new users are logged in straight away.
-- **AI diagnostic chatbot:** answers car questions with Google Gemini, using the logged-in user's vehicles and maintenance records. Conversations are saved so they can be continued later.
+- **AI diagnostic chatbot:** diagnoses car problems with Google Gemini. It matches the symptoms against known problems for that year, make and model, uses the user's service history to rule out parts that were recently fixed, and flags overdue maintenance. It can look things up in the database while it works (older records, reminders, past conversations, community posts). Conversations are saved so they can be continued later.
 - **Garage:** vehicles, maintenance records and service reminders.
 - **Community:** posts, comments and likes.
 - **Protected routes:** everything except sign-up and login needs a token, and users can only change their own data.
@@ -27,20 +27,24 @@ A full-stack web app for tracking your car's maintenance and getting help with c
 Drive_Care/
 ├── client/                 # React frontend (Vite)
 │   └── src/
-│       ├── App.jsx         # Picks which page to show for each URL
-│       ├── auth.js         # Saves, reads and removes the login token (saveToken, getToken, isLoggedIn, logout)
-│       ├── RequireAuth.jsx # Wraps a page so only logged-in users can open it
-│       ├── main.jsx        # Starts the app and sets up the router
-│       ├── index.css       # Global styles
-│       ├── Login.jsx       # Login page (/ and /login), styled by Login.css
-│       ├── Register.jsx    # Sign-up page (/register), styled by Register.css
-│       ├── maint&diag.jsx  # Maintenance and diagnostics page (/maintenance), styled by maint&diag.css
-│       └── assets/         # Background images
+│       ├── App.jsx             # Picks which page to show for each URL
+│       ├── main.jsx            # Starts the app and sets up the router
+│       ├── index.css           # Global styles
+│       ├── auth.js             # Login token helpers and authFetch for calling protected API routes
+│       ├── RequireAuth.jsx     # Wraps a page so only logged-in users can open it
+│       ├── AuthLayout.jsx      # Shared layout for the login and sign-up pages, styled by AuthLayout.css
+│       ├── Login.jsx           # Login page (/ and /login)
+│       ├── Register.jsx        # Sign-up page (/register)
+│       ├── maint&diag.jsx      # Maintenance and diagnostics page (/maintenance), styled by maint&diag.css
+│       ├── DiagnosticsChat.jsx # AI diagnostics chat used on /maintenance, styled by DiagnosticsChat.css
+│       ├── Markdown.jsx        # Formats the AI's replies (headings, bold, lists)
+│       └── assets/             # Background images
 ├── server/                 # Express backend
 │   ├── index.js            # App setup, mounts the route files
 │   ├── db.js               # Database connection pool
 │   ├── schema.sql          # Creates every table in an empty database
 │   ├── helpers.js          # Validation helpers and the error handler
+│   ├── aiTools.js          # Read-only database lookups the AI chatbot can run
 │   ├── middleware/auth.js  # JWT check (requireAuth)
 │   └── routes/             # auth, users, vehicles, maintenance, reminders, posts, ai
 └── .github/workflows/      # GitHub Actions CI
@@ -90,8 +94,9 @@ GEMINI_API_KEY=your-gemini-api-key
 JWT_SECRET=a-long-random-string
 PORT=5001
 
-# Optional: which Gemini model the chatbot uses (default: gemini-3.8-flash)
-# GEMINI_MODEL=gemini-3.5-flash
+# Which Gemini model the chatbot uses. The code falls back to gemini-2.5-flash,
+# which Google no longer offers to new API keys, so set this to a current model
+GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 
 To generate a strong `JWT_SECRET`, run:
@@ -139,7 +144,7 @@ Open the address Vite prints (usually `http://localhost:5173`).
 |---|---|
 | `/` and `/login` | Log in |
 | `/register` | Create an account (linked from the login page) |
-| `/maintenance` | Maintenance and diagnostics: overview, service records, add a record, diagnostics and schedule tabs |
+| `/maintenance` | Maintenance and diagnostics: vehicle overview, next service, Quick Diagnostics, stats, maintenance history, costs and the AI diagnostics chat |
 
 Logging in and creating an account both save the token in the browser's `localStorage` under the key `token`, then take you to `/maintenance`. Creating an account logs you in, so there is no need to log in again.
 
@@ -151,9 +156,15 @@ Logging in and creating an account both save the token in the browser's `localSt
 
 This check only decides what the browser shows. The server still verifies the token on every protected request.
 
-On screens wider than 800px the login and sign-up pages show a background image on the left half and the form centred in the right half. On narrower screens the image is hidden and the form takes the whole screen.
+The login and sign-up pages share one layout, [`AuthLayout.jsx`](client/src/AuthLayout.jsx): a photo with the DriveCare headline and features fills the left 2/3 of the screen, and the form sits in a card on the right 1/3 (never narrower than 400px). Below 900px wide the photo is hidden and the form fills the screen. The password field has a show/hide button. All of their styling is in `AuthLayout.css`.
 
-`/maintenance` currently shows built-in sample records and does not call the API yet. See [Project status](#project-status).
+On `/maintenance`:
+
+- **Vehicle picker:** lists the logged-in user's vehicles from the API. Picking a car points the AI chat at that car.
+- **AI diagnostics chat:** opens from the "Diagnose Issue" tab, or from the Quick Diagnostics card. Type a symptom (or pick a Common Issues chip) and press "Diagnose with AI"; the chat opens and sends the question. Follow-up questions continue the same conversation, and "New conversation" starts over. Under each answer the chat shows what the AI checked, such as "Checked your maintenance records".
+- **Everything else on the page is sample data** kept in the page itself: the vehicle overview card, next service, stats, history table and costs. See [Project status](#project-status).
+
+The page is a light design and sets `color-scheme: light`, so text boxes stay readable when the computer is in dark mode. New pages should do the same or set input text colours explicitly.
 
 ## Database
 
@@ -202,24 +213,18 @@ Common statuses: `400` invalid or missing input, `401` no token or an invalid/ex
 
 Updates use `PATCH` and only change the fields you send. Dates are `YYYY-MM-DD`.
 
-Calling a protected route from the frontend looks like this:
+From the frontend, call protected routes with `authFetch` from [`auth.js`](client/src/auth.js). It adds the token and the JSON headers, returns the parsed response, and throws an `Error` with the server's message if the request fails. If the token is missing or expired (401), it logs the user out and sends them to the login page.
 
 ```js
-import { getToken } from './auth.js'
+import { authFetch } from './auth.js'
 
-const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001'
+const { vehicles } = await authFetch('/api/vehicles')
 
-const response = await fetch(`${backend}/api/vehicles`, {
-  headers: { Authorization: `Bearer ${getToken()}` },
+const { vehicle } = await authFetch('/api/vehicles', {
+  method: 'POST',
+  body: { make: 'Honda', model: 'Civic', year: 2016 },
 })
-const data = await response.json()
-
-if (response.status === 401) {
-  // No token, or it expired (tokens last 1 hour): send the user back to the login page
-}
 ```
-
-For `POST`, `PATCH` and `PUT`, also send `'Content-Type': 'application/json'` and a `body` made with `JSON.stringify(...)`.
 
 ### Accounts
 
@@ -297,7 +302,24 @@ Posts include `username`, `avatar_url`, `vehicle_make`, `vehicle_model`, `vehicl
 | `DELETE` | `/api/conversations/:id` | | |
 | `POST` | `/api/conversations/:id/messages` | `content` | Asks a question in that conversation |
 
-Both ways of asking return `reply`, the two saved `messages` (yours and the assistant's) and the `conversation`. The chatbot is given the conversation's vehicle and its maintenance records, or all of your vehicles if the conversation has none.
+Both ways of asking return `reply`, the two saved `messages` (yours and the assistant's), the `conversation`, and `tools_used`, the names of the database lookups the AI ran for that answer.
+
+How the chatbot works ([`routes/ai.js`](server/routes/ai.js)):
+
+- **What it's given up front:** the conversation's vehicle (or all of the user's vehicles if none is attached), its 20 newest maintenance records with how long and how many miles ago each was done, and open reminders marked `[OVERDUE]` when they're past their date or mileage. Plus the last 40 messages of the conversation.
+- **How it's told to diagnose:** match the symptoms to known problems for that year, make and model; demote parts that were replaced recently (while allowing that a fresh repair can cause new problems); treat overdue or never-logged maintenance as more likely causes; then answer with *Most likely causes*, *Less likely, based on your records*, *What to check next*, *Urgency* and *Questions that would help*. Anything involving brakes, steering, tires, overheating or fuel smells gets a clear "is it safe to drive" answer.
+- **Database lookups:** while answering, the AI can run the lookups in [`aiTools.js`](server/aiTools.js), up to 4 rounds per question:
+
+  | Lookup | Finds |
+  |---|---|
+  | `list_my_vehicles` | The user's vehicles, with mileage, record count and last service date |
+  | `get_maintenance_records` | A vehicle's records, optionally filtered by keyword (e.g. `brake`) |
+  | `get_reminders` | Upcoming and overdue reminders |
+  | `search_past_diagnoses` | The user's earlier conversations about a symptom, and the last answer they got |
+  | `search_community_posts` | Community posts by other owners, matched by make, model or keyword |
+
+  Every lookup is read-only and filtered by the logged-in user's id on the server. The AI picks a lookup and its arguments but never writes SQL, so it can't read another user's private data. Community posts are the exception by design: every logged-in user can already see them in the feed.
+- **Reliability:** temperature is 0.4 so the same question gets a consistent diagnosis. Temporary Gemini errors (429, 500, 503, 504) are retried up to 3 times; if Gemini is still unavailable the API answers `503` with "The AI assistant is busy right now." An empty reply is retried once.
 
 ### `GET /api/test-db`
 
@@ -309,6 +331,7 @@ Checks the database connection and returns the database's current time.
 - All database queries are parameterized to prevent SQL injection.
 - Email format and password length are checked on the server, not only in the browser, so the rules can't be skipped by calling the API directly.
 - Routes take the user's identity from the verified token, never from the request body.
+- The AI chatbot only reaches the database through fixed, read-only lookups scoped to the logged-in user (see [AI chatbot](#ai-chatbot)). The vehicle data in its instructions is marked as user-entered information, not instructions.
 - Never commit `.env` files. They're already listed in `.gitignore`.
 
 ## Project status
@@ -316,19 +339,21 @@ Checks the database connection and returns the database's current time.
 What works end to end today:
 
 - Creating an account and logging in, from the browser through to the database.
+- The vehicle picker and the AI diagnostics chat on `/maintenance`.
 - Every API route listed above, for anyone sending a valid token.
 
 Not connected yet:
 
-- **The frontend only calls `/api/register` and `/api/login`.** No page sends the token back, so the vehicle, maintenance, reminder, post and chatbot routes aren't used by any page.
-- **`/maintenance` runs on sample data** kept in the page itself. Records added there disappear on refresh.
+- **There's no way to add a vehicle in the app.** Until there is, new users see "No vehicles added yet" and the AI asks for their car's details instead of using records.
+- **Most of `/maintenance` is sample data:** the overview card always shows a 2022 Dodge Charger, and the history table, stats and costs are hardcoded. The maintenance, reminder and vehicle routes aren't called by these parts yet.
 - **No log out button.** `logout()` in [`auth.js`](client/src/auth.js) is ready to call from one.
 - **Unknown URLs show a blank page.**
-- **The pages for vehicles, reminders, the community feed and the chatbot don't exist yet.**
+- **The pages for vehicles, reminders and the community feed don't exist yet.**
+- **`Login.css`, `register.css` and `App.css` aren't imported anywhere** and can be deleted.
 
 Known gaps in the backend:
 
-- No rate limiting on login or on the chatbot, which calls a paid API.
+- No rate limiting on login or on the chatbot, which calls a paid API. One question can take up to 5 Gemini calls when the AI runs lookups.
 - Tokens expire after 1 hour with no way to refresh them, so users are logged out mid-session.
 - No image upload: posts and avatars take an `image_url`.
 - No password reset.
