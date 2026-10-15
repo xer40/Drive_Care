@@ -1,31 +1,32 @@
-.register-page {
+register-page {
 
     background-image: url('./assets/registerbg.png');
     background-position: left;
     background-repeat: no-repeat;
-    background-size: 55% 100%;
+    background-size: 65% 100%;
     background-color: #1b2430; 
-    min-height: 100vh;
 }
 
- .register-page #center {
+#center {
 
-    margin-top: 10%;
+    position: relative;
+    margin-left: auto;
+    margin-right: -12%;
+    margin-top: 2.1%;
     border-style: solid;
     border-width: 1px;
     border-radius: 24px;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-bottom: 3px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 0px;
     border-color: #ffffff2e;
-    backdrop-filter: blur(14px);
-    padding-top: 0px;
-    max-width: 300px;
-    margin-left: 68%;
+    max-width: 500px;
+    backdrop-filter: blur(13px);
+    padding-top: 2px;
 
 }
 
-  .register-page #center h1 {
+#center h1 {
 
     font-family: inter;
     font-size: 42px;
@@ -34,7 +35,7 @@
     letter-spacing: 0.5px;
 }
 
-  .register-page #center p {
+#center p {
 
     font-family: inter;
     font-size: 20px;
@@ -43,7 +44,7 @@
     padding-bottom: 15px;
 }
 
-  .register-page #center h6 {
+#center h6 {
     font-family: inter;
      color: rgba(255,255,255,0.95);
     font-weight: 400;
@@ -53,7 +54,7 @@
 
 }
 
-  .register-page .submit-btn { 
+.submit-btn { 
 
     cursor: pointer;
     font-family: inter;
@@ -63,7 +64,7 @@
 }
 
 
-  .register-page .input-group input {
+.input-group input {
     margin-top: 15px;
     margin-bottom: 13px;
     font-size: 19px;
@@ -71,7 +72,7 @@
 }
 
 
-  .register-page .status-msg {
+.status-msg {
 
     padding-top: 20px;
     font-family: inter;
