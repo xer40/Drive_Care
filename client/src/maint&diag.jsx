@@ -5,21 +5,57 @@ function Maintenance() {
   const [activeTab, setActiveTab] = useState("overview");
 
   const [records, setRecords] = useState([
-    {
-      id: 1,
-      service: "Oil Change",
-      date: "2026-09-15",
-      mileage: 42000,
-      cost: 89.99,
-    },
-    {
-      id: 2,
-      service: "Brake Replacement",
-      date: "2026-08-10",
-      mileage: 39500,
-      cost: 350,
-    },
-  ]);
+  {
+    id: 1,
+    service: "Oil Change",
+    category: "Oil & Fluids",
+    date: "2026-09-15",
+    mileage: 42000,
+    cost: 89.99,
+    location: "Valvoline",
+    icon: "🛢️",
+  },
+  {
+    id: 2,
+    service: "Brake Pads (Front)",
+    category: "Brakes",
+    date: "2026-08-02",
+    mileage: 39400,
+    cost: 350.00,
+    location: "Local Shop",
+    icon: "🔧",
+  },
+  {
+    id: 3,
+    service: "Air Filter",
+    category: "Filters",
+    date: "2026-06-10",
+    mileage: 37200,
+    cost: 45.00,
+    location: "AutoZone",
+    icon: "🔩",
+  },
+  {
+    id: 4,
+    service: "Tire Rotation",
+    category: "Tires",
+    date: "2026-03-18",
+    mileage: 33100,
+    cost: 30.00,
+    location: "Discount Tire",
+    icon: "🛞",
+  },
+  {
+    id: 5,
+    service: "Battery Replacement",
+    category: "Electrical",
+    date: "2026-01-05",
+    mileage: 28500,
+    cost: 220.00,
+    location: "Dealer",
+    icon: "🔋",
+  },
+]);
 
   const [newRecord, setNewRecord] = useState({
     service: "",
@@ -285,103 +321,327 @@ function Maintenance() {
           </button>
 
         </div>
+              
       </div>
       {/* END OF MAINTENANCE DASHBOARD */}
-
-      {/* ===================================
-          ADD MAINTENANCE RECORD
+       
+            {/* ===================================
+          MAINTENANCE STATISTICS
       =================================== */}
 
-      <section>
-        <h2>Add Maintenance Record</h2>
+      <div className="maintenance-stats">
 
-        <form onSubmit={addRecord}>
+        {/* CARD 1: TOTAL RECORDS */}
+        <div className="maintenance-stat-card">
 
-          <input
-            name="service"
-            placeholder="Service Type"
-            value={newRecord.service}
-            onChange={handleChange}
-            required
-          />
+          <div className="stat-icon stat-icon-blue">
+            📄
+          </div>
 
-          <input
-            type="date"
-            name="date"
-            value={newRecord.date}
-            onChange={handleChange}
-            required
-          />
+          <div className="stat-info">
+            <h3>5</h3>
+            <p>Total Records</p>
+          </div>
 
-          <input
-            type="number"
-            name="mileage"
-            placeholder="Mileage"
-            value={newRecord.mileage}
-            onChange={handleChange}
-            required
-          />
+          <span className="stat-arrow">›</span>
 
-          <input
-            type="number"
-            name="cost"
-            placeholder="Cost"
-            value={newRecord.cost}
-            onChange={handleChange}
-            min="0"
-            step="0.01"
-            required
-          />
+        </div>
 
-          <button type="submit">
-            Add Record
-          </button>
+        {/* CARD 2: TOTAL SPENT */}
+        <div className="maintenance-stat-card">
 
-        </form>
-      </section>
+          <div className="stat-icon stat-icon-blue">
+            💲
+          </div>
 
+          <div className="stat-info">
+            <h3>$642</h3>
+            <p>Total Spent (This Year)</p>
+          </div>
+
+          <span className="stat-arrow">›</span>
+
+        </div>
+
+        {/* CARD 3: UPCOMING SERVICES */}
+        <div className="maintenance-stat-card">
+
+          <div className="stat-icon stat-icon-blue">
+            📅
+          </div>
+
+          <div className="stat-info">
+            <h3>3</h3>
+            <p>Upcoming Services</p>
+          </div>
+
+          <span className="stat-arrow">›</span>
+
+        </div>
+
+        {/* CARD 4: VEHICLE HEALTH */}
+        <div className="maintenance-stat-card">
+
+          <div className="stat-icon stat-icon-green">
+            ✓
+          </div>
+
+          <div className="stat-info">
+            <h3>All Good</h3>
+            <p>No critical issues</p>
+          </div>
+
+          <span className="stat-arrow">›</span>
+
+        </div>
+
+      </div>
+      
+      
       {/* ===================================
-          MAINTENANCE HISTORY
-      =================================== */}
+    MAINTENANCE HISTORY TABLE
+=================================== */}
+<div className="maintenance-bottom-grid">
+<section className="maintenance-history-section">
 
-      <section>
-        <h2>Maintenance History</h2>
+  {/* Header */}
+  <div className="history-header">
+
+    <h2>Maintenance History</h2>
+
+    <button type="button" className="history-filter-button">
+      ⚲ Filter
+    </button>
+
+  </div>
+
+  {/* Table */}
+  <div className="history-table-wrapper">
+
+    <table className="history-table">
+
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Date</th>
+          <th>Mileage</th>
+          <th>Cost</th>
+          <th>Location</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
 
         {records.map((record) => (
-          <div key={record.id} className="maintenance-card">
 
-            <h3>{record.service}</h3>
+          <tr key={record.id}>
 
-            <p>Date: {record.date}</p>
+            {/* Service */}
+            <td>
+              <div className="history-service">
 
-            <p>Mileage: {record.mileage}</p>
+                <span className="history-service-icon">
+                  {record.icon || "🔧"}
+                </span>
 
-            <p>Cost: ${Number(record.cost).toFixed(2)}</p>
+                <div className="history-service-info">
+                  <strong>{record.service}</strong>
+                  <span>{record.category || "General Maintenance"}</span>
+                </div>
 
-          </div>
+              </div>
+            </td>
+
+            {/* Date */}
+            <td>
+              {new Date(`${record.date}T00:00:00`).toLocaleDateString(
+                "en-US",
+                {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                }
+              )}
+            </td>
+
+            {/* Mileage */}
+            <td>
+              {Number(record.mileage).toLocaleString()} mi
+            </td>
+
+            {/* Cost */}
+            <td className="history-cost">
+              ${Number(record.cost).toFixed(2)}
+            </td>
+
+            {/* Location */}
+            <td>{record.location || "Not specified"}</td>
+
+            {/* Actions */}
+            <td>
+              <button
+                type="button"
+                className="history-actions-button"
+              >
+                •••
+              </button>
+            </td>
+
+          </tr>
+
         ))}
-      </section>
 
-      {/* ===================================
-          VEHICLE DIAGNOSTICS
-      =================================== */}
+      </tbody>
 
-      <section>
-        <h2>Vehicle Diagnostics</h2>
+    </table>
 
-        <p>
-          Describe any issues you're experiencing with your vehicle.
-        </p>
+  </div>
 
-        <textarea
-          placeholder="Describe your vehicle's symptoms..."
-        />
+</section>
+    {/* ===================================
+    RIGHT COLUMN: MAINTENANCE SIDEBAR
+=================================== */}
 
-        <button type="button">
-          Ask AI Assistant
-        </button>
+<div className="maintenance-right-column">
 
-      </section>
+  {/* ===================================
+      MAINTENANCE COSTS
+  =================================== */}
+
+  <div className="maintenance-costs-card">
+
+    <div className="costs-header">
+      <h2>Maintenance Costs</h2>
+
+      <select defaultValue="year">
+        <option value="year">This Year</option>
+        <option value="month">This Month</option>
+        <option value="all">All Time</option>
+      </select>
+    </div>
+
+    <div className="costs-content">
+
+      {/* DONUT CHART */}
+      <div className="costs-donut">
+
+        <div className="costs-donut-center">
+          <strong>$642</strong>
+          <span>Total</span>
+        </div>
+
+      </div>
+
+      {/* COST BREAKDOWN */}
+      <div className="costs-legend">
+
+        <div className="costs-legend-item">
+          <span className="legend-dot tires"></span>
+          <span className="legend-name">Tires</span>
+          <strong>$120</strong>
+          <span className="legend-percent">19%</span>
+        </div>
+
+        <div className="costs-legend-item">
+          <span className="legend-dot brakes"></span>
+          <span className="legend-name">Brakes</span>
+          <strong>$350</strong>
+          <span className="legend-percent">55%</span>
+        </div>
+
+        <div className="costs-legend-item">
+          <span className="legend-dot fluids"></span>
+          <span className="legend-name">Oil & Fluids</span>
+          <strong>$89</strong>
+          <span className="legend-percent">14%</span>
+        </div>
+
+        <div className="costs-legend-item">
+          <span className="legend-dot filters"></span>
+          <span className="legend-name">Filters</span>
+          <strong>$45</strong>
+          <span className="legend-percent">7%</span>
+        </div>
+
+        <div className="costs-legend-item">
+          <span className="legend-dot other"></span>
+          <span className="legend-name">Other</span>
+          <strong>$38</strong>
+          <span className="legend-percent">6%</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  {/* ===================================
+      COMMON SERVICES
+  =================================== */}
+
+  <div className="common-services-card">
+
+    <div className="common-services-header">
+      <h2>Common Services for Your Vehicle</h2>
+
+      <button type="button" className="common-view-all">
+        View All →
+      </button>
+    </div>
+
+    <div className="common-service-item">
+
+      <span className="common-service-icon oil-icon">🛢️</span>
+
+      <div className="common-service-info">
+        <strong>Oil Change</strong>
+        <span>Every 5,000 – 7,500 mi</span>
+      </div>
+
+      <button type="button" className="common-learn-button">
+        Learn More
+      </button>
+
+    </div>
+
+    <div className="common-service-item">
+
+      <span className="common-service-icon tire-icon">🛞</span>
+
+      <div className="common-service-info">
+        <strong>Tire Rotation</strong>
+        <span>Every 5,000 – 8,000 mi</span>
+      </div>
+
+      <button type="button" className="common-learn-button">
+        Learn More
+      </button>
+
+    </div>
+
+    <div className="common-service-item">
+
+      <span className="common-service-icon brake-icon">🔧</span>
+
+      <div className="common-service-info">
+        <strong>Brake Inspection</strong>
+        <span>Every 10,000 – 15,000 mi</span>
+      </div>
+
+      <button type="button" className="common-learn-button">
+        Learn More
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+</div> {/* END OF MAINTENANCE BOTTOM GRID */}
+
 
     </div>
   );
