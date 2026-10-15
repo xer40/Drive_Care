@@ -1,0 +1,79 @@
+.register-page {
+
+    background-image: url('./assets/registerbg.png');
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: 65% 100%;
+    background-color: #1b2430; 
+    min-height: 100vh;
+}
+
+.register-page #center {
+
+     margin-top: 14.5%;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 24px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 3px;
+    border-color: #ffffff2e;
+    backdrop-filter: blur(14px);
+    padding-top: 0px;
+    max-width: 300px;
+    margin-left: 65%;
+
+}
+
+.register-page #center h1 {
+
+    font-family: inter;
+    font-size: 42px;
+    font-weight: 750;
+    color: #f8fafc;
+    letter-spacing: 0.5px;
+}
+
+.register-page #center p {
+
+    font-family: inter;
+    font-size: 20px;
+    color: #e2e8f0;
+    font-weight: 400;
+    padding-bottom: 15px;
+}
+
+.register-page #center h6 {
+    font-family: inter;
+     color: rgba(255,255,255,0.95);
+    font-weight: 400;
+    font-size: 22px;
+    margin-top: -10px;
+    padding-top: 20px;
+
+}
+
+.register-page .submit-btn { 
+
+    cursor: pointer;
+    font-family: inter;
+    font-size: 21px;
+    font-weight: 600px;
+    margin-top: 5px;
+}
+
+
+.register-page.input-group input {
+    margin-top: 15px;
+    margin-bottom: 13px;
+    font-size: 19px;
+    font-family: inter;
+}
+
+
+    .status-msg {
+
+    padding-top: 20px;
+    font-family: inter;
+    font-size: 20px;
+}

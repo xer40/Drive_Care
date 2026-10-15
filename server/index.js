@@ -1,28 +1,28 @@
 // Load environment variables from your server/.env file
-require('dotenv').config(); 
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
+const pool = require('./db');
+const { requireAuth } = require('./middleware/auth');
+const { errorHandler } = require('./helpers');
 
 const app = express();
 
 // Middleware
 app.use(cors());          // Allows your React app to communicate with this API
 app.use(express.json());  // Allows your server to parse incoming JSON data
-
-// 1. Configure the connection pool to your cloud database
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  // Uncomment the line below if your cloud provider (like Supabase/Neon) requires SSL
-  // ssl: { rejectUnauthorized: false } 
+// Requests without a JSON body leave req.body undefined; default it so routes can read fields safely
+app.use((req, res, next) => {
+  req.body = req.body || {};
+  next();
 });
 
-// 2. Add a simple test route to check if the backend works
+// Add a simple test route to check if the backend works
 app.get('/', (req, res) => {
-  res.send(' Node.js backend is running successfully!');
+  res.send('🚀 Node.js backend is running successfully!');
 });
 
-// 3. Add a database test route for your React app
+// Add a database test route for your React app
 app.get('/api/test-db', async (req, res) => {
   try {
     // Run a simple query to get the current timestamp from Postgres
@@ -38,7 +38,28 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
-// 4. Start the server
+// Public routes: /api/register and /api/login
+app.use('/api', require('./routes/auth'));
+
+// Everything below this line requires a valid JWT. Routes read the user from req.user,
+// never from the request body, so users can't read or change each other's data
+app.use('/api', requireAuth);
+app.use('/api', require('./routes/users'));
+app.use('/api', require('./routes/vehicles'));
+app.use('/api', require('./routes/maintenance'));
+app.use('/api', require('./routes/reminders'));
+app.use('/api', require('./routes/posts'));
+app.use('/api', require('./routes/ai'));
+
+// Unknown URLs
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: 'Route not found.' });
+});
+
+// Turns errors thrown by any route into a JSON response
+app.use(errorHandler);
+
+// Start the server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
