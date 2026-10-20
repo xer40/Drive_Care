@@ -1,18 +1,4 @@
 
-.login-page {
-
-    background-image: url('./assets/loginbg.jpg');
-    background-size: 50% 100%;
-    background-position: left;
-    background-repeat: no-repeat;
-    background-color: #F8F7F8;
-    min-height: 100vh;
-
-}
-
-.login-page #center {
-    
-    margin-top: 14.5%;
 /* Full-screen page: image fills the left half, card is centered in the right half */
 .login-page {
 
@@ -23,7 +9,7 @@
     justify-content: center;
     padding: 24px 24px 24px calc(50% + 24px);
     box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.884);
+    background-color: #f7f7f7;
 }
 
 /* cover crops the image to fit instead of stretching it */
@@ -54,7 +40,17 @@
     padding: 0px 30px 24px 30px;
     border-color: #ffffff2e;
     backdrop-filter: blur(14px);
+    background-color: #fdfdfc;
 }
+
+.login-page #center h1 {
+    font-family: inter;
+    font-size: 42px;
+    font-weight: 700;
+    color:#181A21;
+    letter-spacing: 0.5px;
+
+    }
 
 .login-page .input-group input,
 .login-page .submit-btn {
@@ -82,9 +78,6 @@
         padding: 0px 20px 20px 20px;
     }
 
-    .login-page #center h1 {
-        font-size: 32px;
-    }
 
     .login-page #center p,
     .login-page #center h6 {
@@ -92,19 +85,11 @@
     }
 }
 
-#center h1 {
-
-    font-family: inter;
-    font-size: 42px;
-    font-weight: 750;
-    color: #f8fafc;
-    letter-spacing: 0.5px;
-}
 
 
 #center p {
     font-family: inter;
-    color: #f1f5f9;
+    color: #181A21;
     font-size: 20px;
     font-weight: 400;
 }
@@ -143,78 +128,6 @@
 }
 
 .status-msg {
-
-    color: #f8fafc;
-    font-family: inter;
-    font-size: 18px;
-    text-align: center;
-}
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 24px;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-bottom: 3px;
-    border-color: #E5E7EB;
-    backdrop-filter: blur(14px);
-    padding-top: 0px;
-    max-width: 300px;
-    margin-left: 65%;
-    background-color: #FDFDFD;
-
-}
-
-.login-page #center h1 {
-
-    font-family: inter;
-    font-size: 42px;
-    font-weight: 750;
-    color: #181B22;
-    letter-spacing: 0.5px;
-}
-
-
-.login-page #center p {
-    font-family: inter;
-    color: #181B22;
-    font-size: 20px;
-    font-weight: 400;
-}
-
-
-.login-page #center h6 {
-    
-    font-family: inter;
-    color: #181B22;
-    font-weight: 400;
-    font-size: 20px;
-    margin-top: -15px;
-}
-
-.login-page .input-group input {
-
-    font-size: 18px;
-    margin-top: 15px;
-    margin-bottom: 3px;
-    color:#00000069;
-    font-family: inter;
-}
-
-.login-page .submit-btn {
-    color: #334155;
-    margin-top: 15px;
-    margin-bottom: 27px;
-    font-family: inter;
-    font-size: 20px;
-    font-weight: 600;
-    border-radius: 12px;
-    border: none;
-    width: 120px;
-    height: 50px;
-    cursor: pointer;
-}
-
-.login-page .status-msg {
 
     color: #f8fafc;
     font-family: inter;
