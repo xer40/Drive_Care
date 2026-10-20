@@ -62,10 +62,10 @@
 
 .auth-hero-text h1 {
   margin: 0 0 18px;
-  max-width: 12ch;
+  max-width: 18ch;
   font-size: clamp(40px, 4.4vw, 64px);
   line-height: 1.08;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -1.5px;
   color: #fff;
 }
