@@ -1,29 +1,76 @@
-register-page {
-
-    background-image: url('./assets/registerbg.png');
-    background-position: left;
-    background-repeat: no-repeat;
-    background-size: 65% 100%;
-    background-color: #1b2430; 
-}
-
-#center {
+/* Full-screen page: image fills the left half, card is centered in the right half */
+.register-page {
 
     position: relative;
-    margin-left: auto;
-    margin-right: -12%;
-    margin-top: 2.1%;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 24px 24px calc(50% + 24px);
+    box-sizing: border-box;
+    background-color: #1b2430;
+}
+
+/* cover crops the image to fit instead of stretching it */
+.register-page::before {
+
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    background-image: url('./assets/registerbg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* .register-page prefix keeps these rules from leaking onto the login page's #center */
+.register-page #center {
+
+    margin: 0;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
     border-style: solid;
     border-width: 1px;
     border-radius: 24px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 0px;
+    padding: 2px 20px 24px 20px;
     border-color: #ffffff2e;
-    max-width: 500px;
     backdrop-filter: blur(13px);
-    padding-top: 2px;
+}
 
+.register-page .input-group input,
+.register-page .submit-btn {
+
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.register-page .input-group input {
+
+    padding: 10px 12px;
+}
+
+/* Phones and narrow windows: no image, form takes the whole screen, smaller text */
+@media (max-width: 800px) {
+    .register-page {
+        padding: 16px;
+    }
+
+    .register-page::before {
+        display: none;
+    }
+
+    .register-page #center h1 {
+        font-size: 32px;
+    }
+
+    .register-page #center p,
+    .register-page #center h6 {
+        font-size: 17px;
+    }
 }
 
 #center h1 {
