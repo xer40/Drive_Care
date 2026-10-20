@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Login from './Login.jsx'
 import Register from './Register.jsx'
 import Maintenance from './maint&diag.jsx'
+import RequireAuth from './RequireAuth.jsx'
 
 function App() {
   return (
@@ -9,7 +10,8 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/maintenance" element={<Maintenance />} />
+      {/* Logged-in only: users without a valid token are sent back to the login page */}
+      <Route path="/maintenance" element={<RequireAuth><Maintenance /></RequireAuth>} />
     </Routes>
   )
 }

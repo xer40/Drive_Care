@@ -8,6 +8,8 @@
   min-height: 100vh;
   font-family: Arial, sans-serif;
   color: #1e293b;
+  /* This page is a light design: stop the computer's dark mode from turning typed text white */
+  color-scheme: light;
 }
 
 /* Page Title */
@@ -398,7 +400,7 @@
 .maintenance-page .vehicle-trim {
   font-size: 13px;
   color: #64748b;
-  margin-top: 6px;
+  text-align: left;
 }
 
 .maintenance-page .vehicle-overview-details {
@@ -624,6 +626,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   background-color: #f8fafc;
+  color: #1e293b;
   font-family: inherit;
   font-size: 13px;
   resize: vertical;

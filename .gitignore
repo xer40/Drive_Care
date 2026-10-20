@@ -1,12 +1,36 @@
 # Dependencies
 node_modules/
-client/node_modules/
-server/node_modules/
 
-# Secrets
+# Secrets (.env, .env.local, .env.production, ...). An .env.example with no real values can be committed
 .env
-server/.env
+.env.*
+!.env.example
+*.local
 
-# IDE / System files
-.DS_Store
+# Build output
 dist/
+dist-ssr/
+build/
+coverage/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# System files
+.DS_Store
+Thumbs.db

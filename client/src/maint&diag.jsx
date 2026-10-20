@@ -1,8 +1,44 @@
-import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./maint&diag.css";
+import { authFetch } from "./auth.js";
+import DiagnosticsChat from "./DiagnosticsChat.jsx";
 
 function Maintenance() {
   const [activeTab, setActiveTab] = useState("overview");
+
+  // The logged-in user's vehicles from the database, and which one is selected
+  const [vehicles, setVehicles] = useState([]);
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+
+  useEffect(() => {
+    authFetch("/api/vehicles")
+      .then((data) => {
+        setVehicles(data.vehicles);
+        if (data.vehicles.length > 0) setSelectedVehicleId(data.vehicles[0].id);
+      })
+      .catch((err) => console.error("Could not load vehicles:", err.message));
+  }, []);
+
+  const selectedVehicle = vehicles.find((vehicle) => vehicle.id === selectedVehicleId);
+  const vehicleName = selectedVehicle
+    ? `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`
+    : "";
+
+  // Quick Diagnostics card: what the user typed, and the question handed to the full chat.
+  // chatSession changes every time the card sends a question, which starts a fresh conversation
+  const [quickMessage, setQuickMessage] = useState("");
+  const [chatQuestion, setChatQuestion] = useState("");
+  const [chatSession, setChatSession] = useState(0);
+  const chatRef = useRef(null);
+
+  const openDiagnostics = (question = "") => {
+    setChatQuestion(question.trim());
+    setChatSession((session) => session + 1);
+    setActiveTab("diagnostics");
+    setQuickMessage("");
+    // Wait for the chat to appear, then scroll to it
+    setTimeout(() => chatRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  };
 
   const [records, setRecords] = useState([
   {
@@ -109,10 +145,17 @@ function Maintenance() {
 
         {/* Vehicle Selector */}
         <div className="maintenance-vehicle-selector">
-          <select>
-            <option>2022 Dodge Charger</option>
-            <option>2020 Honda Civic</option>
-            <option>2025 Hyundai Gray</option>
+          <select
+            value={selectedVehicleId ?? ""}
+            onChange={(e) => setSelectedVehicleId(Number(e.target.value))}
+            disabled={vehicles.length === 0}
+          >
+            {vehicles.length === 0 && <option value="">No vehicles added yet</option>}
+            {vehicles.map((vehicle) => (
+              <option key={vehicle.id} value={vehicle.id}>
+                {vehicle.year} {vehicle.make} {vehicle.model}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -151,7 +194,7 @@ function Maintenance() {
         <button
           type="button"
           className={activeTab === "diagnostics" ? "active" : ""}
-          onClick={() => setActiveTab("diagnostics")}
+          onClick={() => openDiagnostics()}
         >
           Diagnose Issue
         </button>
@@ -165,6 +208,23 @@ function Maintenance() {
         </button>
 
       </div>
+
+      {/* ===================================
+          AI DIAGNOSTICS CHAT
+          Opens from the "Diagnose Issue" tab or the Quick Diagnostics card
+      =================================== */}
+
+      {activeTab === "diagnostics" && (
+        <section ref={chatRef} className="diagnostics-chat-section">
+          {/* key: a new car or a new quick question starts a fresh conversation */}
+          <DiagnosticsChat
+            key={`${selectedVehicleId ?? "none"}-${chatSession}`}
+            vehicleId={selectedVehicleId}
+            vehicleName={vehicleName}
+            initialMessage={chatQuestion}
+          />
+        </section>
+      )}
 
       {/* ===================================
           MAINTENANCE DASHBOARD
@@ -191,7 +251,7 @@ function Maintenance() {
           <div className="vehicle-overview-info">
 
             <div className="vehicle-overview-heading">
-              <h2>2022 Dodge Charger</h2>
+              <h2>2022 Dodge Charger</h2>             
               <span className="vehicle-status">Active</span>
             </div>
 
@@ -299,23 +359,25 @@ function Maintenance() {
           <textarea
             className="quick-diagnostics-input"
             placeholder="e.g., My car makes a squeaking noise when braking..."
+            value={quickMessage}
+            onChange={(e) => setQuickMessage(e.target.value)}
           />
 
           <div className="diagnostics-suggestions">
             <span>Common Issues</span>
 
             <div className="diagnostics-chips">
-              <button type="button">Engine Noise</button>
-              <button type="button">Warning Light</button>
-              <button type="button">Braking Issues</button>
-              <button type="button">Battery</button>
+              <button type="button" onClick={() => setQuickMessage("My engine is making an unusual noise")}>Engine Noise</button>
+              <button type="button" onClick={() => setQuickMessage("A warning light came on on my dashboard")}>Warning Light</button>
+              <button type="button" onClick={() => setQuickMessage("Something feels wrong when I brake")}>Braking Issues</button>
+              <button type="button" onClick={() => setQuickMessage("My car is slow to start or the battery seems weak")}>Battery</button>
             </div>
           </div>
 
           <button
             type="button"
             className="diagnostics-analyze-button"
-            onClick={() => setActiveTab("diagnostics")}
+            onClick={() => openDiagnostics(quickMessage)}
           >
             ✨ Diagnose with AI
           </button>

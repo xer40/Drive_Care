@@ -9,7 +9,7 @@
     justify-content: center;
     padding: 24px 24px 24px calc(50% + 24px);
     box-sizing: border-box;
-    background-color: #f7f7f7;
+    background-color: rgba(0, 0, 0, 0.884);
 }
 
 /* cover crops the image to fit instead of stretching it */
@@ -40,7 +40,42 @@
     padding: 0px 30px 24px 30px;
     border-color: #ffffff2e;
     backdrop-filter: blur(14px);
-    background-color: #fdfdfc;
+}
+
+.login-page .input-group input,
+.login-page .submit-btn {
+
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.login-page .input-group input {
+
+    padding: 10px 12px;
+}
+
+/* Phones and narrow windows: no image, form takes the whole screen, smaller text */
+@media (max-width: 800px) {
+    .login-page {
+        padding: 16px;
+    }
+
+    .login-page::before {
+        display: none;
+    }
+
+    .login-page #center {
+        padding: 0px 20px 20px 20px;
+    }
+
+    .login-page #center h1 {
+        font-size: 32px;
+    }
+
+    .login-page #center p,
+    .login-page #center h6 {
+        font-size: 17px;
+    }
 }
 
 .login-page #center h1 {

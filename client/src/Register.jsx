@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import './register.css'
+import { saveToken } from './auth.js'
+import AuthLayout, { AuthField, PasswordField, UserIcon, MailIcon, ArrowRightIcon } from './AuthLayout.jsx'
+import registerImage from './assets/registerbg.png'
 
 const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
 
@@ -14,8 +16,9 @@ function Register() {
     email:'',
   })
 
-  // Status tracker to show feedback to your user
-  const [statusMessage, setStatusMessage] = useState('')
+  // Feedback for the user; error decides whether the message is shown in red
+  const [status, setStatus] = useState({ text: '', error: false })
+  const [submitting, setSubmitting] = useState(false)
 
   // 2. Dynamic input handler that updates tracking state as user types
   const handleChange = (e) => {
@@ -33,12 +36,13 @@ function Register() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
     if (!emailRegex.test(formData.email)) {
-      setStatusMessage('Registration failed: enter a valid email address (e.g., name@domain.com or .net).')
+      setStatus({ text: 'Enter a valid email address (e.g., name@domain.com or .net).', error: true })
       return // Stop the function here so it doesn't send the fetch request
     }
     // ------------------------------
 
-    setStatusMessage('Registering...')
+    setStatus({ text: '', error: false })
+    setSubmitting(true)
 
     try {
       // Points directly to the local backend port hosting your API routes
@@ -54,78 +58,75 @@ function Register() {
 
       if (response.ok) {
         // Registering also logs the user in: keep the JWT so authenticated requests work right away
-        localStorage.setItem('token', data.token)
+        saveToken(data.token)
         navigate('/maintenance')
       } else {
-        setStatusMessage(`Registration failed: ${data.message || 'Unknown error'}`)
+        setStatus({ text: data.message || 'Registration failed.', error: true })
       }
     } catch (error) {
       console.error('Network Error:', error)
-      setStatusMessage('Network error. Is your backend server running?')
+      setStatus({ text: 'Network error. Is your backend server running?', error: true })
+    } finally {
+      setSubmitting(false)
     }
   }
 
   return (
-    <>
-      <div className="register-page">
-      <section id="center">
-        <div>
-          <h1>Create Account</h1>
-          <p>
-            Sign up below to access your development dashboard.
-          </p>
-        </div>
-        {/* 4. Registration form interface targeting onSubmit */}
-        <form onSubmit={handleRegister} className="register-form">
-          <div className="input-group">
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+    <AuthLayout
+      image={registerImage}
+      heading="Your garage, all in one place"
+      tagline="Log every service, get reminders before things are due, and ask our AI assistant when something feels off."
+      footer={<>Already have an account? <Link to="/">Sign in</Link></>}
+    >
+      <h1>Create your account</h1>
+      <p className="auth-subtitle">
+        Set up your free account to start tracking your vehicles and maintenance.
+      </p>
 
-          <button type="submit" className="submit-btn">
-            Register
-          </button>
-        </form>
+      {/* 4. Registration form interface targeting onSubmit */}
+      <form onSubmit={handleRegister} className="auth-form">
+        <AuthField
+          label="Username"
+          icon={<UserIcon />}
+          type="text"
+          name="username"
+          placeholder="Choose a username"
+          autoComplete="username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+        />
 
-        {statusMessage && <p className="status-msg">{statusMessage}</p>}
+        <AuthField
+          label="Email"
+          icon={<MailIcon />}
+          type="email"
+          name="email"
+          placeholder="you@example.com"
+          autoComplete="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
 
-        <h6>
-          Already have an account? <Link to="/">Log in</Link>
-        </h6>
-      </section>
-      </div>
+        <PasswordField
+          label="Password"
+          name="password"
+          placeholder="At least 8 characters"
+          autoComplete="new-password"
+          minLength={8}
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
 
-      <div className="ticks"></div>
+        <button type="submit" className="auth-submit" disabled={submitting}>
+          {submitting ? 'Creating account...' : <>Create account <ArrowRightIcon /></>}
+        </button>
+      </form>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      {status.text && <p className={`auth-status${status.error ? ' error' : ''}`}>{status.text}</p>}
+    </AuthLayout>
   )
 }
 
