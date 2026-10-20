@@ -2,19 +2,19 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
-// 1. ADD THIS LINE: Import the bcrypt library to fix the crash
-const bcrypt = require('bcrypt');
+const pool = require('./db');
+const { requireAuth } = require('./middleware/auth');
+const { errorHandler } = require('./helpers');
 
 const app = express();
 
 // Middleware
 app.use(cors());          // Allows your React app to communicate with this API
 app.use(express.json());  // Allows your server to parse incoming JSON data
-
-// Configure the connection pool to your cloud database
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+// Requests without a JSON body leave req.body undefined; default it so routes can read fields safely
+app.use((req, res, next) => {
+  req.body = req.body || {};
+  next();
 });
 
 // Add a simple test route to check if the backend works
@@ -38,73 +38,26 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
-// 2. NOTE: The empty GET route /api/register/:id/:password has been removed.
-// Exposing raw passwords in a URL is insecure and bypasses the req.body layout.
+// Public routes: /api/register and /api/login
+app.use('/api', require('./routes/auth'));
 
-// 3. Secure Route: Create/Register a New User with Hashed Password
-app.post('/api/register', async (req, res) => {
-  const { id, password } = req.body;
-  console.log(`Attempting to create user: ${id}`); // Removed password from logs for security
+// Everything below this line requires a valid JWT. Routes read the user from req.user,
+// never from the request body, so users can't read or change each other's data
+app.use('/api', requireAuth);
+app.use('/api', require('./routes/users'));
+app.use('/api', require('./routes/vehicles'));
+app.use('/api', require('./routes/maintenance'));
+app.use('/api', require('./routes/reminders'));
+app.use('/api', require('./routes/posts'));
+app.use('/api', require('./routes/ai'));
 
-  // Validate the inputs
-  if (!id || !password) {
-    return res.status(400).json({
-      success: false,
-      message: 'Both id and password fields are required.'
-    });
-  }
-
-  try {
-    // Generate salt and hash the plain text password asynchronously
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Insert user into your custom table using parameterized queries to protect against SQL injection
-    const insertQuery = 'INSERT INTO users (id, password) VALUES (\$1, \$2) RETURNING id';
-    const values = [id, hashedPassword];
-
-    const result = await pool.query(insertQuery, values);
-
-    // Send a secure success response back to React (omitting the password hash)
-    return res.status(201).json({
-      success: true,
-      message: 'User registered successfully!',
-      user: {
-        id: result.rows[0].id
-      }
-    });
-
-  } catch (err) {
-    // Check for PostgreSQL unique constraint violation error code (duplicate username/id)
-    if (err.code === '23505') {
-      return res.status(409).json({
-        success: false,
-        message: 'This user ID is already taken.'
-      });
-    }
-
-    console.error('❌ Error creating user:', err.message);
-    return res.status(500).json({
-      success: false,
-      error: 'An internal server error occurred.'
-    });
-  }
+// Unknown URLs
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: 'Route not found.' });
 });
 
-app.delete('/del_db', async (req, res) => {
-  const deleteQuery = "TRUNCATE table users";
-  
-  try {
-    await pool.query(deleteQuery);
-    console.log("Database Cleared 🫪")
-    res.json({ status: 'good' });
-  } catch (error) {
-    console.error(error);
-    // Always send a response in the catch block so the client isn't left hanging
-    res.status(500).json({ status: 'error', message: 'Failed to delete data' });
-  }
-});
-
+// Turns errors thrown by any route into a JSON response
+app.use(errorHandler);
 
 // Start the server
 const PORT = process.env.PORT || 5001;

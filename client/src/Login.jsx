@@ -1,19 +1,24 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import './Login.css'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { saveToken } from './auth.js'
+import AuthLayout, { AuthField, PasswordField, UserIcon, ArrowRightIcon } from './AuthLayout.jsx'
+import loginImage from './assets/loginbg.jpg'
 
 
 const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
 
 function Login() {
-  // Register sends a success message here after a new account is created
+  // Other pages can send a message here, e.g. "Please log in to continue."
   const location = useLocation()
+  const navigate = useNavigate()
 
   const [loginData, setLoginData] = useState({
     username: '',
     password: '',
   })
-  const [loginMessage, setLoginMessage] = useState(location.state?.message || '')
+  // error decides whether the message is shown in red
+  const [status, setStatus] = useState({ text: location.state?.message || '', error: false })
+  const [submitting, setSubmitting] = useState(false)
 
   const handleLoginChange = (e) => {
     setLoginData({
@@ -25,7 +30,8 @@ function Login() {
   // Logs in a returning user and stores the JWT for authenticated requests (e.g. /api/chat)
   const handleLogin = async (event) => {
     event.preventDefault()
-    setLoginMessage('Logging in...')
+    setStatus({ text: '', error: false })
+    setSubmitting(true)
 
     try {
       const response = await fetch(`${backend}/api/login`, {
@@ -39,70 +45,63 @@ function Login() {
       const data = await response.json()
 
       if (response.ok) {
-        // Send this later as "Authorization: Bearer <token>"
-        localStorage.setItem('token', data.token)
-        setLoginMessage(`Welcome back, ${data.username}!`)
-        setLoginData({ username: '', password: '' })
+        // Keep this user's JWT; protected API calls send it as "Authorization: Bearer <token>"
+        saveToken(data.token)
+        navigate('/maintenance')
       } else {
-        setLoginMessage(`Login failed: ${data.message || data.error || 'Unknown error'}`)
+        setStatus({ text: data.message || data.error || 'Login failed.', error: true })
       }
     } catch (error) {
       console.error('Network Error:', error)
-      setLoginMessage('Network error. Is your backend server running?')
+      setStatus({ text: 'Network error. Is your backend server running?', error: true })
+    } finally {
+      setSubmitting(false)
     }
   }
 
   return (
-    <>
-    
-      <section id="center">
-        <div>
-          <h1>Log In</h1>
-          <p>
-            Welcome back! Sign in to access your dashboard.
-          </p>
-        </div>
+    <AuthLayout
+      image={loginImage}
+      heading="Keep your car in its best shape"
+      tagline="Track maintenance, get personalized insights, connect with a car community, and more."
+      footer={<>Don't have an account? <Link to="/register">Create account</Link></>}
+    >
+      <h1>Welcome back</h1>
+      <p className="auth-subtitle">
+        Sign in to access your vehicles, maintenance records, and personalized insights.
+      </p>
 
-        <form onSubmit={handleLogin} className="register-form">
-          <div className="input-group">
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={loginData.username}
-              onChange={handleLoginChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={loginData.password}
-              onChange={handleLoginChange}
-              required
-            />
-          </div>
+      <form onSubmit={handleLogin} className="auth-form">
+        <AuthField
+          label="Username"
+          icon={<UserIcon />}
+          type="text"
+          name="username"
+          placeholder="Your username"
+          autoComplete="username"
+          value={loginData.username}
+          onChange={handleLoginChange}
+          required
+        />
 
-          <button type="submit" className="submit-btn">
-            Log In
-          </button>
-        </form>
+        <PasswordField
+          label="Password"
+          name="password"
+          placeholder="Enter your password"
+          autoComplete="current-password"
+          value={loginData.password}
+          onChange={handleLoginChange}
+          required
+        />
 
-        {loginMessage && <p className="status-msg">{loginMessage}</p>}
+        <button type="submit" className="auth-submit" disabled={submitting}>
+          {submitting ? 'Signing in...' : <>Sign in <ArrowRightIcon /></>}
+        </button>
+      </form>
 
-        <h6>
-          Don't have an account? <Link to="/register">Create one</Link>
-        </h6>
-      </section>
-
-
-      <section id="spacer"></section>
-    </>
+      {status.text && <p className={`auth-status${status.error ? ' error' : ''}`}>{status.text}</p>}
+    </AuthLayout>
   )
 }
 
 export default Login
-
-

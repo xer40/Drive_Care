@@ -8,6 +8,8 @@
   min-height: 100vh;
   font-family: Arial, sans-serif;
   color: #1e293b;
+  /* This page is a light design: stop the computer's dark mode from turning typed text white */
+  color-scheme: light;
 }
 
 /* Page Title */
@@ -327,5 +329,953 @@
 
   .maintenance-page .maintenance-tabs {
     gap: 16px;
+  }
+}
+/* ===================================
+   VEHICLE DASHBOARD LAYOUT
+=================================== */
+
+.maintenance-page .maintenance-dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+/* Vehicle Card */
+
+.maintenance-page .vehicle-overview-card {
+  min-width: 0;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Vehicle Image */
+
+.maintenance-page .vehicle-image {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.maintenance-page .vehicle-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Vehicle Information */
+
+.maintenance-page .vehicle-overview-info {
+  padding: 20px;
+}
+
+.maintenance-page .vehicle-overview-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.maintenance-page .vehicle-overview-heading h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.maintenance-page .vehicle-status {
+  background-color: #dcfce7;
+  color: #15803d;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.maintenance-page .vehicle-trim {
+  font-size: 13px;
+  color: #64748b;
+  text-align: left;
+}
+
+.maintenance-page .vehicle-overview-details {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.maintenance-page .vehicle-overview-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.maintenance-page .vehicle-overview-details span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.maintenance-page .vehicle-overview-details strong {
+  font-size: 14px;
+  color: #111827;
+}
+
+.maintenance-page .vehicle-details-button {
+  width: 100%;
+  margin-top: 20px;
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.maintenance-page .vehicle-details-button:hover {
+  background-color: #dbeafe;
+}
+
+/* Responsive Design */
+
+@media (max-width: 1100px) {
+  .maintenance-page .maintenance-dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+/* ===================================
+   NEXT MAINTENANCE CARD
+=================================== */
+
+.maintenance-page .next-maintenance-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Card Header */
+
+.maintenance-page .next-maintenance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.maintenance-page .next-maintenance-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.maintenance-page .maintenance-icon {
+  font-size: 22px;
+  background-color: #eff6ff;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+/* Service Information */
+
+.maintenance-page .next-maintenance-content {
+  margin-top: 28px;
+}
+
+.maintenance-page .maintenance-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #64748b;
+}
+
+.maintenance-page .next-maintenance-content h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 12px 0;
+}
+
+.maintenance-page .maintenance-due {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.maintenance-page .maintenance-due strong {
+  color: #2563eb;
+}
+
+/* Progress Bar */
+
+.maintenance-page .maintenance-progress {
+  width: 100%;
+  height: 9px;
+  background-color: #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 25px;
+}
+
+.maintenance-page .maintenance-progress-fill {
+  width: 80%;
+  height: 100%;
+  background-color: #2563eb;
+  border-radius: 20px;
+}
+
+/* Mileage */
+
+.maintenance-page .maintenance-mileage {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Reminder */
+
+.maintenance-page .maintenance-reminder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #f8fafc;
+  padding: 14px;
+  border-radius: 10px;
+  margin-top: 30px;
+}
+
+.maintenance-page .maintenance-reminder p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #475569;
+}
+
+/* Schedule Button */
+
+.maintenance-page .maintenance-schedule-button {
+  width: 100%;
+  margin-top: auto;
+  padding: 12px;
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.maintenance-page .maintenance-schedule-button:hover {
+  background-color: #dbeafe;
+}
+/* ===================================
+   QUICK DIAGNOSTICS CARD
+=================================== */
+
+.maintenance-page .quick-diagnostics-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Card Header */
+
+.maintenance-page .quick-diagnostics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.maintenance-page .quick-diagnostics-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.maintenance-page .diagnostics-icon {
+  font-size: 22px;
+  background-color: #eff6ff;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+/* Description */
+
+.maintenance-page .quick-diagnostics-description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #64748b;
+  margin-top: 24px;
+}
+
+/* Symptom Input */
+
+.maintenance-page .quick-diagnostics-input {
+  width: 100%;
+  min-height: 115px;
+  margin-top: 18px;
+  margin-bottom: 15px;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 13px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+/* Common Issues */
+
+.maintenance-page .diagnostics-suggestions {
+  margin-top: 5px;
+}
+
+.maintenance-page .diagnostics-suggestions > span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.maintenance-page .diagnostics-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.maintenance-page .diagnostics-chips button {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 20px;
+}
+
+.maintenance-page .diagnostics-chips button:hover {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+/* AI Button */
+
+.maintenance-page .diagnostics-analyze-button {
+  width: 100%;
+  margin-top: auto;
+  background-color: #2563eb;
+  color: white;
+  padding: 13px;
+  border-radius: 10px;
+}
+
+.maintenance-page .diagnostics-analyze-button:hover {
+  background-color: #1d4ed8;
+}
+/* ===================================
+   MAINTENANCE STATISTICS
+=================================== */
+
+.maintenance-page .maintenance-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+/* Individual Statistics Card */
+
+.maintenance-page .maintenance-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  padding: 18px 16px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  min-width: 0;
+  transition: all 0.2s ease;
+}
+
+.maintenance-page .maintenance-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: #bfdbfe;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Icons */
+
+.maintenance-page .stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+
+  border-radius: 50%;
+  font-size: 22px;
+}
+
+.maintenance-page .stat-icon-blue {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.maintenance-page .stat-icon-green {
+  background-color: #dcfce7;
+  color: #16a34a;
+
+  font-weight: 700;
+}
+
+/* Statistics Text */
+
+.maintenance-page .stat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.maintenance-page .stat-info h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 5px;
+}
+
+.maintenance-page .stat-info p {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Arrow */
+
+.maintenance-page .stat-arrow {
+  color: #64748b;
+  font-size: 26px;
+  font-weight: 300;
+  margin-left: auto;
+}
+
+/* Responsive Design */
+
+@media (max-width: 1100px) {
+  .maintenance-page .maintenance-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .maintenance-page .maintenance-stats {
+    grid-template-columns: 1fr;
+  }
+}
+/* ===================================
+   MAINTENANCE HISTORY TABLE
+=================================== */
+
+.maintenance-page .maintenance-history-section {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Header */
+
+.maintenance-page .history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.maintenance-page .history-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.maintenance-page .history-filter-button {
+  background-color: white;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+.maintenance-page .history-filter-button:hover {
+  background-color: #f8fafc;
+}
+
+/* Table Container */
+
+.maintenance-page .history-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Table */
+
+.maintenance-page .history-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.maintenance-page .history-table thead {
+  background-color: #f8fafc;
+}
+
+.maintenance-page .history-table th {
+  padding: 14px 12px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.maintenance-page .history-table td {
+  padding: 14px 12px;
+  font-size: 13px;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.maintenance-page .history-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Service Column */
+
+.maintenance-page .history-service {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.maintenance-page .history-service-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  background-color: #eff6ff;
+  font-size: 20px;
+}
+
+.maintenance-page .history-service-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.maintenance-page .history-service-info strong {
+  font-size: 13px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.maintenance-page .history-service-info span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Cost */
+
+.maintenance-page .history-table td.history-cost {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Actions */
+
+.maintenance-page .history-actions-button {
+  background: transparent;
+  color: #64748b;
+  border: none;
+  font-size: 18px;
+  padding: 5px;
+}
+
+.maintenance-page .history-actions-button:hover {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .maintenance-page .history-table {
+    min-width: 700px;
+  }
+}
+.maintenance-page .maintenance-bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.maintenance-page .maintenance-history-section {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1000px) {
+  .maintenance-page .maintenance-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ===================================
+   MAINTENANCE RIGHT COLUMN
+=================================== */
+
+.maintenance-page .maintenance-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* ===================================
+   MAINTENANCE COSTS CARD
+=================================== */
+
+.maintenance-page .maintenance-costs-card,
+.maintenance-page .common-services-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  min-width: 0;
+}
+
+/* COSTS HEADER */
+
+.maintenance-page .costs-header,
+.maintenance-page .common-services-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.maintenance-page .costs-header h2,
+.maintenance-page .common-services-header h2 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.maintenance-page .costs-header select {
+  width: auto;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  font-size: 12px;
+  color: #475569;
+  min-width: 110px;
+}
+
+/* ===================================
+   DONUT CHART
+=================================== */
+
+.maintenance-page .costs-content {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.maintenance-page .costs-donut {
+  width: 155px;
+  height: 155px;
+  min-width: 155px;
+  border-radius: 50%;
+
+  background: conic-gradient(
+    #3b82f6 0% 18.7%,
+    #fb923c 18.7% 73.2%,
+    #22c55e 73.2% 87.1%,
+    #8b5cf6 87.1% 94.1%,
+    #94a3b8 94.1% 100%
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.maintenance-page .costs-donut-center {
+  width: 105px;
+  height: 105px;
+  border-radius: 50%;
+  background: white;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.maintenance-page .costs-donut-center strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.maintenance-page .costs-donut-center span {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ===================================
+   COST LEGEND
+=================================== */
+
+.maintenance-page .costs-legend {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.maintenance-page .costs-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.maintenance-page .legend-dot {
+  width: 11px;
+  height: 11px;
+  min-width: 11px;
+  border-radius: 50%;
+}
+
+.maintenance-page .legend-dot.tires {
+  background: #3b82f6;
+}
+
+.maintenance-page .legend-dot.brakes {
+  background: #fb923c;
+}
+
+.maintenance-page .legend-dot.fluids {
+  background: #22c55e;
+}
+
+.maintenance-page .legend-dot.filters {
+  background: #8b5cf6;
+}
+
+.maintenance-page .legend-dot.other {
+  background: #94a3b8;
+}
+
+.maintenance-page .legend-name {
+  flex: 1;
+  color: #475569;
+}
+
+.maintenance-page .costs-legend-item strong {
+  color: #111827;
+  font-size: 12px;
+}
+
+.maintenance-page .legend-percent {
+  color: #94a3b8;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ===================================
+   COMMON SERVICES
+=================================== */
+
+.maintenance-page .common-services-header {
+  margin-bottom: 8px;
+}
+
+.maintenance-page .common-view-all {
+  background: transparent;
+  color: #2563eb;
+  border: none;
+  padding: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.maintenance-page .common-view-all:hover {
+  background: #eff6ff;
+}
+
+.maintenance-page .common-service-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.maintenance-page .common-service-item:last-child {
+  border-bottom: none;
+}
+
+.maintenance-page .common-service-icon {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+  background: #f1f5f9;
+}
+
+.maintenance-page .oil-icon {
+  background: #fff7ed;
+}
+
+.maintenance-page .tire-icon {
+  background: #eff6ff;
+}
+
+.maintenance-page .brake-icon {
+  background: #f1f5f9;
+}
+
+.maintenance-page .common-service-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+.maintenance-page .common-service-info strong {
+  font-size: 13px;
+  color: #111827;
+}
+
+.maintenance-page .common-service-info span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.maintenance-page .common-learn-button {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.maintenance-page .common-learn-button:hover {
+  background: #dbeafe;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+=================================== */
+
+@media (max-width: 1350px) {
+  .maintenance-page .costs-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .maintenance-page .costs-legend {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .maintenance-page .common-service-item {
+    flex-wrap: wrap;
+  }
+
+  .maintenance-page .common-learn-button {
+    margin-left: 54px;
+  }
+}
+/* ===================================
+   BOTTOM DASHBOARD: MATCH COLUMN HEIGHTS
+   Costs keeps its natural height; Common Services fills the rest.
+=================================== */
+.maintenance-page .maintenance-bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* The original section rule adds a 25px bottom margin.
+   Remove it here so the two columns line up. */
+.maintenance-page section.maintenance-history-section {
+  margin-bottom: 0;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.maintenance-page .maintenance-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  height: auto;
+}
+
+.maintenance-page .maintenance-costs-card {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.maintenance-page .common-services-card {
+  flex: 1 1 auto;
+  margin: 0;
+}
+
+@media (max-width: 1000px) {
+  .maintenance-page .maintenance-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .maintenance-page .common-services-card {
+    flex: 0 0 auto;
   }
 }
