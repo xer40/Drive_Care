@@ -1,8 +1,8 @@
 /* Login and sign-up pages. Every class starts with auth- so nothing here leaks onto other pages */
 
 .auth-page {
-  --auth-blue: #2f66c4;
-  --auth-blue-hover: #2656a8;
+  --auth-blue: #3266AE;
+  --auth-blue-hover: #4271b4;
   --auth-text: #0f172a;
   --auth-muted: #5b6474;
   --auth-border: #dfe3ea;
@@ -47,34 +47,38 @@
   font-size: 34px;
   font-weight: 700;
   letter-spacing: -0.5px;
-  color: #fff;
+  color: #FBFAF9;
 }
 
 .auth-brand-icon {
   width: 64px;
   height: 32px;
-  color: #8fb3ff;
+  color: #FFF;
 }
 
 .auth-brand-accent {
-  color: #8fb3ff;
+  color: #84B3E8;
 }
 
 .auth-hero-text h1 {
   margin: 0 0 18px;
-  max-width: 18ch;
-  font-size: clamp(40px, 4.4vw, 64px);
+  max-width: 14ch;
+  font-size: clamp(38px, 3.9vw, 53px);
   line-height: 1.08;
+  font-family: "inter", sans-serif;
   font-weight: 600;
-  letter-spacing: -1.5px;
+  letter-spacing: -2px;
   color: #fff;
+  padding-bottom: 10px;
 }
 
 .auth-hero-text p {
-  max-width: 34ch;
-  font-size: clamp(17px, 1.5vw, 22px);
+  max-width: 42ch;
+  font-size: clamp(12px, 1.5vw, 22px);
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.85);
+  font-family: "inter", sans-serif;
+  font-weight: 400;
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
 }
 
