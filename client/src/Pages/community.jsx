@@ -1,303 +1,686 @@
 
 
-import { useState } from 'react'
-import './community.css'
 
 
-function Community(){
-    return (
-        <div className="community-page">
-            
-            {/*Banner header add picture*/}
-            <section className ="community-hero">
-                <div className = "hero-overlay">
-                    <h1>Community</h1>
+import { useEffect, useState } from "react"
+import { authFetch } from "../Components/auth.js"
+import "../Styles/community.css"
 
-                    <p>
-                        A place for Community
-                    </p>
-                </div>
-            </section>
+function Community() {
 
-            {/*Community tabs*/}
-            <div className ="community-tabs">
-                
-                <button className ="community-tab active">
-                    For You
-                </button>
-                <button className ="community-tab">
-                    Following
-                </button>
-                <button className= "community-tab">
-                    My Posts
-                </button>
-                <button className ="community-tab">
-                    Trending
-                </button>
-                <button className ="create-post-button">
-                    + Create Post
-                </button>
-            
+  // ==========================================
+  // PAGE STATE
+  // ==========================================
+
+  const [activeTab, setActiveTab] = useState("for-you")
+
+  const [posts, setPosts] = useState([])
+  const [vehicles, setVehicles] = useState([])
+
+  const [postText, setPostText] = useState("")
+  const [selectedVehicleId, setSelectedVehicleId] = useState("")
+  const [selectedTopic, setSelectedTopic] = useState("")
+
+  const [loading, setLoading] = useState(true)
+  const [statusMessage, setStatusMessage] = useState("")
+
+
+  // ==========================================
+  // LOAD COMMUNITY DATA
+  // ==========================================
+
+  useEffect(() => {
+
+    const loadCommunity = async () => {
+
+      try {
+
+        /*
+          These endpoint response shapes may need to be
+          adjusted to match your backend routes.
+        */
+
+        const postData = await authFetch("/api/posts")
+        const vehicleData = await authFetch("/api/vehicles")
+
+        setPosts(postData.posts || [])
+        setVehicles(vehicleData.vehicles || [])
+
+      } catch (error) {
+
+        console.error(
+          "Could not load community:",
+          error.message
+        )
+
+        setStatusMessage(
+          "Unable to load community posts."
+        )
+
+      } finally {
+
+        setLoading(false)
+
+      }
+    }
+
+    loadCommunity()
+
+  }, [])
+
+
+  // ==========================================
+  // CREATE POST
+  // ==========================================
+
+  const handleCreatePost = async (event) => {
+
+    event.preventDefault()
+
+    if (!postText.trim()) return
+
+    try {
+
+      const data = await authFetch(
+        "/api/posts",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            content: postText,
+            vehicle_id:
+              selectedVehicleId || null,
+            topic:
+              selectedTopic || null
+          })
+        }
+      )
+
+      /*
+        Add the new post to the top of the feed
+        without refreshing the whole page.
+      */
+
+      if (data.post) {
+
+        setPosts((previousPosts) => [
+          data.post,
+          ...previousPosts
+        ])
+
+      }
+
+      setPostText("")
+      setSelectedVehicleId("")
+      setSelectedTopic("")
+
+    } catch (error) {
+
+      console.error(
+        "Could not create post:",
+        error.message
+      )
+
+      setStatusMessage(
+        "Unable to create post."
+      )
+    }
+  }
+
+
+  // ==========================================
+  // LIKE POST
+  // ==========================================
+
+  const handleLike = async (postId) => {
+
+    try {
+
+      await authFetch(
+        `/api/posts/${postId}/like`,
+        {
+          method: "POST"
+        }
+      )
+
+      /*
+        Temporary frontend update.
+        Adjust property names to match backend.
+      */
+
+      setPosts((previousPosts) =>
+        previousPosts.map((post) => {
+
+          if (post.id === postId) {
+
+            return {
+              ...post,
+              likes:
+                Number(post.likes || 0) + 1
+            }
+
+          }
+
+          return post
+
+        })
+      )
+
+    } catch (error) {
+
+      console.error(
+        "Could not like post:",
+        error.message
+      )
+    }
+  }
+
+
+  // ==========================================
+  // PAGE
+  // ==========================================
+
+  return (
+
+    <div className="community-page">
+
+
+      {/* ===================================
+          COMMUNITY HEADER
+      =================================== */}
+
+      <section className="community-banner">
+
+        <div className="community-banner-content">
+
+          <h1>Community</h1>
+
+          <p>
+            A place for car enthusiasts to
+            share experiences, ask questions,
+            and help each other.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      {/* ===================================
+          COMMUNITY NAVIGATION
+      =================================== */}
+
+      <div className="community-tabs">
+
+        <button
+          type="button"
+          className={
+            activeTab === "for-you"
+              ? "active"
+              : ""
+          }
+          onClick={() =>
+            setActiveTab("for-you")
+          }
+        >
+          For You
+        </button>
+
+
+        <button
+          type="button"
+          className={
+            activeTab === "following"
+              ? "active"
+              : ""
+          }
+          onClick={() =>
+            setActiveTab("following")
+          }
+        >
+          Following
+        </button>
+
+
+        <button
+          type="button"
+          className={
+            activeTab === "my-posts"
+              ? "active"
+              : ""
+          }
+          onClick={() =>
+            setActiveTab("my-posts")
+          }
+        >
+          My Posts
+        </button>
+
+
+        <button
+          type="button"
+          className={
+            activeTab === "trending"
+              ? "active"
+              : ""
+          }
+          onClick={() =>
+            setActiveTab("trending")
+          }
+        >
+          Trending
+        </button>
+
+      </div>
+
+
+      {/* ===================================
+          COMMUNITY GRID
+      =================================== */}
+
+      <div className="community-grid">
+
+
+        {/* ===================================
+            LEFT COLUMN
+        =================================== */}
+
+        <aside className="community-left">
+
+          <div className="community-card">
+
+            <h2>Explore</h2>
+
+            <button>
+              All Posts
+            </button>
+
+            <button>
+              Maintenance
+            </button>
+
+            <button>
+              Troubleshooting
+            </button>
+
+            <button>
+              Modifications
+            </button>
+
+            <button>
+              Reviews
+            </button>
+
+            <button>
+              General Discussion
+            </button>
+
+          </div>
+
+
+          <div className="community-card">
+
+            <h2>Popular Topics</h2>
+
+            <div className="community-topics">
+
+              <span>#OilChange</span>
+              <span>#Tires</span>
+              <span>#Brakes</span>
+              <span>#Reliability</span>
+              <span>#DIY</span>
+              <span>#CarCare</span>
+
             </div>
 
-                {/* Main Community Layout*/}
-                <div className ="community-grid">
+          </div>
 
-                    {/* Left Column */}
-                    <aside className = "Community-left-column">
-                        <div className ="community-card">
-                            <h3>Explore</h3>
-                            <div className ="explote-list">
-                                <button className="explore-item-list">
-                                    All Posts
-                                </button>
-                                <button className="explore-item">
-                                    Maintnance
-                                </button>
-                                <button className="explore-item">
-                                    Modifications
-                                </button>
-                                <button className="explore-item">
-                                    Troubleshooting
-                                </button>
-                                <button className="explore-item">
-                                    Reviews
-                                </button>
-                                <button className="explore-item">
-                                    Photos
-                                </button>
-                                <button className="explore-item">
-                                    Road Trips
-                                </button>
-                                <button className="explore-item">
-                                    General Discussion
-                                </button>
-                                
-                            </div>
-                            
-                            <h4 className ="popular-title">
-                                Popular Topics
-                            </h4>
-                            <div className="Topic-list">
-                                <span># OilChange</span>
-                                <span># Tires</span>
-                                <span># Brakes</span>
-                                <span># Reliability</span>
-                                <span># Mods</span>
-                                <span># DIY</span>
-                                <span># CarCare</span>
-                                <span># RoadTrip</span>
-                            </div>
-                        </div>
-                            <div className="community-card">
+        </aside>
 
 
-                                <div className="card-hedding">
-                                    <h3>Suggested Users</h3>
-                                    <button>View All</button>
-                                </div>
+        {/* ===================================
+            CENTER FEED
+        =================================== */}
 
-                                <div className="suggested-user">
-                                    <div className="user-avatar">
-                                        D
-                                    </div>
+        <main className="community-feed">
 
-                                    <div className="suggested-user-info">
-                                        <strong>Daniel R</strong>
-                                        <span>WRX Enthusiast</span>
-                                    </div>
 
-                                    <button className="follow-button">
-                                        Follow
-                                    </button>
-                                </div>
+          {/* CREATE POST */}
 
-                            </div>
-                    </aside>
+          <form
+            className="community-create-post"
+            onSubmit={handleCreatePost}
+          >
 
-                    {/* Center Column */}
-                    <main className = "community-feed">
-                        {/* Create post */}
-                        <div className ="create-post-card">
+            <textarea
+              placeholder=
+                "Share your experience, ask a question, or post an update..."
+              value={postText}
+              onChange={(event) =>
+                setPostText(
+                  event.target.value
+                )
+              }
+            />
 
-                            <div className="create-post-top">
-                                <div className="user-avatar">
-                                    U
-                                </div>
-                                <input
-                                    type="text"
-                                    placeholder="Share your experience,ask a question or post a photo.."
-                                />
-                            </div>
-                            <div className="create-post-actions">
-                                <div className ="create-post-options">
-                                    <button>
-                                        Photo
-                                    </button>
-                                    <Button>
-                                        Select Vehicle
-                                    </Button>
 
-                                    <button>
-                                        Tag topic
-                                    </button>
-                                </div>
-                                <button ClassName ="submit-post button">
-                                    Post
-                                </button>
-                            </div>
-                        </div>
+            <div className="community-post-options">
 
-                        {/*Example Post*/}
-                        <article className="post-card">
-                            <div className ="post-header">
-                                <div className="user-avatar">
-                                    D
-                                </div>
-                                <div className ="post-user-info">
-                                    <div className ="post-user-line">
-                                        <strong>
-                                            Daniel R
-                                        </strong>
-                                        <span className ="vehicle-tag">
-                                            WRX
-                                        </span>
-                                    </div>
-                                    <span className ="post-time">
-                                        2h Ago
-                                    </span>
-                                </div>
-                                <button className ="post-menu">
-                                    :::
-                                </button>
-                            </div>
-                            <p className ="post-text">
-                                Just installed new tires Woo!
-                            </p>
-                            <div className ="post-image-placeholder">
-                                Vehicle Photo
-                            </div>
+              <select
+                value={selectedVehicleId}
+                onChange={(event) =>
+                  setSelectedVehicleId(
+                    event.target.value
+                  )
+                }
+              >
 
-                            <div className ="post-actions">
-                                <button>
-                                    current like placeholder
-                                </button>
-                                <button>
-                                    current comment placeholder
-                                </button>
-                                <button>
-                                    Bookmark
-                                </button>
-                                <span className="post-topic">
-                                    Tires
-                                </span>
-                            </div>
-                        </article>
-                        
-                    </main>
+                <option value="">
+                  No Vehicle
+                </option>
 
-                        <aside className="community-right-column">
-                            <div className="community-card">
-                                <div className="card-heading">
-                                <h3>
-                                    My vehicles
-                                </h3>
+                {vehicles.map((vehicle) => (
 
-                                <Button>
-                                    View All
-                                </Button>
-                            </div>
-                            <div className="vehicle-item">
-                                <div className="vehicle-thumbnail">
-                                    car
-                                </div>
-                                <div>
-                                    <strong>
-                                        2022 charger
-                                    </strong>
-                                    <span>
-                                        Hellcat Widebody
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="vehicle-item">
-                                <div className ="vehicle-thumbnail">
-                                    Car
-                                </div>
-                                <div>
-                                    <strong>
-                                        2020 honda civic
-                                    </strong>
-                                    <span>
-                                        sport
-                                    </span>
-                                </div>
-                            </div>
+                  <option
+                    key={vehicle.id}
+                    value={vehicle.id}
+                  >
+                    {vehicle.year}{" "}
+                    {vehicle.make}{" "}
+                    {vehicle.model}
+                  </option>
 
-                            <button className="add-vehicle-button">
-                                +Add vehicle
-                            </button>
-                            </div>
+                ))}
 
-                            <div className ="community-card">
-                                <div className ="card-heading">
-                                    <h3>
-                                        Trending Posts
-                                    </h3>
-                                    <button>
-                                        View All
-                                    </button>
-                                </div>
-                                <div className ="trending-item">
-                                    <strong>
-                                        Best tires for daily driving?
-                                    </strong>
-                                    <span>
-                                        comment count
-                                    </span>
-                                </div>
-                                <div className="trending-item">
-                                    <Strong>
-                                        Oil change interval for charger?
-                                    </Strong>
-                                    <span>
-                                        comment count
-                                    </span>
-                                </div>
-                                <div className ="trending-item">
-                                    <Strong>
-                                        Brake Pad Recommendations
-                                    </Strong>
-                                    <span>
-                                        comment count
-                                    </span>
-                                </div>
-                                <div className="community-card">
-                                    <h3>
-                                        Community Guidelines
-                                    </h3>
-                                    <ul className="guidelines-list">
-                                        <li>Be Respectful</li>
-                                        <li>Keep on topic</li>
-                                        <li>No spam</li>
-                                        <li>Share responsibily</li>
-            
-                                    </ul>
-                                </div>
-                            </div>
-                        </aside>
+              </select>
+
+
+              <select
+                value={selectedTopic}
+                onChange={(event) =>
+                  setSelectedTopic(
+                    event.target.value
+                  )
+                }
+              >
+
+                <option value="">
+                  Select Topic
+                </option>
+
+                <option value="maintenance">
+                  Maintenance
+                </option>
+
+                <option value="repairs">
+                  Repairs
+                </option>
+
+                <option value="tires">
+                  Tires
+                </option>
+
+                <option value="brakes">
+                  Brakes
+                </option>
+
+                <option value="general">
+                  General
+                </option>
+
+              </select>
+
+
+              <button
+                type="submit"
+                className="community-post-button"
+              >
+                Post
+              </button>
+
+            </div>
+
+          </form>
+
+
+          {/* STATUS */}
+
+          {statusMessage && (
+
+            <p className="community-status">
+              {statusMessage}
+            </p>
+
+          )}
+
+
+          {/* POSTS */}
+
+          {loading ? (
+
+            <div className="community-card">
+              Loading posts...
+            </div>
+
+          ) : posts.length === 0 ? (
+
+            <div className="community-empty">
+
+              <h3>No posts yet</h3>
+
+              <p>
+                Be the first person to start
+                a discussion.
+              </p>
+
+            </div>
+
+          ) : (
+
+            posts.map((post) => (
+
+              <article
+                key={post.id}
+                className="community-post-card"
+              >
+
+                <div className="community-post-header">
+
+                  <div className="community-avatar">
+
+                    {post.username
+                      ?.charAt(0)
+                      ?.toUpperCase() || "U"}
+
+                  </div>
+
+
+                  <div className="community-post-user">
+
+                    <strong>
+                      {post.username ||
+                        "DriveCare User"}
+                    </strong>
+
+                    <span>
+                      {post.created_at ||
+                        "Recently"}
+                    </span>
+
+                  </div>
+
+
+                  {post.vehicle && (
+
+                    <span className="community-vehicle-tag">
+
+                      {post.vehicle.year}{" "}
+                      {post.vehicle.make}{" "}
+                      {post.vehicle.model}
+
+                    </span>
+
+                  )}
+
                 </div>
 
 
+                <p className="community-post-text">
 
-            </div>
-    )
+                  {post.content}
+
+                </p>
+
+
+                {post.image_url && (
+
+                  <img
+                    src={post.image_url}
+                    alt="Community post"
+                    className="community-post-image"
+                  />
+
+                )}
+
+
+                <div className="community-post-actions">
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleLike(post.id)
+                    }
+                  >
+                    ♡ {post.likes || 0}
+                  </button>
+
+
+                  <button type="button">
+
+                    💬 {post.comments || 0}
+
+                  </button>
+
+                </div>
+
+              </article>
+
+            ))
+
+          )}
+
+        </main>
+
+
+        {/* ===================================
+            RIGHT COLUMN
+        =================================== */}
+
+        <aside className="community-right">
+
+
+          {/* MY VEHICLES */}
+
+          <div className="community-card">
+
+            <h2>My Vehicles</h2>
+
+            {vehicles.length === 0 ? (
+
+              <p>
+                No vehicles added yet.
+              </p>
+
+            ) : (
+
+              vehicles
+                .slice(0, 2)
+                .map((vehicle) => (
+
+                  <div
+                    key={vehicle.id}
+                    className="community-vehicle"
+                  >
+
+                    <div>
+
+                      <strong>
+                        {vehicle.year}{" "}
+                        {vehicle.make}{" "}
+                        {vehicle.model}
+                      </strong>
+
+                      <span>
+                        {vehicle.trim ||
+                          "Vehicle"}
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                ))
+
+            )}
+
+          </div>
+
+
+          {/* TRENDING */}
+
+          <div className="community-card">
+
+            <h2>Trending Posts</h2>
+
+            <p>
+              Popular discussions will appear
+              here.
+            </p>
+
+          </div>
+
+
+          {/* GUIDELINES */}
+
+          <div className="community-card">
+
+            <h2>
+              Community Guidelines
+            </h2>
+
+            <ul>
+
+              <li>
+                Be respectful and helpful.
+              </li>
+
+              <li>
+                Keep discussions relevant.
+              </li>
+
+              <li>
+                Avoid spam.
+              </li>
+
+              <li>
+                Share useful experiences.
+              </li>
+
+            </ul>
+
+          </div>
+
+        </aside>
+
+      </div>
+
+    </div>
+
+  )
 }
-export default Commmunity;
 
-
-
-
-
-
-
+export default Community

@@ -1,23 +1,28 @@
-import NavBar from "./navbar"
-import TopBar from "./Topbar"
+import Navbar from "./navbar"
+import Topbar from "./Topbar"
 
-import "../styles/layout.css"
+import "../Styles/layout.css"
 
-function Layout ({ Children}){
-    return (
-        <div className ="layout">
-            <navbar />
+function Layout({ children }) {
+  return (
+    <div className="dc-layout">
 
-            <div className = "main-area">
+      <Navbar />
 
-                <Topbar />
-                
-                <main className ="page-content">
-                    {children}
-                </main>
-            </div>
-        </div>
-    )
+      <div className="dc-main">
+
+        <Topbar />
+
+        <main className="dc-page-content">
+
+          {children}
+
+        </main>
+
+      </div>
+
+    </div>
+  )
 }
 
 export default Layout

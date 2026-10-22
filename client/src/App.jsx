@@ -4,6 +4,7 @@ import Register from './Register.jsx'
 import Maintenance from './maint&diag.jsx'
 import RequireAuth from './RequireAuth.jsx'
 import Homepage from './Homepage.jsx'
+import Community from './community.jsx'
 
 function App() {
   return (
@@ -14,7 +15,9 @@ function App() {
       <Route path="/register" element={<Register />} />
       {/* Logged-in only: users without a valid token are sent back to the login page */}
       <Route path="/maintenance" element={<Maintenance />} />
+      <Route path="/community" element= {<Community/>} />
     </Routes>
+  
   )
 }
 

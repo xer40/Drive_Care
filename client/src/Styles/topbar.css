@@ -1,76 +1,135 @@
-.topbar {
-  width: 100%;
-  height: 70px;
+/* =========================================
+   UNIVERSAL TOPBAR
+========================================= */
+
+.dc-topbar {
+  height: 72px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  padding: 0 24px;
+  padding: 0 28px;
 
-  background-color: white;
+  background-color: #ffffff;
 
   border-bottom: 1px solid #e5e7eb;
-
-  position: sticky;
-  top: 0;
-
-  z-index: 1000;
 }
 
-.search-box {
-  width: 450px;
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.dc-search-container {
+  width: min(520px, 55%);
 
   display: flex;
   align-items: center;
 
+  gap: 10px;
+
   padding: 10px 14px;
 
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border: 1px solid #dbe1e8;
+  border-radius: 9px;
 
-  background-color: #f9fafb;
+  background-color: #f8fafc;
 }
 
-.search-icon {
-  margin-right: 10px;
+.dc-search-icon {
+  width: 18px;
+  height: 18px;
+
+  color: #94a3b8;
+
+  flex-shrink: 0;
 }
 
-.search-box input {
+.dc-search-input {
   width: 100%;
 
   border: none;
   outline: none;
 
-  background: transparent;
+  background-color: transparent;
 
-  font-size: 14px;
+  color: #334155;
+
+  font-size: 13px;
 }
 
-.topbar-right {
+.dc-search-input::placeholder {
+  color: #94a3b8;
+}
+
+
+/* =========================================
+   TOPBAR ACTIONS
+========================================= */
+
+.dc-topbar-actions {
   display: flex;
   align-items: center;
 
-  gap: 20px;
+  gap: 18px;
 }
 
-.notification-btn {
-  border: none;
-  background: none;
 
-  font-size: 20px;
+/* Notification */
+
+.dc-notification-btn {
+  width: 38px;
+  height: 38px;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background-color: transparent;
 
   cursor: pointer;
 }
 
-.profile {
+.dc-notification-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.dc-notif-dot {
+  width: 7px;
+  height: 7px;
+
+  position: absolute;
+
+  top: 8px;
+  right: 8px;
+
+  border: 2px solid white;
+  border-radius: 50%;
+
+  background-color: #ef4444;
+}
+
+
+/* =========================================
+   USER PROFILE
+========================================= */
+
+.dc-user-profile {
   display: flex;
   align-items: center;
 
   gap: 10px;
+
+  cursor: pointer;
 }
 
-.profile-circle {
+.dc-avatar-placeholder {
   width: 38px;
   height: 38px;
 
@@ -82,5 +141,25 @@
 
   background-color: #dbeafe;
 
-  font-weight: bold;
+  color: #1d4ed8;
+
+  font-weight: 700;
+}
+
+.dc-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dc-user-name {
+  color: #1e293b;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dc-user-role {
+  color: #94a3b8;
+
+  font-size: 11px;
 }

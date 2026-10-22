@@ -1,54 +1,154 @@
-import { useState } from 'react'
-import "./navbar.css"
+import { useNavigate } from "react-router-dom"
+import { isLoggedIn, logout } from "../auth.js"
 
-function NavBar(){
-    return(
-        <aside classname ="navbar">
-            <div classname = "navbar-title">
-                Car Maitnance Checker
-            </div>
+import "../Styles/navbar.css"
 
-            <nav> 
-                <a href = "/" classname ="nav-item">
-                    Home
-                </a>
+function Navbar() {
+  const navigate = useNavigate()
 
-                <a href = "/garage" classname ="nav-item">
-                    My Garage
-                </a>
+  const handleLogout = () => {
+    logout()
+    navigate("/login")
+  }
 
-                <a href ="Maintenance" classname = "nav-item">
-                    Maintenance
-                </a>
+  return (
+    <aside className="dc-sidebar">
 
-                <a href ="/reminders" classname ="nav-item">
-                    Reminders
-                </a>
+      {/* Logo */}
+      <div className="dc-sidebar-logo">
 
-                <a href ="/ai-assistant" classname ="nav-item">
-                    AI assistant
-                </a>
+        <svg
+          className="dc-logo-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 10.8 2 11v5c0 .6.4 1 1 1h2" />
+          <circle cx="7" cy="17" r="2" />
+          <circle cx="17" cy="17" r="2" />
+        </svg>
 
-                <a href ="/reports" clasaname="nav-item">
-                    Reports
-                </a>
+        <span className="dc-logo-text">
+          DriveCare
+        </span>
 
-            </nav>
+      </div>
 
-            <div classname="navbar-bottom">
-                <a heref="/settings" classname ="nav-item">
-                    Settings
-                </a>
 
-                <a href = "/help" classname ="nav-item">
-                    Help
-                </a>
-            </div>
-        </aside>
-         
+      {/* Main Navigation */}
+      <nav className="dc-nav-menu">
 
-        
-    )
+        <button
+          className="dc-nav-item"
+          onClick={() => navigate("/")}
+        >
+          <span className="dc-nav-icon">⌂</span>
+          <span>Home</span>
+        </button>
+
+
+        <button
+          className="dc-nav-item"
+          onClick={() => navigate("/garage")}
+        >
+          <span className="dc-nav-icon">🚗</span>
+          <span>My Garage</span>
+        </button>
+
+
+        <button
+          className="dc-nav-item"
+          onClick={() => navigate("/maintenance")}
+        >
+          <span className="dc-nav-icon">🔧</span>
+          <span>Maintenance</span>
+        </button>
+
+
+        <button
+          className="dc-nav-item"
+          onClick={() => navigate("/reminders")}
+        >
+          <span className="dc-nav-icon">📅</span>
+          <span>Reminders</span>
+        </button>
+
+
+        <button
+          className="dc-nav-item"
+          onClick={() => navigate("/expenses")}
+        >
+          <span className="dc-nav-icon">＄</span>
+          <span>Expenses</span>
+        </button>
+
+
+        <button
+          className="dc-nav-item"
+          onClick={() => navigate("/community")}
+        >
+          <span className="dc-nav-icon">👥</span>
+          <span>Community</span>
+        </button>
+
+      </nav>
+
+
+      {/* Bottom Section */}
+      <div className="dc-sidebar-footer">
+
+        <div className="dc-unlock-card">
+
+          <div className="dc-unlock-icon">
+            👑
+          </div>
+
+          <div className="dc-unlock-info">
+            <h4>Unlock More</h4>
+
+            <p>
+              Premium features coming soon
+            </p>
+          </div>
+
+          <span className="dc-arrow">
+            ›
+          </span>
+
+        </div>
+
+
+        <div className="dc-bottom-links">
+
+          {isLoggedIn() ? (
+
+            <button
+              className="dc-bottom-link"
+              onClick={handleLogout}
+            >
+              <span>↪</span>
+              <span>Log Out</span>
+            </button>
+
+          ) : (
+
+            <button
+              className="dc-bottom-link"
+              onClick={() => navigate("/login")}
+            >
+              <span>↪</span>
+              <span>Log In</span>
+            </button>
+
+          )}
+
+        </div>
+
+      </div>
+
+    </aside>
+  )
 }
 
-export default NavBar;
+export default Navbar

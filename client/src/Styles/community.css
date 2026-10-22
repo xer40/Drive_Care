@@ -1,4 +1,625 @@
-:root{
+/* =========================================
+   COMMUNITY PAGE
+========================================= */
 
-    
+.community-page {
+  width: 100%;
+  min-height: 100vh;
+
+  background-color: #f5f7fb;
+}
+
+
+/* =========================================
+   COMMUNITY BANNER
+========================================= */
+
+.community-banner {
+  min-height: 170px;
+
+  display: flex;
+  align-items: flex-end;
+
+  padding: 28px 32px;
+
+  margin-bottom: 20px;
+
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    #1e3a8a,
+    #2563eb
+  );
+
+  color: white;
+}
+
+.community-banner-content {
+  max-width: 650px;
+}
+
+.community-banner-content h1 {
+  margin: 0 0 8px;
+
+  font-size: 38px;
+  font-weight: 700;
+}
+
+.community-banner-content p {
+  margin: 0;
+
+  font-size: 15px;
+  line-height: 1.6;
+
+  color: #e5edff;
+}
+
+
+/* =========================================
+   COMMUNITY TABS
+========================================= */
+
+.community-tabs {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 20px;
+
+  padding: 8px 0;
+}
+
+.community-tabs button {
+  padding: 10px 18px;
+
+  border: 1px solid #dbe2ea;
+  border-radius: 20px;
+
+  background-color: white;
+
+  color: #475569;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.community-tabs button:hover {
+  background-color: #eff6ff;
+
+  color: #2563eb;
+}
+
+.community-tabs button.active {
+  background-color: #2563eb;
+
+  border-color: #2563eb;
+
+  color: white;
+}
+
+
+/* =========================================
+   MAIN COMMUNITY GRID
+========================================= */
+
+.community-grid {
+  display: grid;
+
+  grid-template-columns:
+    220px
+    minmax(420px, 1fr)
+    280px;
+
+  gap: 20px;
+
+  align-items: start;
+}
+
+
+/* =========================================
+   SHARED CARDS
+========================================= */
+
+.community-card {
+  padding: 18px;
+
+  margin-bottom: 18px;
+
+  background-color: white;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.community-card h2 {
+  margin: 0 0 15px;
+
+  font-size: 17px;
+
+  color: #1e293b;
+}
+
+
+/* =========================================
+   LEFT COLUMN
+========================================= */
+
+.community-left {
+  min-width: 0;
+}
+
+.community-left .community-card > button {
+  width: 100%;
+
+  display: block;
+
+  padding: 10px 12px;
+
+  margin-bottom: 5px;
+
+  border: none;
+  border-radius: 8px;
+
+  background-color: transparent;
+
+  color: #475569;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.community-left .community-card > button:hover {
+  background-color: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+/* =========================================
+   POPULAR TOPICS
+========================================= */
+
+.community-topics {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.community-topics span {
+  padding: 6px 10px;
+
+  border-radius: 16px;
+
+  background-color: #f1f5f9;
+
+  color: #475569;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.community-topics span:hover {
+  background-color: #dbeafe;
+
+  color: #2563eb;
+}
+
+
+/* =========================================
+   CENTER FEED
+========================================= */
+
+.community-feed {
+  min-width: 0;
+}
+
+
+/* =========================================
+   CREATE POST
+========================================= */
+
+.community-create-post {
+  padding: 18px;
+
+  margin-bottom: 18px;
+
+  background-color: white;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.community-create-post textarea {
+  width: 100%;
+  min-height: 95px;
+
+  padding: 14px;
+
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+
+  outline: none;
+
+  resize: vertical;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  color: #1e293b;
+
+  background-color: #f8fafc;
+
+  transition: 0.2s ease;
+}
+
+.community-create-post textarea:focus {
+  border-color: #2563eb;
+
+  background-color: white;
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.community-post-options {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 12px;
+}
+
+.community-post-options select {
+  padding: 9px 10px;
+
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+
+  background-color: white;
+
+  color: #475569;
+
+  outline: none;
+
+  cursor: pointer;
+}
+
+.community-post-button {
+  margin-left: auto;
+
+  padding: 9px 20px;
+
+  border: none;
+  border-radius: 8px;
+
+  background-color: #2563eb;
+
+  color: white;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.community-post-button:hover {
+  background-color: #1d4ed8;
+}
+
+
+/* =========================================
+   STATUS / EMPTY STATE
+========================================= */
+
+.community-status {
+  padding: 12px;
+
+  margin-bottom: 15px;
+
+  border-radius: 8px;
+
+  background-color: #eff6ff;
+
+  color: #1d4ed8;
+}
+
+.community-empty {
+  padding: 40px 20px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background-color: white;
+
+  text-align: center;
+}
+
+.community-empty h3 {
+  margin-bottom: 8px;
+
+  color: #1e293b;
+}
+
+.community-empty p {
+  color: #64748b;
+}
+
+
+/* =========================================
+   POST CARD
+========================================= */
+
+.community-post-card {
+  padding: 18px;
+
+  margin-bottom: 18px;
+
+  background-color: white;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.community-post-header {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.community-avatar {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background-color: #dbeafe;
+
+  color: #1d4ed8;
+
+  font-weight: 700;
+}
+
+.community-post-user {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+}
+
+.community-post-user strong {
+  color: #1e293b;
+
+  font-size: 14px;
+}
+
+.community-post-user span {
+  margin-top: 2px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+}
+
+.community-vehicle-tag {
+  padding: 5px 9px;
+
+  border-radius: 14px;
+
+  background-color: #eff6ff;
+
+  color: #2563eb;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+}
+
+.community-post-text {
+  margin: 16px 0;
+
+  color: #334155;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.community-post-image {
+  width: 100%;
+  max-height: 420px;
+
+  object-fit: cover;
+
+  border-radius: 12px;
+
+  margin-bottom: 12px;
+}
+
+
+/* =========================================
+   POST ACTIONS
+========================================= */
+
+.community-post-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+
+  padding-top: 12px;
+
+  border-top: 1px solid #edf2f7;
+}
+
+.community-post-actions button {
+  padding: 5px 0;
+
+  border: none;
+
+  background-color: transparent;
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.community-post-actions button:hover {
+  color: #2563eb;
+}
+
+
+/* =========================================
+   RIGHT COLUMN
+========================================= */
+
+.community-right {
+  min-width: 0;
+}
+
+
+/* =========================================
+   VEHICLE CARD
+========================================= */
+
+.community-vehicle {
+  padding: 10px 0;
+
+  border-bottom: 1px solid #edf2f7;
+}
+
+.community-vehicle:last-child {
+  border-bottom: none;
+}
+
+.community-vehicle div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.community-vehicle strong {
+  color: #1e293b;
+
+  font-size: 13px;
+}
+
+.community-vehicle span {
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+
+/* =========================================
+   GUIDELINES
+========================================= */
+
+.community-right ul {
+  padding-left: 18px;
+
+  margin: 0;
+}
+
+.community-right li {
+  margin-bottom: 10px;
+
+  color: #64748b;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 1200px) {
+
+  .community-grid {
+    grid-template-columns:
+      200px
+      minmax(400px, 1fr);
+  }
+
+  .community-right {
+    display: none;
+  }
+
+}
+
+
+@media (max-width: 850px) {
+
+  .community-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .community-left {
+    display: none;
+  }
+
+  .community-tabs {
+    overflow-x: auto;
+  }
+
+  .community-post-options {
+    flex-wrap: wrap;
+  }
+
+  .community-post-button {
+    margin-left: 0;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .community-banner {
+    padding: 20px;
+
+    min-height: 140px;
+  }
+
+  .community-banner-content h1 {
+    font-size: 30px;
+  }
+
+  .community-post-header {
+    align-items: flex-start;
+  }
+
+  .community-vehicle-tag {
+    display: none;
+  }
+
 }

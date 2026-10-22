@@ -1,29 +1,98 @@
+/* =========================================
+   GLOBAL APPLICATION LAYOUT
+========================================= */
+
 * {
   box-sizing: border-box;
 }
 
-body {
+html,
+body,
+#root {
   margin: 0;
 
-  font-family: Arial, Helvetica, sans-serif;
-
-  background-color: #f5f7fa;
+  width: 100%;
+  min-height: 100%;
 }
 
-.layout {
+body {
+  font-family:
+    Inter,
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background-color: #f5f7fb;
+
+  color: #1e293b;
+}
+
+
+/* =========================================
+   APPLICATION
+========================================= */
+
+.dc-layout {
+  width: 100%;
   min-height: 100vh;
+
+  background-color: #f5f7fb;
 }
 
-.layout-body {
-  display: flex;
 
-  min-height: calc(100vh - 70px);
+/* =========================================
+   MAIN AREA
+========================================= */
+
+.dc-main {
+  min-height: 100vh;
+
+  margin-left: 245px;
 }
 
-.page-content {
-  flex: 1;
 
-  margin-left: 240px;
+/* =========================================
+   PAGE CONTENT
+========================================= */
 
-  padding: 24px;
+.dc-page-content {
+  width: 100%;
+
+  min-height: calc(100vh - 72px);
+
+  padding: 24px 28px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+  .dc-sidebar {
+    width: 200px;
+  }
+
+  .dc-main {
+    margin-left: 200px;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .dc-sidebar {
+    display: none;
+  }
+
+  .dc-main {
+    margin-left: 0;
+  }
+
+  .dc-page-content {
+    padding: 16px;
+  }
+
 }
