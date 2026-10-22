@@ -8,10 +8,6 @@ import "../Styles/community.css"
 
 function Community() {
 
-  // ==========================================
-  // PAGE STATE
-  // ==========================================
-
   const [activeTab, setActiveTab] = useState("for-you")
 
   const [posts, setPosts] = useState([])
@@ -25,9 +21,7 @@ function Community() {
   const [statusMessage, setStatusMessage] = useState("")
 
 
-  // ==========================================
-  // LOAD COMMUNITY DATA
-  // ==========================================
+ //Community data
 
   useEffect(() => {
 
@@ -36,8 +30,7 @@ function Community() {
       try {
 
         /*
-          These endpoint response shapes may need to be
-          adjusted to match your backend routes.
+          Might have to adjust
         */
 
         const postData = await authFetch("/api/posts")
@@ -69,9 +62,7 @@ function Community() {
   }, [])
 
 
-  // ==========================================
-  // CREATE POST
-  // ==========================================
+  //Creating a post
 
   const handleCreatePost = async (event) => {
 
@@ -132,9 +123,7 @@ function Community() {
   }
 
 
-  // ==========================================
-  // LIKE POST
-  // ==========================================
+ //Liking a Post
 
   const handleLike = async (postId) => {
 
@@ -180,18 +169,14 @@ function Community() {
   }
 
 
-  // ==========================================
-  // PAGE
-  // ==========================================
+  //Page
 
   return (
 
     <div className="community-page">
 
 
-      {/* ===================================
-          COMMUNITY HEADER
-      =================================== */}
+      {/*\Community Header*/}
 
       <section className="community-banner">
 
@@ -210,9 +195,7 @@ function Community() {
       </section>
 
 
-      {/* ===================================
-          COMMUNITY NAVIGATION
-      =================================== */}
+      {/* Community Navigation*/}
 
       <div className="community-tabs">
 
@@ -278,16 +261,12 @@ function Community() {
       </div>
 
 
-      {/* ===================================
-          COMMUNITY GRID
-      =================================== */}
+      {/* Community Grid */}
 
       <div className="community-grid">
 
 
-        {/* ===================================
-            LEFT COLUMN
-        =================================== */}
+        {/* Left Column */}
 
         <aside className="community-left">
 
@@ -342,14 +321,12 @@ function Community() {
         </aside>
 
 
-        {/* ===================================
-            CENTER FEED
-        =================================== */}
+        {/* Center Feed */}
 
         <main className="community-feed">
 
 
-          {/* CREATE POST */}
+          {/* Create Post*/}
 
           <form
             className="community-create-post"
@@ -447,7 +424,7 @@ function Community() {
           </form>
 
 
-          {/* STATUS */}
+          {/* Status*/}
 
           {statusMessage && (
 
@@ -458,7 +435,7 @@ function Community() {
           )}
 
 
-          {/* POSTS */}
+          {/* Posts */}
 
           {loading ? (
 
@@ -576,14 +553,12 @@ function Community() {
         </main>
 
 
-        {/* ===================================
-            RIGHT COLUMN
-        =================================== */}
+        {/*Right Column*/}
 
         <aside className="community-right">
 
 
-          {/* MY VEHICLES */}
+          {/* My Vehicles */}
 
           <div className="community-card">
 
@@ -630,7 +605,7 @@ function Community() {
           </div>
 
 
-          {/* TRENDING */}
+          {/*Trending Post*/}
 
           <div className="community-card">
 
@@ -644,7 +619,7 @@ function Community() {
           </div>
 
 
-          {/* GUIDELINES */}
+          {/*Guidelines*/}
 
           <div className="community-card">
 
