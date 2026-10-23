@@ -74,7 +74,7 @@ function Register() {
   return (
     <AuthLayout
       image={registerImage}
-      heading={<h1>Your garage <br / > All in one place</h1>}
+      heading= { <h1>Your garage <br / > All in one place</h1> }
       tagline="Log every service, get reminders before things are due, and ask our AI assistant when something feels off."
       footer={<>Already have an account? <Link to="/">Sign in</Link></>}
     >
