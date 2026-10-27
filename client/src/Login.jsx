@@ -30,6 +30,10 @@ function Login() {
   // Logs in a returning user and stores the JWT for authenticated requests (e.g. /api/chat)
   const handleLogin = async (event) => {
     event.preventDefault()
+
+    
+    
+
     setStatus({ text: '', error: false })
     setSubmitting(true)
 
@@ -94,10 +98,16 @@ function Login() {
           required
         />
 
-        <button type="submit" className="auth-submit" disabled={submitting}>
-          {submitting ? 'Signing in...' : <>Sign in <ArrowRightIcon /></>}
-        </button>
-      </form>
+        <button
+  type="submit"
+  className="auth-submit"
+  disabled={submitting}
+  
+>
+  {submitting ? 'Signing in...' : <>Sign in <ArrowRightIcon /></>}
+</button>
+
+</form>
 
       {status.text && <p className={`auth-status${status.error ? ' error' : ''}`}>{status.text}</p>}
     </AuthLayout>
