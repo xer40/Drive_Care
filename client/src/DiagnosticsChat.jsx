@@ -7,12 +7,7 @@ import './DiagnosticsChat.css'
 // service history and lets it look up more (older records, reminders, past chats, community posts).
 // Changing the selected car starts a fresh conversation (the parent re-mounts this with a new key)
 
-const SUGGESTIONS = [
-  'I hear a squeal when I brake',
-  'My car shakes at highway speeds',
-  'The check engine light came on',
-  'It hesitates when I accelerate',
-]
+
 
 // Friendly names for the lookups the assistant ran, shown under its answer
 const TOOL_LABELS = {
@@ -100,36 +95,166 @@ function DiagnosticsChat({ vehicleId, vehicleName, initialMessage }) {
   }
 
   return (
-    <div className="diag">
-      <div className="diag-header">
-        <div>
-          <h2>Diagnose an Issue</h2>
-          <p>
-            {vehicleName
-              ? <>Describe what your <strong>{vehicleName}</strong> is doing. The assistant checks your service history to rule out what's already been fixed.</>
-              : "Describe what your car is doing. Add a vehicle so the assistant can use your service history."}
-          </p>
+  <div className="diag">
+
+    {/* ======================================
+        DRIVECARE AI COMMAND CENTER
+    ====================================== */}
+
+    <div className="diag-hero">
+
+      <div className="diag-hero-top">
+
+        <div className="diag-brand">
+          <span className="diag-brand-icon">✦</span>
+          <span>DRIVECARE INTELLIGENCE</span>
         </div>
-        {messages.length > 0 && (
-          <button type="button" className="diag-new" onClick={startOver} disabled={sending}>
-            New conversation
-          </button>
-        )}
+
+        <div className="diag-ai-status">
+          <span className="diag-status-dot"></span>
+          AI ASSISTANT READY
+        </div>
+
       </div>
+
+      <div className="diag-hero-content">
+
+        <div className="diag-hero-text">
+
+          <span className="diag-eyebrow">
+            NEXT-GENERATION VEHICLE DIAGNOSTICS
+          </span>
+
+          <h2>
+            Your Vehicle.
+            <br />
+            <span>Our Intelligence.</span>
+          </h2>
+
+          <p>
+            Advanced AI-powered automotive assistance.
+            Describe your vehicle's symptoms and receive
+            personalized diagnostic guidance.
+          </p>
+
+        </div>
+
+        <div className="diag-hero-visual">
+          <div className="diag-ai-orb">
+            <span>✦</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div className="diag-vehicle-panel">
+
+        <div className="diag-vehicle-icon">
+          🚘
+        </div>
+
+        <div className="diag-vehicle-info">
+          <span>SELECTED VEHICLE</span>
+
+          <strong>
+            {vehicleName || "No Vehicle Selected"}
+          </strong>
+
+          <small>
+            {vehicleName
+              ? "Vehicle context available for AI diagnostics"
+              : "Add a vehicle to enable personalized diagnostics"}
+          </small>
+        </div>
+
+        <div className="diag-vehicle-badge">
+          ● AI READY
+        </div>
+
+      </div>
+
+      {messages.length > 0 && (
+        <button
+          type="button"
+          className="diag-new"
+          onClick={startOver}
+          disabled={sending}
+        >
+          ↻ New Conversation
+        </button>
+      )}
+
+    </div>
 
       <div className="diag-thread">
         {messages.length === 0 && (
-          <div className="diag-empty">
-            <p>Try describing the symptom, when it happens, and anything you've noticed (sounds, smells, warning lights).</p>
-            <div className="diag-suggestions">
-              {SUGGESTIONS.map((suggestion) => (
-                <button type="button" key={suggestion} onClick={() => setInput(suggestion)}>
-                  {suggestion}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+          
+  <div className="diag-empty">
+
+    <div className="diag-welcome">
+      <span className="diag-welcome-label">
+        ◉ DIAGNOSTIC COMMAND CENTER
+      </span>
+
+      <h3>What can I help you diagnose?</h3>
+
+      <p>
+        Select a vehicle system below or describe the symptoms
+        you're experiencing to begin an AI-assisted diagnosis.
+      </p>
+    </div>
+
+    <div className="diag-diagnostic-grid">
+
+      <button
+        type="button"
+        className="diag-diagnostic-card"
+        onClick={() => setInput("I hear an unusual noise when driving or braking")}
+      >
+        <span className="diag-card-icon">🔊</span>
+        <strong>Unusual Noises</strong>
+        <small>Brakes, suspension, and mechanical sounds</small>
+        <span className="diag-card-arrow">↗</span>
+      </button>
+
+      <button
+        type="button"
+        className="diag-diagnostic-card"
+        onClick={() => setInput("A warning light appeared on my dashboard")}
+      >
+        <span className="diag-card-icon">⚠️</span>
+        <strong>Warning Lights</strong>
+        <small>Dashboard alerts and warning indicators</small>
+        <span className="diag-card-arrow">↗</span>
+      </button>
+
+      <button
+        type="button"
+        className="diag-diagnostic-card"
+        onClick={() => setInput("My vehicle is experiencing engine or performance issues")}
+      >
+        <span className="diag-card-icon">⚙️</span>
+        <strong>Engine & Performance</strong>
+        <small>Acceleration, power, and engine behavior</small>
+        <span className="diag-card-arrow">↗</span>
+      </button>
+
+      <button
+        type="button"
+        className="diag-diagnostic-card"
+        onClick={() => setInput("My vehicle is having battery or electrical problems")}
+      >
+        <span className="diag-card-icon">🔋</span>
+        <strong>Electrical Systems</strong>
+        <small>Battery, starting, and electrical issues</small>
+        <span className="diag-card-arrow">↗</span>
+      </button>
+
+    </div>
+
+  </div>
+)}
+        
 
         {messages.map((message) => (
           <div key={message.id} className={`diag-message ${message.role}`}>
@@ -154,18 +279,47 @@ function DiagnosticsChat({ vehicleId, vehicleName, initialMessage }) {
       {error && <p className="diag-error">{error}</p>}
 
       <form className="diag-composer" onSubmit={handleSubmit}>
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={messages.length === 0 ? "Describe your vehicle's symptoms..." : 'Ask a follow-up question...'}
-          rows={3}
-          disabled={sending}
-        />
-        <button type="submit" disabled={sending || !input.trim()}>
-          {sending ? 'Thinking...' : 'Ask AI Assistant'}
-        </button>
-      </form>
+
+  <div className="diag-input-header">
+    <span className="diag-input-indicator"></span>
+    <span>DIAGNOSTIC INPUT</span>
+  </div>
+
+  <div className="diag-input-container">
+
+    <textarea
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      onKeyDown={handleKeyDown}
+      placeholder={
+        messages.length === 0
+          ? "Describe your vehicle's symptoms, noises, or warning lights..."
+          : "Ask DriveCare AI a follow-up question..."
+      }
+      rows={3}
+      disabled={sending}
+    />
+
+    <button
+      type="submit"
+      className="diag-send-button"
+      disabled={sending || !input.trim()}
+    >
+      {sending ? (
+        <>◉ Analyzing...</>
+      ) : (
+        <>✦ Run AI Diagnostics →</>
+      )}
+    </button>
+
+  </div>
+
+  <div className="diag-input-footer">
+    <span>⚡ AI-POWERED ANALYSIS</span>
+    <span>ENTER TO SEND · SHIFT + ENTER FOR NEW LINE</span>
+  </div>
+
+</form>
 
       <p className="diag-disclaimer">
         AI suggestions are not a substitute for an inspection by a qualified mechanic.

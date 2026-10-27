@@ -3,6 +3,7 @@ import "./maint&diag.css";
 import { authFetch } from "./auth.js";
 import DiagnosticsChat from "./DiagnosticsChat.jsx";
 
+
 function Maintenance() {
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -93,12 +94,16 @@ function Maintenance() {
   },
 ]);
 
-  const [newRecord, setNewRecord] = useState({
-    service: "",
-    date: "",
-    mileage: "",
-    cost: "",
-  });
+  const emptyRecord = {
+  service: "",
+  date: "",
+  mileage: "",
+  cost: "",
+  location: "",
+};
+
+const [newRecord, setNewRecord] = useState(emptyRecord);
+const [editingRecordId, setEditingRecordId] = useState(null);
 
   const handleChange = (e) => {
     setNewRecord({
@@ -108,22 +113,85 @@ function Maintenance() {
   };
 
   const addRecord = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
+  const recordData = {
+    ...newRecord,
+    service: newRecord.service.trim(),
+    location: newRecord.location.trim(),
+    mileage: Number(newRecord.mileage),
+    cost: Number(newRecord.cost),
+  };
+
+  if (
+    !recordData.service ||
+    !recordData.date ||
+    !recordData.location ||
+    newRecord.mileage === "" ||
+    newRecord.cost === "" ||
+    !Number.isFinite(recordData.mileage) ||
+    !Number.isFinite(recordData.cost) ||
+    recordData.mileage < 0 ||
+    recordData.cost < 0
+  ) {
+    alert("Please complete all fields with valid information.");
+    return;
+  }
+
+  if (editingRecordId !== null) {
+    setRecords((previousRecords) =>
+      previousRecords.map((record) =>
+        record.id === editingRecordId
+          ? { ...record, ...recordData }
+          : record
+      )
+    );
+  } else {
     const record = {
-      ...newRecord,
-      id: Date.now(),
+      ...recordData,
+      id: crypto.randomUUID(),
+      category: "General Maintenance",
+      icon: "🔧",
     };
 
-    setRecords([...records, record]);
+    setRecords((previousRecords) => [...previousRecords, record]);
+  }
 
-    setNewRecord({
-      service: "",
-      date: "",
-      mileage: "",
-      cost: "",
-    });
-  };
+  setNewRecord({ ...emptyRecord });
+  setEditingRecordId(null);
+  setActiveTab("records");
+};
+
+const editRecord = (record) => {
+  setNewRecord({
+    service: record.service,
+    date: record.date,
+    mileage: String(record.mileage),
+    cost: String(record.cost),
+    location: record.location || "",
+  });
+
+  setEditingRecordId(record.id);
+  setActiveTab("add");
+};
+
+const deleteRecord = (id) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this maintenance record?"
+  );
+
+  if (!confirmed) return;
+
+  setRecords((previousRecords) =>
+    previousRecords.filter((record) => record.id !== id)
+  );
+};
+
+const cancelRecord = () => {
+  setNewRecord({ ...emptyRecord });
+  setEditingRecordId(null);
+  setActiveTab("records");
+};
 
   return (
     <div className="maintenance-page">
@@ -198,14 +266,7 @@ function Maintenance() {
         >
           Diagnose Issue
         </button>
-
-        <button
-          type="button"
-          className={activeTab === "schedule" ? "active" : ""}
-          onClick={() => setActiveTab("schedule")}
-        >
-          Service Schedule
-        </button>
+        
 
       </div>
 
@@ -226,6 +287,8 @@ function Maintenance() {
         </section>
       )}
 
+      {activeTab === "overview" && (
+      <>
       {/* ===================================
           MAINTENANCE DASHBOARD
           Both cards go inside this container
@@ -386,7 +449,7 @@ function Maintenance() {
               
       </div>
       {/* END OF MAINTENANCE DASHBOARD */}
-       
+        
             {/* ===================================
           MAINTENANCE STATISTICS
       =================================== */}
@@ -704,6 +767,267 @@ function Maintenance() {
 
 </div> {/* END OF MAINTENANCE BOTTOM GRID */}
 
+  </>
+)}
+
+{/* ===================================
+    ADD / EDIT MAINTENANCE RECORD
+=================================== */}
+
+{activeTab === "add" && (
+  <div className="add-record-page">
+
+    <div className="add-record-header">
+      <h2>
+        {editingRecordId !== null
+          ? "Edit Maintenance Record"
+          : "Add Maintenance Record"}
+      </h2>
+
+      <p>
+        Enter your vehicle's maintenance information below.
+      </p>
+    </div>
+
+    <div className="add-record-card">
+
+      <form onSubmit={addRecord} className="add-record-form">
+
+        <div className="add-record-field">
+          <label htmlFor="record-service">Service Performed</label>
+          <input
+            id="record-service"
+            type="text"
+            name="service"
+            placeholder="e.g., Oil Change"
+            value={newRecord.service}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="add-record-field">
+          <label htmlFor="record-date">Service Date</label>
+          <input
+            id="record-date"
+            type="date"
+            name="date"
+            value={newRecord.date}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="add-record-field">
+          <label htmlFor="record-mileage">Vehicle Mileage</label>
+          <input
+            id="record-mileage"
+            type="number"
+            name="mileage"
+            placeholder="e.g., 43000"
+            min="0"
+            step="1"
+            value={newRecord.mileage}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="add-record-field">
+          <label htmlFor="record-cost">Total Cost ($)</label>
+          <input
+            id="record-cost"
+            type="number"
+            name="cost"
+            placeholder="e.g., 89.99"
+            min="0"
+            step="0.01"
+            value={newRecord.cost}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="add-record-field add-record-full">
+          <label htmlFor="record-location">Service Location</label>
+          <input
+            id="record-location"
+            type="text"
+            name="location"
+            placeholder="e.g., Valvoline"
+            value={newRecord.location}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="add-record-actions">
+
+          <button
+            type="button"
+            className="record-cancel-button"
+            onClick={cancelRecord}
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="record-save-button"
+          >
+            {editingRecordId !== null
+              ? "Save Changes"
+              : "+ Save Record"}
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+)}
+
+{/* ===================================
+    MAINTENANCE RECORDS TAB
+=================================== */}
+
+{activeTab === "records" && (
+  <div className="records-page">
+
+    <div className="records-page-header">
+      <div>
+        <h2>Maintenance History</h2>
+        <p>
+          View and manage your vehicle's maintenance
+          history, repairs, and expenses.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        className="records-add-button"
+        onClick={() => setActiveTab("add")}
+      >
+        + Add Record
+      </button>
+    </div>
+
+    <div className="records-summary">
+      <div className="records-summary-card">
+        <span>📋 Total Records</span>
+        <h3>{records.length}</h3>
+        <p>Maintenance services recorded</p>
+      </div>
+
+      <div className="records-summary-card">
+        <span>💰 Total Spent</span>
+        <h3>
+          ${records.reduce(
+            (total, record) => total + Number(record.cost || 0),
+            0
+          ).toFixed(2)}
+        </h3>
+        <p>All recorded maintenance expenses</p>
+      </div>
+
+      <div className="records-summary-card">
+        <span>🔧 Last Service</span>
+        <h3>
+          {records.length > 0
+            ? new Date(
+                `${[...records].sort(
+                  (a, b) => new Date(b.date) - new Date(a.date)
+                )[0].date}T00:00:00`
+              ).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "N/A"}
+        </h3>
+        <p>Most recent maintenance</p>
+      </div>
+    </div>
+
+    <div className="records-table-container">
+  <table className="records-table">
+
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Date</th>
+        <th>Mileage</th>
+        <th>Cost</th>
+        <th>Location</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {records.map((record) => (
+        <tr key={record.id}>
+
+          <td>
+            {record.icon || "🔧"} {record.service}
+          </td>
+
+          <td>{record.date}</td>
+
+          <td>
+            {Number(record.mileage).toLocaleString()} mi
+          </td>
+
+          <td>
+            ${Number(record.cost).toFixed(2)}
+          </td>
+
+          <td>
+            {record.location || "Not specified"}
+          </td>
+
+          <td>
+            <div className="record-action-buttons">
+
+              <button
+                type="button"
+                className="record-edit-button"
+                onClick={() => editRecord(record)}
+              >
+                ✏️ Edit
+              </button>
+
+              <button
+                type="button"
+                className="record-delete-button"
+                onClick={() => deleteRecord(record.id)}
+              >
+                🗑️ Delete
+              </button>
+
+            </div>
+          </td>
+
+        </tr>
+      ))}
+
+      {records.length === 0 && (
+        <tr>
+          <td colSpan={6} className="records-empty">
+            No maintenance records yet.
+          </td>
+        </tr>
+      )}
+
+    </tbody>
+
+  </table>
+</div>
+    </div>
+
+  
+)}
 
     </div>
   );
