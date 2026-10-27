@@ -75,7 +75,7 @@ function Register() {
       if (response.ok) {
         // Registering also logs the user in: keep the JWT so authenticated requests work right away
         saveToken(data.token)
-        navigate('/maintenance')
+        navigate('/')
       } else {
         setStatusMessage(`Registration failed: ${data.message || 'Unknown error'}`)
       }
@@ -139,7 +139,7 @@ function Register() {
         {statusMessage && <p className="status-msg">{statusMessage}</p>}
 
         <h6>
-          Already have an account? <Link to="/">Log in</Link>
+          Already have an account? <Link to="/login">Log in</Link>
         </h6>
       </section>
 
