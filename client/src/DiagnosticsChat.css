@@ -792,3 +792,277 @@
     flex-direction: column;
   }
 }
+/* ==========================================
+   DRIVECARE AI — FUTURISTIC CONVERSATION
+========================================== */
+
+/* Conversation Area */
+
+.maintenance-page .diag-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-height: 650px;
+  overflow-y: auto;
+  padding: 16px 8px 20px;
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+
+.maintenance-page .diag-thread::-webkit-scrollbar {
+  width: 6px;
+}
+
+.maintenance-page .diag-thread::-webkit-scrollbar-track {
+  background: #0b1120;
+}
+
+.maintenance-page .diag-thread::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+
+/* ==========================================
+   USER MESSAGE
+========================================== */
+
+.maintenance-page .diag-message.user {
+  align-self: flex-end;
+  max-width: 75%;
+  padding: 16px 22px;
+
+  background: linear-gradient(
+    135deg,
+    #075985,
+    #0369a1
+  );
+
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 16px 16px 4px 16px;
+
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1.7;
+
+  box-shadow: 0 4px 20px rgba(0, 184, 255, 0.1);
+}
+
+.maintenance-page .diag-message.user p {
+  color: #ffffff;
+  margin: 0;
+}
+
+/* ==========================================
+   AI RESPONSE MESSAGE
+========================================== */
+
+.maintenance-page .diag-message.assistant {
+  align-self: flex-start;
+  max-width: 88%;
+  width: fit-content;
+
+  padding: 24px;
+
+  background: linear-gradient(
+    145deg,
+    #17243b,
+    #111b2e
+  );
+
+  border: 1px solid #263b59;
+  border-left: 3px solid #00b8ff;
+
+  border-radius: 4px 16px 16px 16px;
+
+  color: #e2e8f0;
+  font-size: 14px;
+  line-height: 1.8;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* ==========================================
+   AI RESPONSE MARKDOWN
+========================================== */
+
+.maintenance-page .diag-message.assistant .md {
+  color: #cbd5e1;
+}
+
+.maintenance-page .diag-message.assistant .md p {
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.maintenance-page .diag-message.assistant .md h1,
+.maintenance-page .diag-message.assistant .md h2,
+.maintenance-page .diag-message.assistant .md h3,
+.maintenance-page .diag-message.assistant .md h4 {
+  color: #67e8f9;
+  font-weight: 700;
+  margin-top: 18px;
+  margin-bottom: 10px;
+}
+
+.maintenance-page .diag-message.assistant .md strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.maintenance-page .diag-message.assistant .md ul,
+.maintenance-page .diag-message.assistant .md ol {
+  color: #cbd5e1;
+  padding-left: 22px;
+}
+
+.maintenance-page .diag-message.assistant .md li {
+  margin-bottom: 8px;
+}
+
+.maintenance-page .diag-message.assistant .md code {
+  padding: 3px 7px;
+  background: #0b1120;
+  border: 1px solid #334155;
+  border-radius: 5px;
+  color: #67e8f9;
+}
+
+.maintenance-page .diag-message.assistant .md hr {
+  border: none;
+  border-top: 1px solid #334155;
+  margin: 20px 0;
+}
+
+/* ==========================================
+   INFORMATION CHECKED BY AI
+========================================== */
+
+.maintenance-page .diag-checked {
+  display: inline-flex;
+  align-items: center;
+
+  margin-top: 16px;
+  padding: 8px 12px;
+
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 8px;
+
+  color: #6ee7b7;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ==========================================
+   AI THINKING ANIMATION
+========================================== */
+
+.maintenance-page .diag-thinking {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 18px 22px;
+
+  background: linear-gradient(
+    135deg,
+    #142238,
+    #0f1a2c
+  );
+
+  border: 1px solid rgba(0, 184, 255, 0.3);
+  border-left: 3px solid #00b8ff;
+
+  color: #67e8f9;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.maintenance-page .diag-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.maintenance-page .diag-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  background: #00b8ff;
+
+  box-shadow: 0 0 10px rgba(0, 184, 255, 0.6);
+
+  animation: diag-bounce 1.2s infinite ease-in-out;
+}
+
+.maintenance-page .diag-dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.maintenance-page .diag-dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* ==========================================
+   ERROR MESSAGES
+========================================== */
+
+.maintenance-page .diag-error {
+  padding: 14px 18px;
+  margin-top: 16px;
+
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+
+  color: #fca5a5;
+  font-size: 13px;
+}
+
+/* ==========================================
+   DISCLAIMER
+========================================== */
+
+.maintenance-page .diag-disclaimer {
+  margin-top: 16px;
+  text-align: center;
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   MOBILE RESPONSIVENESS
+========================================== */
+
+@media (max-width: 768px) {
+
+  .maintenance-page .diag-thread {
+    padding: 12px 4px;
+  }
+
+  .maintenance-page .diag-message.user {
+    max-width: 90%;
+  }
+
+  .maintenance-page .diag-message.assistant {
+    max-width: 100%;
+    padding: 18px;
+  }
+
+}
+
+/* Respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+  .maintenance-page .diag-thread {
+    scroll-behavior: auto;
+  }
+
+  .maintenance-page .diag-dots i {
+    animation: none;
+  }
+}
