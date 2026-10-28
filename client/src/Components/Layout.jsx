@@ -1,6 +1,5 @@
 import Navbar from "./navbar"
 import Topbar from "./Topbar"
-
 import "../Styles/layout.css"
 
 function Layout({ children }) {

@@ -1,9 +1,10 @@
-/* =========================================
-   UNIVERSAL SIDEBAR
-========================================= */
+/* Universal Sidebar */
 
-.dc-sidebar {
-  width: 245px;
+.dc-layout > .dc-sidebar {
+  width: 72px;
+  min-width: 72px;
+  max-width: 72px;
+
   height: 100vh;
 
   position: fixed;
@@ -13,27 +14,40 @@
   display: flex;
   flex-direction: column;
 
-  padding: 24px 16px;
+  padding: 24px 12px;
 
   background-color: #ffffff;
-
   border-right: 1px solid #e5e7eb;
 
-  z-index: 100;
+  overflow: hidden;
+
+  transition:
+    width 0.25s ease,
+    min-width 0.25s ease,
+    max-width 0.25s ease;
+
+  z-index: 1000;
 }
 
 
-/* =========================================
-   LOGO
-========================================= */
+/*Expand Sidebar on Hover*/
+
+.dc-layout > .dc-sidebar:hover {
+  width: 245px;
+  min-width: 245px;
+  max-width: 245px;
+}
+
+
+/* Sidebar Logo */
 
 .dc-sidebar-logo {
   display: flex;
   align-items: center;
 
-  gap: 10px;
+  gap: 12px;
 
-  padding: 0 10px;
+  padding: 0 8px;
 
   margin-bottom: 35px;
 }
@@ -41,6 +55,8 @@
 .dc-logo-icon {
   width: 32px;
   height: 32px;
+
+  min-width: 32px;
 
   color: #2563eb;
 }
@@ -50,12 +66,24 @@
   font-weight: 700;
 
   color: #111827;
+
+  white-space: nowrap;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+}
+
+.dc-sidebar:hover .dc-logo-text {
+  opacity: 1;
+  visibility: visible;
 }
 
 
-/* =========================================
-   NAVIGATION
-========================================= */
+/* Navigation */
 
 .dc-nav-menu {
   display: flex;
@@ -82,12 +110,13 @@
   color: #64748b;
 
   font-size: 14px;
-
   text-align: left;
 
   cursor: pointer;
 
-  transition: 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .dc-nav-item:hover {
@@ -104,23 +133,48 @@
   font-weight: 600;
 }
 
+
+/* Navigation Icons */
+
 .dc-nav-icon {
   width: 22px;
+  min-width: 22px;
 
   display: flex;
+  align-items: center;
   justify-content: center;
 
   font-size: 17px;
 }
 
 
-/* =========================================
-   SIDEBAR FOOTER
-========================================= */
+/* Navigation Text */
+
+.dc-nav-item span:not(.dc-nav-icon) {
+  opacity: 0;
+  visibility: hidden;
+
+  white-space: nowrap;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+}
+
+.dc-sidebar:hover .dc-nav-item span:not(.dc-nav-icon) {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* Sidebar footer */
 
 .dc-sidebar-footer {
   margin-top: auto;
 }
+
+
+/* premium card */
 
 .dc-unlock-card {
   display: flex;
@@ -138,11 +192,22 @@
 }
 
 .dc-unlock-icon {
+  min-width: 22px;
+
   font-size: 19px;
 }
 
 .dc-unlock-info {
   flex: 1;
+
+  opacity: 0;
+  visibility: hidden;
+
+  white-space: nowrap;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
 }
 
 .dc-unlock-info h4 {
@@ -163,7 +228,23 @@
 
 .dc-arrow {
   color: #94a3b8;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
 }
+
+.dc-sidebar:hover .dc-unlock-info,
+.dc-sidebar:hover .dc-arrow {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* Bottom Links */
 
 .dc-bottom-links {
   border-top: 1px solid #e5e7eb;
@@ -177,7 +258,7 @@
   display: flex;
   align-items: center;
 
-  gap: 10px;
+  gap: 12px;
 
   padding: 10px 12px;
 
@@ -188,11 +269,44 @@
 
   color: #64748b;
 
+  font-size: 14px;
+
   cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .dc-bottom-link:hover {
   background-color: #f1f5f9;
 
   color: #2563eb;
+}
+
+.dc-bottom-link span:last-child {
+  opacity: 0;
+  visibility: hidden;
+
+  white-space: nowrap;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+}
+
+.dc-sidebar:hover .dc-bottom-link span:last-child {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* Responsive */
+
+@media (max-width: 700px) {
+
+  .dc-layout > .dc-sidebar {
+    display: none;
+  }
+
 }

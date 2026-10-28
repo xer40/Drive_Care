@@ -1,9 +1,5 @@
-
-
-
-
 import { useEffect, useState } from "react"
-import { authFetch } from "auth.js"
+import { authFetch } from "../auth.js"
 import "../Styles/community.css"
 
 function Community() {

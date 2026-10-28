@@ -1,6 +1,4 @@
-/* =========================================
-   GLOBAL APPLICATION LAYOUT
-========================================= */
+/* =Global */
 
 * {
   box-sizing: border-box;
@@ -28,9 +26,7 @@ body {
 }
 
 
-/* =========================================
-   APPLICATION
-========================================= */
+/* App Layout */
 
 .dc-layout {
   width: 100%;
@@ -40,20 +36,31 @@ body {
 }
 
 
-/* =========================================
-   MAIN AREA
-========================================= */
+/* Main Content Area */
 
-.dc-main {
+.dc-layout > .dc-main {
+  width: calc(100% - 72px);
+
   min-height: 100vh;
+
+  margin-left: 72px;
+
+  transition:
+    margin-left 0.25s ease,
+    width 0.25s ease;
+}
+
+
+/* Sidebar Exapanded */
+
+.dc-layout > .dc-sidebar:hover + .dc-main {
+  width: calc(100% - 245px);
 
   margin-left: 245px;
 }
 
 
-/* =========================================
-   PAGE CONTENT
-========================================= */
+/* Page Content */
 
 .dc-page-content {
   width: 100%;
@@ -64,30 +71,19 @@ body {
 }
 
 
-/* =========================================
-   RESPONSIVE
-========================================= */
-
-@media (max-width: 900px) {
-
-  .dc-sidebar {
-    width: 200px;
-  }
-
-  .dc-main {
-    margin-left: 200px;
-  }
-
-}
-
+/* Responsive */
 
 @media (max-width: 700px) {
 
-  .dc-sidebar {
-    display: none;
+  .dc-layout > .dc-main {
+    width: 100%;
+
+    margin-left: 0;
   }
 
-  .dc-main {
+  .dc-layout > .dc-sidebar:hover + .dc-main {
+    width: 100%;
+
     margin-left: 0;
   }
 
