@@ -3,7 +3,7 @@
 
 
 import { useEffect, useState } from "react"
-import { authFetch } from "../Components/auth.js"
+import { authFetch } from "auth.js"
 import "../Styles/community.css"
 
 function Community() {
