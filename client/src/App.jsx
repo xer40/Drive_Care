@@ -18,10 +18,13 @@ function App() {
 
 
       <Route path="/home" element={
-        <Layout>
-          <RequireAuth><Homepage /></RequireAuth>
-        </Layout>
-      } />
+    <RequireAuth>
+      <Layout>
+        <Homepage />
+      </Layout>
+    </RequireAuth>
+  }
+/>
 
       <Route path="/maintenance" element={
         <Layout>
