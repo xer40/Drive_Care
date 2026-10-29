@@ -1,6 +1,26 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { authFetch } from "../auth.js"
+import { checkPhotoFile, limitedPhoto, uploadPostPhoto } from "../cloudinary.js"
 import "../Styles/community.css"
+
+// Topics a post can have. Used for the post form and the Explore filter, so every post's topic
+// is one people can filter by. The API matches topics ignoring capitals
+const TOPICS = [
+  "Maintenance",
+  "Repairs",
+  "Troubleshooting",
+  "Tires",
+  "Brakes",
+  "Modifications",
+  "Reviews",
+  "General",
+]
+
+// "Oct 28, 2026" from the API's timestamp
+const formatDate = (timestamp) =>
+  timestamp
+    ? new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : "Recently"
 
 function Community() {
 
@@ -8,54 +28,90 @@ function Community() {
 
   const [posts, setPosts] = useState([])
   const [vehicles, setVehicles] = useState([])
+  // Topics in use with their post counts, for "Popular Topics"
+  const [popularTopics, setPopularTopics] = useState([])
+  // Topic the feed is filtered to ("" = all posts)
+  const [activeTopic, setActiveTopic] = useState("")
 
   const [postText, setPostText] = useState("")
   const [selectedVehicleId, setSelectedVehicleId] = useState("")
   const [selectedTopic, setSelectedTopic] = useState("")
 
+  // Optional photo for the new post: the chosen file and a preview of it
+  const [photoFile, setPhotoFile] = useState(null)
+  const [photoPreview, setPhotoPreview] = useState("")
+  const [posting, setPosting] = useState(false)
+  const photoInputRef = useRef(null)
+
   const [loading, setLoading] = useState(true)
   const [statusMessage, setStatusMessage] = useState("")
 
 
- //Community data
+  const loadPopularTopics = () =>
+    authFetch("/api/posts/topics")
+      .then((data) => setPopularTopics(data.topics || []))
+      .catch((error) => console.error("Could not load topics:", error.message))
+
+
+  // The user's vehicles (for tagging a post) and the popular topics only need loading once
 
   useEffect(() => {
 
-    const loadCommunity = async () => {
+    authFetch("/api/vehicles")
+      .then((data) => setVehicles(data.vehicles || []))
+      .catch((error) => console.error("Could not load vehicles:", error.message))
 
-      try {
-
-        /*
-          Might have to adjust
-        */
-
-        const postData = await authFetch("/api/posts")
-        const vehicleData = await authFetch("/api/vehicles")
-
-        setPosts(postData.posts || [])
-        setVehicles(vehicleData.vehicles || [])
-
-      } catch (error) {
-
-        console.error(
-          "Could not load community:",
-          error.message
-        )
-
-        setStatusMessage(
-          "Unable to load community posts."
-        )
-
-      } finally {
-
-        setLoading(false)
-
-      }
-    }
-
-    loadCommunity()
+    loadPopularTopics()
 
   }, [])
+
+
+  // The feed, reloaded whenever the topic filter changes
+
+  useEffect(() => {
+
+    const query = activeTopic ? `?topic=${encodeURIComponent(activeTopic)}` : ""
+
+    authFetch(`/api/posts${query}`)
+      .then((data) => {
+        setPosts(data.posts || [])
+        setStatusMessage("")
+      })
+      .catch((error) => {
+        console.error("Could not load community:", error.message)
+        setStatusMessage("Unable to load community posts.")
+      })
+      .finally(() => setLoading(false))
+
+  }, [activeTopic])
+
+
+  //Choosing or removing the post's photo
+
+  const handleChoosePhoto = (event) => {
+
+    const file = event.target.files?.[0]
+    event.target.value = "" // so picking the same file again still works
+    if (!file) return
+
+    const problem = checkPhotoFile(file)
+    if (problem) {
+      setStatusMessage(problem)
+      return
+    }
+
+    if (photoPreview) URL.revokeObjectURL(photoPreview)
+    setPhotoFile(file)
+    setPhotoPreview(URL.createObjectURL(file))
+    setStatusMessage("")
+  }
+
+  const removePhoto = () => {
+
+    if (photoPreview) URL.revokeObjectURL(photoPreview)
+    setPhotoFile(null)
+    setPhotoPreview("")
+  }
 
 
   //Creating a post
@@ -66,33 +122,36 @@ function Community() {
 
     if (!postText.trim()) return
 
+    // Every post needs a topic so it shows up under the right filter
+    if (!selectedTopic) {
+      setStatusMessage("Pick a topic for your post.")
+      return
+    }
+
+    setPosting(true)
+
     try {
 
-      const data = await authFetch(
-        "/api/posts",
-        {
-          method: "POST",
+      // Upload the photo first (if there is one), so the post is only created once it has its image
+      const imageUrl = photoFile ? await uploadPostPhoto(photoFile) : null
 
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            content: postText,
-            vehicle_id:
-              selectedVehicleId || null,
-            topic:
-              selectedTopic || null
-          })
-        }
-      )
+      // authFetch turns the body into JSON itself, so pass a plain object
+      const data = await authFetch("/api/posts", {
+        method: "POST",
+        body: {
+          body: postText.trim(),
+          topic: selectedTopic,
+          vehicle_id: selectedVehicleId || null,
+          image_url: imageUrl,
+        },
+      })
 
       /*
-        Add the new post to the top of the feed
-        without refreshing the whole page.
+        Add the new post to the top of the feed without refreshing the whole page,
+        unless the feed is filtered to a different topic.
       */
 
-      if (data.post) {
+      if (data.post && (!activeTopic || activeTopic.toLowerCase() === data.post.topic.toLowerCase())) {
 
         setPosts((previousPosts) => [
           data.post,
@@ -104,6 +163,9 @@ function Community() {
       setPostText("")
       setSelectedVehicleId("")
       setSelectedTopic("")
+      removePhoto()
+      setStatusMessage("")
+      loadPopularTopics()
 
     } catch (error) {
 
@@ -112,47 +174,32 @@ function Community() {
         error.message
       )
 
-      setStatusMessage(
-        "Unable to create post."
-      )
+      setStatusMessage(`Unable to create post: ${error.message}`)
+
+    } finally {
+
+      setPosting(false)
     }
   }
 
 
- //Liking a Post
+ //Liking and unliking a post (PUT likes it, DELETE removes the like)
 
-  const handleLike = async (postId) => {
+  const handleLike = async (post) => {
 
     try {
 
-      await authFetch(
-        `/api/posts/${postId}/like`,
-        {
-          method: "POST"
-        }
-      )
+      const data = await authFetch(`/api/posts/${post.id}/like`, {
+        method: post.liked_by_me ? "DELETE" : "PUT",
+      })
 
-      /*
-        Temporary frontend update.
-        Adjust property names to match backend.
-      */
-
+      // Use the server's numbers so the count is always right
       setPosts((previousPosts) =>
-        previousPosts.map((post) => {
-
-          if (post.id === postId) {
-
-            return {
-              ...post,
-              likes:
-                Number(post.likes || 0) + 1
-            }
-
-          }
-
-          return post
-
-        })
+        previousPosts.map((p) =>
+          p.id === post.id
+            ? { ...p, liked_by_me: data.liked_by_me, like_count: data.like_count }
+            : p
+        )
       )
 
     } catch (error) {
@@ -270,29 +317,24 @@ function Community() {
 
             <h2>Explore</h2>
 
-            <button>
+            <button
+              type="button"
+              className={activeTopic === "" ? "active" : ""}
+              onClick={() => setActiveTopic("")}
+            >
               All Posts
             </button>
 
-            <button>
-              Maintenance
-            </button>
-
-            <button>
-              Troubleshooting
-            </button>
-
-            <button>
-              Modifications
-            </button>
-
-            <button>
-              Reviews
-            </button>
-
-            <button>
-              General Discussion
-            </button>
+            {TOPICS.map((topic) => (
+              <button
+                type="button"
+                key={topic}
+                className={activeTopic === topic ? "active" : ""}
+                onClick={() => setActiveTopic(topic)}
+              >
+                {topic}
+              </button>
+            ))}
 
           </div>
 
@@ -303,12 +345,23 @@ function Community() {
 
             <div className="community-topics">
 
-              <span>#OilChange</span>
-              <span>#Tires</span>
-              <span>#Brakes</span>
-              <span>#Reliability</span>
-              <span>#DIY</span>
-              <span>#CarCare</span>
+              {popularTopics.length === 0 ? (
+                <p>No topics yet. Start a discussion!</p>
+              ) : (
+                popularTopics.map(({ topic, post_count }) => (
+                  <span
+                    key={topic}
+                    role="button"
+                    tabIndex={0}
+                    className={activeTopic.toLowerCase() === topic.toLowerCase() ? "active" : ""}
+                    onClick={() => setActiveTopic(topic)}
+                    onKeyDown={(event) => event.key === "Enter" && setActiveTopic(topic)}
+                    title={`${post_count} post${post_count === 1 ? "" : "s"}`}
+                  >
+                    #{topic} ({post_count})
+                  </span>
+                ))
+              )}
 
             </div>
 
@@ -341,7 +394,36 @@ function Community() {
             />
 
 
+            {/* Preview of the photo that will be attached, with a button to take it off */}
+            {photoPreview && (
+              <div className="community-photo-preview">
+                <img src={photoPreview} alt="Photo to attach" />
+                <button type="button" onClick={removePhoto} aria-label="Remove photo">
+                  ✕
+                </button>
+              </div>
+            )}
+
+
             <div className="community-post-options">
+
+              {/* Optional photo. The real file input is hidden; this button opens it */}
+              <button
+                type="button"
+                className="community-photo-button"
+                onClick={() => photoInputRef.current?.click()}
+                disabled={posting}
+              >
+                📷 {photoFile ? "Change Photo" : "Add Photo"}
+              </button>
+
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleChoosePhoto}
+              />
 
               <select
                 value={selectedVehicleId}
@@ -385,25 +467,11 @@ function Community() {
                   Select Topic
                 </option>
 
-                <option value="maintenance">
-                  Maintenance
-                </option>
-
-                <option value="repairs">
-                  Repairs
-                </option>
-
-                <option value="tires">
-                  Tires
-                </option>
-
-                <option value="brakes">
-                  Brakes
-                </option>
-
-                <option value="general">
-                  General
-                </option>
+                {TOPICS.map((topic) => (
+                  <option key={topic} value={topic}>
+                    {topic}
+                  </option>
+                ))}
 
               </select>
 
@@ -411,8 +479,9 @@ function Community() {
               <button
                 type="submit"
                 className="community-post-button"
+                disabled={posting}
               >
-                Post
+                {posting ? "Posting..." : "Post"}
               </button>
 
             </div>
@@ -443,7 +512,7 @@ function Community() {
 
             <div className="community-empty">
 
-              <h3>No posts yet</h3>
+              <h3>{activeTopic ? `No ${activeTopic} posts yet` : "No posts yet"}</h3>
 
               <p>
                 Be the first person to start
@@ -480,20 +549,20 @@ function Community() {
                     </strong>
 
                     <span>
-                      {post.created_at ||
-                        "Recently"}
+                      {formatDate(post.created_at)}
+                      {post.topic && <> · #{post.topic}</>}
                     </span>
 
                   </div>
 
 
-                  {post.vehicle && (
+                  {post.vehicle_make && (
 
                     <span className="community-vehicle-tag">
 
-                      {post.vehicle.year}{" "}
-                      {post.vehicle.make}{" "}
-                      {post.vehicle.model}
+                      {post.vehicle_year}{" "}
+                      {post.vehicle_make}{" "}
+                      {post.vehicle_model}
 
                     </span>
 
@@ -504,7 +573,7 @@ function Community() {
 
                 <p className="community-post-text">
 
-                  {post.content}
+                  {post.body}
 
                 </p>
 
@@ -512,9 +581,10 @@ function Community() {
                 {post.image_url && (
 
                   <img
-                    src={post.image_url}
+                    src={limitedPhoto(post.image_url, 900)}
                     alt="Community post"
                     className="community-post-image"
+                    loading="lazy"
                   />
 
                 )}
@@ -524,17 +594,19 @@ function Community() {
 
                   <button
                     type="button"
+                    className={post.liked_by_me ? "liked" : ""}
                     onClick={() =>
-                      handleLike(post.id)
+                      handleLike(post)
                     }
+                    aria-pressed={post.liked_by_me}
                   >
-                    ♡ {post.likes || 0}
+                    {post.liked_by_me ? "♥" : "♡"} {post.like_count || 0}
                   </button>
 
 
                   <button type="button">
 
-                    💬 {post.comments || 0}
+                    💬 {post.comment_count || 0}
 
                   </button>
 

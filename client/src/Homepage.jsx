@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getToken, getTokenPayload, isLoggedIn, logout } from './auth.js';
+import { authFetch, getToken, getTokenPayload, isLoggedIn, logout } from './auth.js';
+import { uploadVehiclePhoto } from './cloudinary.js';
+import { VehiclePhoto, ChangePhotoButton } from './VehiclePhoto.jsx';
 import './Homepage.css';
 
 const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
@@ -20,14 +22,17 @@ export default function Homepage() {
   // Modal State for adding a vehicle
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newVehicle, setNewVehicle] = useState({
-    year: '2022',
+    year: '',
     make: '',
     model: '',
     trim: '',
     current_mileage: '',
-    imageUrl: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Photo chosen in the Add Vehicle form, a preview of it, and any error from saving
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState('');
+  const [addError, setAddError] = useState('');
 
   // Sample prompt pills for AI
   const promptPills = [
@@ -43,6 +48,39 @@ export default function Homepage() {
     'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=700&auto=format&fit=crop&q=80',
     'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=700&auto=format&fit=crop&q=80'
   ];
+
+  // "Ask DriveCare AI": open the Diagnose Issue chat on the maintenance page with this question already sent.
+  // Passes the main car too, if it's a saved one (sample cars aren't in the database)
+  const askAi = (e) => {
+    e.preventDefault();
+    const question = aiQuestion.trim();
+    if (!question) return;
+    navigate('/maintenance', {
+      state: { diagnoseQuestion: question, vehicleId: vehicles[0]?.created_at ? vehicles[0].id : undefined },
+    });
+  };
+
+  // Stock picture for a car without an uploaded photo (sample cars bring their own imageUrl)
+  const fallbackImage = (car, index) => car?.imageUrl || defaultCarImages[index % defaultCarImages.length];
+
+  // After a photo is changed, swap the updated vehicle into the list
+  const handleVehicleUpdated = (updated) => {
+    setVehicles((prev) => prev.map((car) => (car.id === updated.id ? { ...car, ...updated } : car)));
+  };
+
+  const choosePhoto = (e) => {
+    const file = e.target.files?.[0] || null;
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+    setPhotoFile(file);
+    setPhotoPreview(file ? URL.createObjectURL(file) : '');
+  };
+
+  const resetAddForm = () => {
+    setNewVehicle({ year: '', make: '', model: '', trim: '', current_mileage: '' });
+    setPhotoFile(null);
+    setPhotoPreview('');
+    setAddError('');
+  };
 
   // Try fetching real vehicles from backend if user is logged in
   useEffect(() => {
@@ -67,59 +105,52 @@ export default function Homepage() {
     fetchUserData();
   }, []);
 
-  // Handle adding a vehicle (both locally and to backend if connected)
+  // Handle adding a vehicle. Logged in: upload the photo to Cloudinary, then save the vehicle (with the photo
+  // link) to the database. Logged out: keep it on this page only, as before
   const handleAddVehicle = async (e) => {
     e.preventDefault();
     if (!newVehicle.make || !newVehicle.model) return;
 
     setIsSubmitting(true);
-    const token = getToken();
-    const carImage = newVehicle.imageUrl.trim() || 
-      defaultCarImages[vehicles.length % defaultCarImages.length];
+    setAddError('');
+    const trim = newVehicle.trim || 'Standard';
 
-    const carData = {
-      id: Date.now(),
-      year: parseInt(newVehicle.year, 10) || 2023,
-      make: newVehicle.make,
-      model: newVehicle.model,
-      trim: newVehicle.trim || 'Standard',
-      current_mileage: parseInt(newVehicle.current_mileage, 10) || 12000,
-      imageUrl: carImage
-    };
-
-    // Attempt backend sync
-    if (token) {
-      try {
-        await fetch(`${backend}/api/vehicles`, {
+    try {
+      if (getToken()) {
+        // Upload first, so a failed upload doesn't leave a vehicle saved without its photo
+        const photo = photoFile ? await uploadVehiclePhoto(photoFile) : null;
+        const data = await authFetch('/api/vehicles', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+          body: {
+            make: newVehicle.make,
+            model: newVehicle.model,
+            year: parseInt(newVehicle.year, 10) || new Date().getFullYear(),
+            current_mileage: newVehicle.current_mileage === '' ? null : parseInt(newVehicle.current_mileage, 10),
+            photo,
           },
-          body: JSON.stringify({
-            make: carData.make,
-            model: carData.model,
-            year: carData.year,
-            current_mileage: carData.current_mileage
-          })
         });
-      } catch {
-        // Offline / local fallback
+        // trim isn't stored in the database yet, so it only lives on this page
+        setVehicles((prev) => [...prev, { ...data.vehicle, trim }]);
+        // The car now shows the uploaded Cloudinary photo, so the local preview isn't needed
+        if (photoPreview) URL.revokeObjectURL(photoPreview);
+      } else {
+        setVehicles((prev) => [...prev, {
+          id: Date.now(),
+          year: parseInt(newVehicle.year, 10) || new Date().getFullYear(),
+          make: newVehicle.make,
+          model: newVehicle.model,
+          trim,
+          current_mileage: parseInt(newVehicle.current_mileage, 10) || 0,
+          imageUrl: photoPreview || undefined,
+        }]);
       }
+      resetAddForm();
+      setIsModalOpen(false);
+    } catch (err) {
+      setAddError(err.message === 'Failed to fetch' ? "Can't reach the server. Is the backend running?" : err.message);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Update frontend state immediately
-    setVehicles((prev) => [...prev, carData]);
-    setIsSubmitting(false);
-    setIsModalOpen(false);
-    setNewVehicle({
-      year: '2023',
-      make: '',
-      model: '',
-      trim: '',
-      current_mileage: '',
-      imageUrl: ''
-    });
   };
 
   // Helper function to toggle demo mockup data on and off for testing
@@ -161,7 +192,7 @@ export default function Homepage() {
       
 
       {/* ===================== MAIN CONTENT ===================== */}
-      <main className="dc-main">
+      <div className="dc-home-main">
        
 
         {/* Dashboard Content */}
@@ -183,9 +214,11 @@ export default function Homepage() {
                 </button>
               </div>
               <div className="dc-banner-car-image">
-                <img 
-                  src={vehicles[0]?.imageUrl || "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&auto=format&fit=crop&q=80"} 
-                  alt="Dashboard Vehicle" 
+                <VehiclePhoto
+                  vehicle={vehicles[0]}
+                  width={800}
+                  height={500}
+                  fallback={vehicles[0] ? fallbackImage(vehicles[0], 0) : "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&auto=format&fit=crop&q=80"}
                 />
               </div>
             </div>
@@ -202,7 +235,8 @@ export default function Homepage() {
                 </div>
               </div>
 
-              <div className="dc-ai-input-wrapper">
+              {/* A form so both the → button and the Enter key send the question */}
+              <form className="dc-ai-input-wrapper" onSubmit={askAi}>
                 <input 
                   type="text" 
                   placeholder={vehicles.length > 0 ? `Ask a question about your ${vehicles[0].make}...` : "Ask a question about your car..."}
@@ -210,15 +244,15 @@ export default function Homepage() {
                   onChange={(e) => setAiQuestion(e.target.value)}
                   className="dc-ai-input"
                 />
-                <button className="dc-ai-submit-btn" aria-label="Send">
+                <button type="submit" className="dc-ai-submit-btn" aria-label="Send" disabled={!aiQuestion.trim()}>
                   →
                 </button>
-              </div>
+              </form>
 
               <div className="dc-ai-pills">
                 {promptPills.map((pill, idx) => (
                   <button 
-                    key={idx} 
+                    key={idx}
                     className="dc-ai-pill-btn"
                     onClick={() => setAiQuestion(pill)}
                   >
@@ -312,11 +346,12 @@ export default function Homepage() {
                   {/* Primary Vehicle */}
                   <div className="dc-vehicle-card primary">
                     <div className="dc-vehicle-img-wrapper">
-                      <img 
-                        src={vehicles[0].imageUrl} 
-                        alt={`${vehicles[0].year} ${vehicles[0].make}`} 
-                      />
+                      <VehiclePhoto vehicle={vehicles[0]} width={700} height={320} fallback={fallbackImage(vehicles[0], 0)} />
                       <span className="dc-badge primary">Primary</span>
+                      {/* Only saved vehicles (not sample data) can have a photo uploaded */}
+                      {isLoggedIn() && vehicles[0].created_at && (
+                        <ChangePhotoButton vehicle={vehicles[0]} onUpdated={handleVehicleUpdated} />
+                      )}
                     </div>
                     <div className="dc-vehicle-body">
                       <div className="dc-vehicle-title-row">
@@ -341,13 +376,9 @@ export default function Homepage() {
                   </div>
 
                   {/* Secondary Vehicles */}
-                  {vehicles.slice(1).map((car) => (
+                  {vehicles.slice(1).map((car, i) => (
                     <div key={car.id} className="dc-vehicle-card secondary">
-                      <img 
-                        src={car.imageUrl} 
-                        alt={`${car.make} ${car.model}`} 
-                        className="dc-small-thumb"
-                      />
+                      <VehiclePhoto vehicle={car} width={160} height={120} fallback={fallbackImage(car, i + 1)} className="dc-small-thumb" />
                       <div className="dc-secondary-details">
                         <h4>{car.year} {car.make} {car.model}</h4>
                         <p className="dc-vehicle-trim">{car.trim}</p>
@@ -528,7 +559,7 @@ export default function Homepage() {
             </div>
           </section>
         </div>
-      </main>
+      </div>
 
       {/* ===================== ADD VEHICLE MODAL ===================== */}
       {isModalOpen && (
@@ -598,14 +629,13 @@ export default function Homepage() {
               </div>
 
               <div className="dc-form-group">
-                <label>Image URL (Optional)</label>
-                <input 
-                  type="url" 
-                  value={newVehicle.imageUrl}
-                  onChange={(e) => setNewVehicle({...newVehicle, imageUrl: e.target.value})}
-                  placeholder="Paste an image link or leave blank for automatic photo"
-                />
+                <label>Photo (Optional)</label>
+                <input type="file" accept="image/*" onChange={choosePhoto} />
+                {photoPreview && <img src={photoPreview} alt="Selected vehicle" className="dc-photo-preview" />}
+                <span className="dc-form-hint">JPG, PNG or HEIC, up to 10 MB. Leave blank for an automatic photo.</span>
               </div>
+
+              {addError && <p className="dc-form-error">{addError}</p>}
 
               <div className="dc-modal-actions">
                 <button 

@@ -4,7 +4,6 @@ import { saveToken } from './auth.js'
 import AuthLayout, { AuthField, PasswordField, UserIcon, ArrowRightIcon } from './AuthLayout.jsx'
 import loginImage from './assets/loginbg.jpg'
 
-
 const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
 
 function Login() {

@@ -356,6 +356,8 @@
 /* Vehicle Image */
 
 .maintenance-page .vehicle-image {
+  /* relative: lets the "Change photo" button sit over the image */
+  position: relative;
   width: 100%;
   height: 180px;
   overflow: hidden;

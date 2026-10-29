@@ -50,6 +50,7 @@ CREATE TABLE vehicles (
   current_mileage integer,
   created_at      timestamptz NOT NULL DEFAULT now(),
   updated_at      timestamptz NOT NULL DEFAULT now(),
+  photo           text,            -- Cloudinary link to the car's photo
   CONSTRAINT vehicles_vin_key UNIQUE (vin),
   CONSTRAINT vehicles_year_check CHECK (year >= 1900 AND year <= 2100),
   CONSTRAINT vehicles_current_mileage_check CHECK (current_mileage >= 0)
@@ -70,9 +71,9 @@ CREATE TABLE maintenance_records (
   service_date date NOT NULL,
   mileage      integer,
   cost         numeric(10,2),
-  notes        text,
   created_at   timestamptz NOT NULL DEFAULT now(),
   updated_at   timestamptz NOT NULL DEFAULT now(),
+  service_location text,           -- where the work was done, e.g. 'Valvoline' or 'Dealer'
   CONSTRAINT maintenance_records_mileage_check CHECK (mileage >= 0),
   CONSTRAINT maintenance_records_cost_check CHECK (cost >= 0)
 );
@@ -109,7 +110,7 @@ CREATE TABLE posts (
   user_id    bigint NOT NULL REFERENCES users (id) ON DELETE CASCADE,
   -- Deleting a tagged vehicle keeps the post and just removes the tag
   vehicle_id bigint REFERENCES vehicles (id) ON DELETE SET NULL,
-  title      text NOT NULL,
+  topic      text NOT NULL,      -- what the post is about, e.g. 'Brakes', used to filter the feed
   body       text,
   image_url  text,
   created_at timestamptz NOT NULL DEFAULT now(),

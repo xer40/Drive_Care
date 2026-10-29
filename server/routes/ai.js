@@ -86,7 +86,7 @@ const describeRecord = (record, currentMileage) => {
     parts.push(at);
   }
   if (record.cost !== null) parts.push(`cost $${record.cost}`);
-  if (record.notes) parts.push(`notes: ${record.notes}`);
+  if (record.service_location) parts.push(`done at: ${record.service_location}`);
 
   return `- ${parts.join(' | ')}`;
 };
@@ -124,7 +124,7 @@ const buildVehicleContext = async (userId, vehicleId) => {
   const ids = vehicles.rows.map((car) => car.id);
   const [records, reminders] = await Promise.all([
     pool.query(
-      `SELECT vehicle_id, service_date, service_type, mileage, cost, notes FROM maintenance_records
+      `SELECT vehicle_id, service_date, service_type, mileage, cost, service_location FROM maintenance_records
        WHERE vehicle_id = ANY($1) ORDER BY service_date DESC, id DESC`,
       [ids]
     ),

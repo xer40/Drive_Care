@@ -1,6 +1,7 @@
 const express = require('express');
 const pool = require('../db');
 const { HttpError, isBlank, orNull, requireFields, buildUpdate, checkId, getOwnedVehicle } = require('../helpers');
+const { photoUploadParams, requirePhotoUrl } = require('../cloudinary');
 
 const router = express.Router();
 router.param('id', checkId);
@@ -40,34 +41,56 @@ const likeCount = async (postId) => {
 
 // ---------- Posts ----------
 
-// The feed, newest first. Optional ?user_id= (one author's posts), ?limit= (max 100) and ?offset= for paging
+// The feed, newest first. Optional filters: ?topic= (e.g. Brakes, matched ignoring capitals) and
+// ?user_id= (one author's posts). Paging with ?limit= (max 100) and ?offset=
 router.get('/posts', async (req, res) => {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 20, 1), 100);
   const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
   const authorId = /^\d{1,15}$/.test(req.query.user_id || '') ? req.query.user_id : null;
+  const topic = isBlank(req.query.topic) ? null : String(req.query.topic).trim();
 
   const result = await pool.query(
     `${POST_SELECT}
      WHERE ($2::bigint IS NULL OR p.user_id = $2)
+       AND ($3::text IS NULL OR lower(p.topic) = lower($3))
      ORDER BY p.created_at DESC, p.id DESC
-     LIMIT $3 OFFSET $4`,
-    [req.user.id, authorId, limit, offset]
+     LIMIT $4 OFFSET $5`,
+    [req.user.id, authorId, topic, limit, offset]
   );
   res.json({ success: true, posts: result.rows });
 });
 
-// Create a post. Expects { title } and optionally { body, image_url, vehicle_id }
+// Topics in use and how many posts each has, most popular first (e.g. for a "Popular Topics" list).
+// Defined before /posts/:id so "topics" isn't mistaken for a post id
+router.get('/posts/topics', async (req, res) => {
+  const result = await pool.query(
+    `SELECT topic, COUNT(*) AS post_count FROM posts
+     GROUP BY topic ORDER BY post_count DESC, topic LIMIT 50`
+  );
+  res.json({ success: true, topics: result.rows });
+});
+
+// Signature for uploading a post photo to Cloudinary. The browser uploads the file itself, then sends the
+// returned link as the post's image_url. Defined before /posts/:id so "photo-upload" isn't taken as an id
+router.post('/posts/photo-upload', async (req, res) => {
+  res.json({ success: true, upload: photoUploadParams('post') });
+});
+
+// Create a post. Expects { topic } and optionally { body, image_url, vehicle_id }.
+// image_url must be a photo uploaded through /posts/photo-upload
 router.post('/posts', async (req, res) => {
-  const { title, body, image_url, vehicle_id } = req.body;
-  requireFields(req.body, ['title']);
+  const { body, image_url, vehicle_id } = req.body;
+  requireFields(req.body, ['topic']);
+  requirePhotoUrl(image_url, 'image_url');
+  const topic = String(req.body.topic).trim();
 
   // You can only tag one of your own vehicles
   if (!isBlank(vehicle_id)) await getOwnedVehicle(req.user.id, vehicle_id);
 
   const result = await pool.query(
-    `INSERT INTO posts (user_id, vehicle_id, title, body, image_url)
+    `INSERT INTO posts (user_id, vehicle_id, topic, body, image_url)
      VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-    [req.user.id, orNull(vehicle_id), title, orNull(body), orNull(image_url)]
+    [req.user.id, orNull(vehicle_id), topic, orNull(body), orNull(image_url)]
   );
   res.status(201).json({ success: true, post: await getPost(req.user.id, result.rows[0].id) });
 });
@@ -77,9 +100,10 @@ router.get('/posts/:id', async (req, res) => {
   res.json({ success: true, post: await getPost(req.user.id, req.params.id) });
 });
 
-// Edit your own post
+// Edit your own post. { image_url: null } removes the photo
 router.patch('/posts/:id', async (req, res) => {
-  const { sets, values } = buildUpdate(req.body, ['title', 'body', 'image_url', 'vehicle_id'], ['title']);
+  requirePhotoUrl(req.body.image_url, 'image_url');
+  const { sets, values } = buildUpdate(req.body, ['topic', 'body', 'image_url', 'vehicle_id'], ['topic']);
   if (!isBlank(req.body.vehicle_id)) await getOwnedVehicle(req.user.id, req.body.vehicle_id);
 
   const result = await pool.query(

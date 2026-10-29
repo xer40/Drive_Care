@@ -24,219 +24,34 @@
 }
 
 .dc-dashboard {
+  /* Fills the shared Layout's content area, which shrinks when the sidebar expands.
+     (100vw/100vh here would ignore the sidebar and push the page over) */
   display: flex;
-  height: 100vh;
-  width: 100vw;
+  width: 100%;
+  min-width: 0;
   background-color: var(--dc-bg-page);
   font-family: var(--dc-font-family);
   color: var(--dc-text-heading);
-  overflow: hidden;
 }
 
 /* ==========================================================
    SIDEBAR
    ========================================================== */
-.dc-sidebar {
-  width: 250px;
-  min-width: 250px;
-  background-color: var(--dc-sidebar-bg);
-  display: flex;
-  flex-direction: column;
-  padding: 24px 16px;
-  border-right: 1px solid #1e293b;
-  height: 100%;
-}
 
-.dc-sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 12px 28px 12px;
-}
-
-.dc-logo-icon {
-  width: 28px;
-  height: 28px;
-  color: #38bdf8;
-}
-
-.dc-logo-text {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -0.5px;
-}
-
-.dc-nav-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-}
-
-.dc-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: transparent;
-  border: none;
-  color: var(--dc-sidebar-item);
-  font-size: 0.925rem;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.15s ease-in-out;
-}
-
-.dc-nav-item svg {
-  width: 18px;
-  height: 18px;
-  stroke: currentColor;
-}
-
-.dc-nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.06);
-  color: #f1f5f9;
-}
-
-.dc-nav-item.active {
-  background-color: var(--dc-primary-blue);
-  color: var(--dc-sidebar-item-active);
-  font-weight: 600;
-}
-
-.dc-sidebar-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #1e293b;
-}
-
-.dc-unlock-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 10px 12px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.dc-unlock-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.dc-unlock-icon {
-  font-size: 1.2rem;
-}
-
-.dc-unlock-info h4 {
-  font-size: 0.825rem;
-  color: #f8fafc;
-  font-weight: 600;
-}
-
-.dc-unlock-info p {
-  font-size: 0.72rem;
-  color: var(--dc-sidebar-item);
-}
-
-.dc-arrow {
-  color: var(--dc-sidebar-item);
-  margin-left: auto;
-  font-size: 1.1rem;
-}
-
-.dc-bottom-links {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.dc-bottom-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  background: none;
-  border: none;
-  color: var(--dc-sidebar-item);
-  font-size: 0.85rem;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: color 0.15s ease;
-}
-
-.dc-bottom-link svg {
-  width: 16px;
-  height: 16px;
-}
-
-.dc-bottom-link:hover {
-  color: #ffffff;
-}
 
 /* ==========================================================
    MAIN CONTENT AREA
    ========================================================== */
-.dc-main {
+/* The homepage's main column. Not named dc-main, which is the shared Layout's content area */
+.dc-home-main {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
 }
 
 /* Topbar */
-.dc-topbar {
-  height: 70px;
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--dc-border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
 
-.dc-search-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #f1f5f9;
-  border: 1px solid var(--dc-border-subtle);
-  border-radius: 20px;
-  padding: 8px 16px;
-  width: 480px;
-  transition: border-color 0.15s ease;
-}
-
-.dc-search-container:focus-within {
-  border-color: var(--dc-primary-blue);
-  background-color: #ffffff;
-}
-
-.dc-search-icon {
-  width: 18px;
-  height: 18px;
-  color: var(--dc-text-muted);
-}
-
-.dc-search-input {
-  border: none;
-  background: transparent;
-  outline: none;
-  width: 100%;
-  font-size: 0.875rem;
-  color: var(--dc-text-heading);
-}
 
 .dc-search-badge {
   background: #ffffff;
@@ -249,51 +64,6 @@
   font-weight: 600;
 }
 
-.dc-topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.dc-notification-btn {
-  position: relative;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--dc-text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  border-radius: 50%;
-  transition: color 0.15s;
-}
-
-.dc-notification-btn:hover {
-  color: var(--dc-text-heading);
-}
-
-.dc-notification-btn svg {
-  width: 20px;
-  height: 20px;
-}
-
-.dc-notif-dot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 7px;
-  height: 7px;
-  background-color: #ef4444;
-  border-radius: 50%;
-}
-
-.dc-user-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-}
 
 .dc-avatar {
   width: 38px;
@@ -302,21 +72,6 @@
   object-fit: cover;
 }
 
-.dc-user-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.dc-user-name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--dc-text-heading);
-}
-
-.dc-user-role {
-  font-size: 0.75rem;
-  color: var(--dc-text-muted);
-}
 
 /* ==========================================================
    CONTENT BODY
@@ -973,7 +728,6 @@
 }
 
 
-
 /* ==========================================================
    DEMO TOGGLE BUTTON
    ========================================================== */
@@ -1189,4 +943,39 @@
 
 .dc-modal-btn.submit:hover {
   background: var(--dc-primary-hover);
+}
+
+/* ===================== VEHICLE PHOTO UPLOAD (Add Vehicle form) ===================== */
+
+.dc-form-group input[type="file"] {
+  padding: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.dc-photo-preview {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--dc-border-subtle);
+}
+
+.dc-form-hint {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.dc-form-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.8rem;
+}
+
+/* Placeholder shown in a secondary vehicle row when the car has no photo */
+.dc-small-thumb.vehicle-photo-placeholder {
+  flex-shrink: 0;
 }

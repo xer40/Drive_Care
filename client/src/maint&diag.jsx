@@ -1,24 +1,20 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./maint&diag.css";
 import { authFetch } from "./auth.js";
 import DiagnosticsChat from "./DiagnosticsChat.jsx";
+import { VehiclePhoto, ChangePhotoButton } from "./VehiclePhoto.jsx";
 
 
 function Maintenance() {
   const [activeTab, setActiveTab] = useState("overview");
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // The logged-in user's vehicles from the database, and which one is selected
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
 
-  useEffect(() => {
-    authFetch("/api/vehicles")
-      .then((data) => {
-        setVehicles(data.vehicles);
-        if (data.vehicles.length > 0) setSelectedVehicleId(data.vehicles[0].id);
-      })
-      .catch((err) => console.error("Could not load vehicles:", err.message));
-  }, []);
 
   const selectedVehicle = vehicles.find((vehicle) => vehicle.id === selectedVehicleId);
   const vehicleName = selectedVehicle
@@ -40,6 +36,33 @@ function Maintenance() {
     // Wait for the chat to appear, then scroll to it
     setTimeout(() => chatRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   };
+
+  // A question asked in the homepage's "Ask DriveCare AI" box arrives here as
+  // { diagnoseQuestion, vehicleId }. It's sent once the vehicles have loaded: opening the chat earlier would
+  // restart it when the car list arrives and ask the AI twice
+  const handoff = useRef(location.state);
+
+  useEffect(() => {
+    const { diagnoseQuestion, vehicleId } = handoff.current || {};
+
+    authFetch("/api/vehicles")
+      .then((data) => {
+        setVehicles(data.vehicles);
+        const asked = data.vehicles.find((vehicle) => vehicle.id === vehicleId);
+        if (asked) setSelectedVehicleId(asked.id);
+        else if (data.vehicles.length > 0) setSelectedVehicleId(data.vehicles[0].id);
+      })
+      .catch((err) => console.error("Could not load vehicles:", err.message))
+      .finally(() => {
+        if (diagnoseQuestion) {
+          openDiagnostics(diagnoseQuestion);
+          // Forget the handed-over question so refreshing the page doesn't ask it again
+          navigate(".", { replace: true, state: null });
+        }
+      });
+    // Runs once when the page opens
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [records, setRecords] = useState([
   {
@@ -304,17 +327,28 @@ const cancelRecord = () => {
 
           {/* Vehicle Image */}
           <div className="vehicle-image">
-            <img
-              src="https://images.unsplash.com/photo-1493238792000-8113da705763"
-              alt="Vehicle"
+            {/* The selected car's photo; the stock picture is only shown when no car has been added */}
+            <VehiclePhoto
+              vehicle={selectedVehicle}
+              width={800}
+              height={360}
+              fallback={selectedVehicle ? undefined : "https://images.unsplash.com/photo-1493238792000-8113da705763"}
             />
+            {selectedVehicle && (
+              <ChangePhotoButton
+                vehicle={selectedVehicle}
+                onUpdated={(updated) =>
+                  setVehicles((prev) => prev.map((v) => (v.id === updated.id ? updated : v)))
+                }
+              />
+            )}
           </div>
 
           {/* Vehicle Information */}
           <div className="vehicle-overview-info">
 
             <div className="vehicle-overview-heading">
-              <h2>2022 Dodge Charger</h2>             
+              <h2>{vehicleName || "2022 Dodge Charger"}</h2>             
               <span className="vehicle-status">Active</span>
             </div>
 
@@ -324,7 +358,13 @@ const cancelRecord = () => {
 
               <div>
                 <span>Current Mileage</span>
-                <strong>42,500 mi</strong>
+                <strong>
+                  {selectedVehicle
+                    ? selectedVehicle.current_mileage != null
+                      ? `${Number(selectedVehicle.current_mileage).toLocaleString()} mi`
+                      : "Not set"
+                    : "42,500 mi"}
+                </strong>
               </div>
 
               <div>

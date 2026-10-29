@@ -30,18 +30,18 @@ router.get('/vehicles/:vehicleId/maintenance', async (req, res) => {
   res.json({ success: true, records: result.rows });
 });
 
-// Log a service. Expects { service_type, service_date } and optionally { mileage, cost, notes }
+// Log a service. Expects { service_type, service_date } and optionally { mileage, cost, service_location }
 router.post('/vehicles/:vehicleId/maintenance', async (req, res) => {
   await getOwnedVehicle(req.user.id, req.params.vehicleId);
 
-  const { service_type, service_date, mileage, cost, notes } = req.body;
+  const { service_type, service_date, mileage, cost, service_location } = req.body;
   requireFields(req.body, ['service_type', 'service_date']);
   requireDates(req.body, ['service_date']);
 
   const result = await pool.query(
-    `INSERT INTO maintenance_records (vehicle_id, service_type, service_date, mileage, cost, notes)
+    `INSERT INTO maintenance_records (vehicle_id, service_type, service_date, mileage, cost, service_location)
      VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [req.params.vehicleId, service_type, service_date, orNull(mileage), orNull(cost), orNull(notes)]
+    [req.params.vehicleId, service_type, service_date, orNull(mileage), orNull(cost), orNull(service_location)]
   );
   await raiseVehicleMileage(result.rows[0]);
   res.status(201).json({ success: true, record: result.rows[0] });
@@ -59,7 +59,7 @@ router.patch('/maintenance/:id', async (req, res) => {
   requireDates(req.body, ['service_date']);
   const { sets, values } = buildUpdate(
     req.body,
-    ['service_type', 'service_date', 'mileage', 'cost', 'notes'],
+    ['service_type', 'service_date', 'mileage', 'cost', 'service_location'],
     ['service_type', 'service_date']
   );
 
