@@ -6,6 +6,61 @@ import DiagnosticsChat from "./DiagnosticsChat.jsx";
 import { VehiclePhoto, ChangePhotoButton } from "./VehiclePhoto.jsx";
 
 
+// The API stores a record as { service_type, service_date, service_location, category, category_icon, ... }.
+// The page's tables and form use shorter names, so records are converted on the way in and out
+const toPageRecord = (record) => ({
+  id: record.id,
+  service: record.service_type,
+  date: record.service_date,
+  mileage: record.mileage,
+  cost: record.cost,
+  location: record.service_location,
+  category: record.category,
+  icon: record.category_icon,
+});
+
+const toApiRecord = (record) => ({
+  service_type: record.service,
+  service_date: record.date,
+  mileage: record.mileage,
+  cost: record.cost,
+  service_location: record.location,
+});
+
+// "Sep 15, 2026" from a 'YYYY-MM-DD' date
+const formatDate = (date) =>
+  new Date(`${date}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+const formatMoney = (amount) =>
+  `$${Number(amount || 0).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+
+// Colours for the costs chart (the legend dots use the matching CSS classes)
+const CATEGORY_STYLE = {
+  Tires: { color: "#3b82f6", dot: "tires" },
+  Brakes: { color: "#fb923c", dot: "brakes" },
+  "Oil & Fluids": { color: "#22c55e", dot: "fluids" },
+  Filters: { color: "#8b5cf6", dot: "filters" },
+  Engine: { color: "#ef4444", dot: "engine" },
+  Electrical: { color: "#eab308", dot: "electrical" },
+  Other: { color: "#94a3b8", dot: "other" },
+};
+
+// Builds the donut's conic-gradient from the summary's cost_by_category. Grey ring when there's nothing to show
+const donutBackground = (costByCategory = []) => {
+  const used = costByCategory.filter((c) => c.total > 0);
+  const total = used.reduce((sum, c) => sum + c.total, 0);
+  if (total === 0) return "#e2e8f0";
+
+  let start = 0;
+  const slices = used.map((c) => {
+    const end = start + (c.total / total) * 100;
+    const slice = `${CATEGORY_STYLE[c.category]?.color || "#94a3b8"} ${start}% ${end}%`;
+    start = end;
+    return slice;
+  });
+  return `conic-gradient(${slices.join(", ")})`;
+};
+
 function Maintenance() {
   const [activeTab, setActiveTab] = useState("overview");
   const location = useLocation();
@@ -64,58 +119,72 @@ function Maintenance() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [records, setRecords] = useState([
-  {
-    id: 1,
-    service: "Oil Change",
-    category: "Oil & Fluids",
-    date: "2026-09-15",
-    mileage: 42000,
-    cost: 89.99,
-    location: "Valvoline",
-    icon: "🛢️",
-  },
-  {
-    id: 2,
-    service: "Brake Pads (Front)",
-    category: "Brakes",
-    date: "2026-08-02",
-    mileage: 39400,
-    cost: 350.00,
-    location: "Local Shop",
-    icon: "🔧",
-  },
-  {
-    id: 3,
-    service: "Air Filter",
-    category: "Filters",
-    date: "2026-06-10",
-    mileage: 37200,
-    cost: 45.00,
-    location: "AutoZone",
-    icon: "🔩",
-  },
-  {
-    id: 4,
-    service: "Tire Rotation",
-    category: "Tires",
-    date: "2026-03-18",
-    mileage: 33100,
-    cost: 30.00,
-    location: "Discount Tire",
-    icon: "🛞",
-  },
-  {
-    id: 5,
-    service: "Battery Replacement",
-    category: "Electrical",
-    date: "2026-01-05",
-    mileage: 28500,
-    cost: 220.00,
-    location: "Dealer",
-    icon: "🔋",
-  },
-]);
+  // Maintenance records for the selected car, from the database
+  const [records, setRecords] = useState([]);
+  // Stat cards use this year's numbers; the costs chart uses whichever period is picked
+  const [yearSummary, setYearSummary] = useState(null);
+  const [costPeriod, setCostPeriod] = useState("year");
+  const [costSummary, setCostSummary] = useState(null);
+  // The car's next open reminder, for the Next Maintenance card
+  const [nextReminder, setNextReminder] = useState(null);
+  const [savingRecord, setSavingRecord] = useState(false);
+  // Bumped after a save or delete so everything below reloads
+  const [dataVersion, setDataVersion] = useState(0);
+  // Which car (and version) the records on screen belong to; anything else means they're still loading
+  const [recordsLoadedFor, setRecordsLoadedFor] = useState(null);
+  const recordsLoading = Boolean(selectedVehicleId) && recordsLoadedFor !== `${selectedVehicleId}-${dataVersion}`;
+
+  // Load the selected car's records, this year's summary and its next reminder
+  useEffect(() => {
+    if (!selectedVehicleId) return;
+
+    authFetch(`/api/vehicles/${selectedVehicleId}/maintenance`)
+      .then((data) => setRecords(data.records.map(toPageRecord)))
+      .catch((err) => console.error("Could not load maintenance records:", err.message))
+      .finally(() => setRecordsLoadedFor(`${selectedVehicleId}-${dataVersion}`));
+
+    authFetch(`/api/vehicles/${selectedVehicleId}/maintenance/summary?period=year`)
+      .then((data) => setYearSummary(data))
+      .catch((err) => console.error("Could not load maintenance summary:", err.message));
+
+    // Open reminders come back soonest first
+    authFetch(`/api/vehicles/${selectedVehicleId}/reminders`)
+      .then((data) => setNextReminder(data.reminders.find((r) => !r.is_done) || null))
+      .catch((err) => console.error("Could not load reminders:", err.message));
+  }, [selectedVehicleId, dataVersion]);
+
+  // The costs chart, for the period picked in its dropdown
+  useEffect(() => {
+    if (!selectedVehicleId) return;
+
+    authFetch(`/api/vehicles/${selectedVehicleId}/maintenance/summary?period=${costPeriod}`)
+      .then((data) => setCostSummary(data))
+      .catch((err) => console.error("Could not load maintenance costs:", err.message));
+  }, [selectedVehicleId, costPeriod, dataVersion]);
+
+  // After a save or delete: reload the records and numbers, and the car itself, because logging a higher
+  // mileage raises the car's current mileage on the server
+  const refreshAfterChange = () => {
+    setDataVersion((version) => version + 1);
+    authFetch(`/api/vehicles/${selectedVehicleId}`)
+      .then((data) => setVehicles((prev) => prev.map((v) => (v.id === data.vehicle.id ? data.vehicle : v))))
+      .catch(() => {});
+  };
+
+  // Next Maintenance card: how soon the next reminder is due
+  const describeDue = (reminder) => {
+    if (!reminder) return null;
+    const mileage = selectedVehicle?.current_mileage;
+    if (reminder.due_mileage != null && mileage != null) {
+      const left = reminder.due_mileage - mileage;
+      return left <= 0 ? <strong>Overdue</strong> : <>Due in <strong>{left.toLocaleString()} miles</strong></>;
+    }
+    if (reminder.due_date) {
+      const days = Math.round((new Date(`${reminder.due_date}T00:00:00`) - new Date()) / 86400000);
+      return days < 0 ? <strong>Overdue</strong> : <>Due on <strong>{formatDate(reminder.due_date)}</strong></>;
+    }
+    return <>Due at <strong>{Number(reminder.due_mileage).toLocaleString()} miles</strong></>;
+  };
 
   const emptyRecord = {
   service: "",
@@ -161,28 +230,33 @@ const [editingRecordId, setEditingRecordId] = useState(null);
     return;
   }
 
-  if (editingRecordId !== null) {
-    setRecords((previousRecords) =>
-      previousRecords.map((record) =>
-        record.id === editingRecordId
-          ? { ...record, ...recordData }
-          : record
-      )
-    );
-  } else {
-    const record = {
-      ...recordData,
-      id: crypto.randomUUID(),
-      category: "General Maintenance",
-      icon: "🔧",
-    };
-
-    setRecords((previousRecords) => [...previousRecords, record]);
+  if (!selectedVehicleId) {
+    alert("Add a vehicle first, then you can log its maintenance.");
+    return;
   }
 
-  setNewRecord({ ...emptyRecord });
-  setEditingRecordId(null);
-  setActiveTab("records");
+  saveRecord(recordData);
+};
+
+// Saves a new record (POST) or changes to an existing one (PATCH), then goes back to the records list
+const saveRecord = async (recordData) => {
+  setSavingRecord(true);
+  try {
+    if (editingRecordId !== null) {
+      await authFetch(`/api/maintenance/${editingRecordId}`, { method: "PATCH", body: toApiRecord(recordData) });
+    } else {
+      await authFetch(`/api/vehicles/${selectedVehicleId}/maintenance`, { method: "POST", body: toApiRecord(recordData) });
+    }
+    refreshAfterChange();
+
+    setNewRecord({ ...emptyRecord });
+    setEditingRecordId(null);
+    setActiveTab("records");
+  } catch (err) {
+    alert(`Could not save the record: ${err.message === "Failed to fetch" ? "can't reach the server" : err.message}`);
+  } finally {
+    setSavingRecord(false);
+  }
 };
 
 const editRecord = (record) => {
@@ -198,16 +272,19 @@ const editRecord = (record) => {
   setActiveTab("add");
 };
 
-const deleteRecord = (id) => {
+const deleteRecord = async (id) => {
   const confirmed = window.confirm(
     "Are you sure you want to delete this maintenance record?"
   );
 
   if (!confirmed) return;
 
-  setRecords((previousRecords) =>
-    previousRecords.filter((record) => record.id !== id)
-  );
+  try {
+    await authFetch(`/api/maintenance/${id}`, { method: "DELETE" });
+    refreshAfterChange();
+  } catch (err) {
+    alert(`Could not delete the record: ${err.message}`);
+  }
 };
 
 const cancelRecord = () => {
@@ -369,7 +446,9 @@ const cancelRecord = () => {
 
               <div>
                 <span>Last Service</span>
-                <strong>Sep 15, 2026</strong>
+                <strong>
+                  {yearSummary?.last_service ? formatDate(yearSummary.last_service.service_date) : "None yet"}
+                </strong>
               </div>
 
             </div>
@@ -405,22 +484,37 @@ const cancelRecord = () => {
               UPCOMING SERVICE
             </span>
 
-            <h3>Oil Change</h3>
+            {nextReminder ? (
+              <>
+                <h3>{nextReminder.service_type}</h3>
 
-            <p className="maintenance-due">
-              Due in <strong>1,200 miles</strong>
-            </p>
+                <p className="maintenance-due">
+                  {describeDue(nextReminder)}
+                </p>
 
-            {/* Mileage Progress Bar */}
-            <div className="maintenance-progress">
-              <div className="maintenance-progress-fill"></div>
-            </div>
+                {/* Mileage progress: how close the odometer is to the due mileage */}
+                {nextReminder.due_mileage != null && selectedVehicle?.current_mileage != null && (
+                  <>
+                    <div className="maintenance-progress">
+                      <div
+                        className="maintenance-progress-fill"
+                        style={{ width: `${Math.min(100, Math.round((selectedVehicle.current_mileage / nextReminder.due_mileage) * 100))}%` }}
+                      ></div>
+                    </div>
 
-            {/* Mileage Information */}
-            <div className="maintenance-mileage">
-              <span>42,500 mi</span>
-              <span>43,700 mi</span>
-            </div>
+                    <div className="maintenance-mileage">
+                      <span>{Number(selectedVehicle.current_mileage).toLocaleString()} mi</span>
+                      <span>{Number(nextReminder.due_mileage).toLocaleString()} mi</span>
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <h3>Nothing scheduled</h3>
+                <p className="maintenance-due">No upcoming services for this vehicle.</p>
+              </>
+            )}
 
             {/* Reminder Message */}
             <div className="maintenance-reminder">
@@ -504,7 +598,7 @@ const cancelRecord = () => {
           </div>
 
           <div className="stat-info">
-            <h3>5</h3>
+            <h3>{yearSummary?.total_records ?? 0}</h3>
             <p>Total Records</p>
           </div>
 
@@ -520,7 +614,7 @@ const cancelRecord = () => {
           </div>
 
           <div className="stat-info">
-            <h3>$642</h3>
+            <h3>{formatMoney(yearSummary?.total_spent)}</h3>
             <p>Total Spent (This Year)</p>
           </div>
 
@@ -536,7 +630,7 @@ const cancelRecord = () => {
           </div>
 
           <div className="stat-info">
-            <h3>3</h3>
+            <h3>{yearSummary?.upcoming_services ?? 0}</h3>
             <p>Upcoming Services</p>
           </div>
 
@@ -547,13 +641,18 @@ const cancelRecord = () => {
         {/* CARD 4: VEHICLE HEALTH */}
         <div className="maintenance-stat-card">
 
-          <div className="stat-icon stat-icon-green">
-            ✓
+          {/* Vehicle health: flags overdue services from the car's reminders */}
+          <div className={`stat-icon ${yearSummary?.overdue_services > 0 ? "stat-icon-blue" : "stat-icon-green"}`}>
+            {yearSummary?.overdue_services > 0 ? "⚠" : "✓"}
           </div>
 
           <div className="stat-info">
-            <h3>All Good</h3>
-            <p>No critical issues</p>
+            <h3>{yearSummary?.overdue_services > 0 ? "Needs Attention" : "All Good"}</h3>
+            <p>
+              {yearSummary?.overdue_services > 0
+                ? `${yearSummary.overdue_services} overdue service${yearSummary.overdue_services === 1 ? "" : "s"}`
+                : "No overdue services"}
+            </p>
           </div>
 
           <span className="stat-arrow">›</span>
@@ -657,6 +756,18 @@ const cancelRecord = () => {
 
         ))}
 
+        {records.length === 0 && (
+          <tr>
+            <td colSpan={6} className="records-empty">
+              {recordsLoading
+                ? "Loading records..."
+                : selectedVehicleId
+                  ? "No maintenance records yet. Use Add Record to log a service."
+                  : "Add a vehicle to start tracking maintenance."}
+            </td>
+          </tr>
+        )}
+
       </tbody>
 
     </table>
@@ -679,7 +790,7 @@ const cancelRecord = () => {
     <div className="costs-header">
       <h2>Maintenance Costs</h2>
 
-      <select defaultValue="year">
+      <select value={costPeriod} onChange={(e) => setCostPeriod(e.target.value)}>
         <option value="year">This Year</option>
         <option value="month">This Month</option>
         <option value="all">All Time</option>
@@ -688,53 +799,31 @@ const cancelRecord = () => {
 
     <div className="costs-content">
 
-      {/* DONUT CHART */}
-      <div className="costs-donut">
+      {/* DONUT CHART (slices sized by how much was spent in each category) */}
+      <div className="costs-donut" style={{ background: donutBackground(costSummary?.cost_by_category) }}>
 
         <div className="costs-donut-center">
-          <strong>$642</strong>
+          <strong>{formatMoney(costSummary?.total_spent)}</strong>
           <span>Total</span>
         </div>
 
       </div>
 
-      {/* COST BREAKDOWN */}
+      {/* COST BREAKDOWN (only categories with spending in this period) */}
       <div className="costs-legend">
 
-        <div className="costs-legend-item">
-          <span className="legend-dot tires"></span>
-          <span className="legend-name">Tires</span>
-          <strong>$120</strong>
-          <span className="legend-percent">19%</span>
-        </div>
+        {(costSummary?.cost_by_category || []).filter((c) => c.total > 0).map((c) => (
+          <div className="costs-legend-item" key={c.category}>
+            <span className={`legend-dot ${CATEGORY_STYLE[c.category]?.dot || "other"}`}></span>
+            <span className="legend-name">{c.category}</span>
+            <strong>{formatMoney(c.total)}</strong>
+            <span className="legend-percent">{c.percent}%</span>
+          </div>
+        ))}
 
-        <div className="costs-legend-item">
-          <span className="legend-dot brakes"></span>
-          <span className="legend-name">Brakes</span>
-          <strong>$350</strong>
-          <span className="legend-percent">55%</span>
-        </div>
-
-        <div className="costs-legend-item">
-          <span className="legend-dot fluids"></span>
-          <span className="legend-name">Oil & Fluids</span>
-          <strong>$89</strong>
-          <span className="legend-percent">14%</span>
-        </div>
-
-        <div className="costs-legend-item">
-          <span className="legend-dot filters"></span>
-          <span className="legend-name">Filters</span>
-          <strong>$45</strong>
-          <span className="legend-percent">7%</span>
-        </div>
-
-        <div className="costs-legend-item">
-          <span className="legend-dot other"></span>
-          <span className="legend-name">Other</span>
-          <strong>$38</strong>
-          <span className="legend-percent">6%</span>
-        </div>
+        {!(costSummary?.total_spent > 0) && (
+          <p className="costs-empty">No maintenance costs in this period.</p>
+        )}
 
       </div>
 
@@ -914,10 +1003,13 @@ const cancelRecord = () => {
           <button
             type="submit"
             className="record-save-button"
+            disabled={savingRecord}
           >
-            {editingRecordId !== null
-              ? "Save Changes"
-              : "+ Save Record"}
+            {savingRecord
+              ? "Saving..."
+              : editingRecordId !== null
+                ? "Save Changes"
+                : "+ Save Record"}
           </button>
 
         </div>
@@ -1013,7 +1105,7 @@ const cancelRecord = () => {
             {record.icon || "🔧"} {record.service}
           </td>
 
-          <td>{record.date}</td>
+          <td>{formatDate(record.date)}</td>
 
           <td>
             {Number(record.mileage).toLocaleString()} mi
@@ -1055,7 +1147,7 @@ const cancelRecord = () => {
       {records.length === 0 && (
         <tr>
           <td colSpan={6} className="records-empty">
-            No maintenance records yet.
+            {recordsLoading ? "Loading records..." : "No maintenance records yet."}
           </td>
         </tr>
       )}

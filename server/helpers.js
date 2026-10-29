@@ -84,6 +84,11 @@ const getOwnedVehicle = async (userId, vehicleId) => {
   return result.rows[0];
 };
 
+// Today's date as 'YYYY-MM-DD', according to the database. The database runs on the app's local time
+// (America/Los_Angeles), while Node's clock is UTC, which is already "tomorrow" every evening. Asking the
+// database keeps "today", "this month", "overdue" and so on consistent everywhere
+const getToday = async () => (await pool.query('SELECT CURRENT_DATE::text AS today')).rows[0].today;
+
 // Friendly messages for the database constraints
 const CONSTRAINT_MESSAGES = {
   users_username_key: 'This username is already taken.',
@@ -129,4 +134,4 @@ const errorHandler = (err, req, res, next) => {
   return res.status(500).json({ success: false, error: 'An internal server error occurred.' });
 };
 
-module.exports = { HttpError, isBlank, orNull, requireFields, requirePassword, requireEmail, requireDates, buildUpdate, checkId, getOwnedVehicle, errorHandler };
+module.exports = { HttpError, isBlank, orNull, requireFields, requirePassword, requireEmail, requireDates, buildUpdate, checkId, getOwnedVehicle, getToday, errorHandler };

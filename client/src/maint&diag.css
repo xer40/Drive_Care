@@ -1638,3 +1638,26 @@
   }
 
 }
+
+/* =============================
+   CONNECTED DATA: extra chart colours and empty states
+============================= */
+
+.maintenance-page .legend-dot.engine {
+  background: #ef4444;
+}
+
+.maintenance-page .legend-dot.electrical {
+  background: #eab308;
+}
+
+.maintenance-page .costs-empty {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.maintenance-page .record-save-button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}

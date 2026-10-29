@@ -2,7 +2,7 @@ const express = require('express');
 // Import the official Google Gen AI SDK
 const { GoogleGenAI } = require('@google/genai');
 const pool = require('../db');
-const { HttpError, isBlank, orNull, requireFields, buildUpdate, checkId, getOwnedVehicle } = require('../helpers');
+const { HttpError, isBlank, orNull, requireFields, buildUpdate, checkId, getOwnedVehicle, getToday } = require('../helpers');
 const { TOOL_DECLARATIONS, runTool } = require('../aiTools');
 
 const router = express.Router();
@@ -60,9 +60,10 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 const formatMiles = (miles) => `${Number(miles).toLocaleString('en-US')} mi`;
 
-// "3 weeks ago", "in 2 months"... so the model can tell a fresh repair from an old one
-const describeDate = (dateString) => {
-  const days = Math.round((new Date(`${dateString}T00:00:00Z`).getTime() - Date.now()) / DAY_MS);
+// "3 weeks ago", "in 2 months"... so the model can tell a fresh repair from an old one.
+// today is 'YYYY-MM-DD' from the database (see getToday), so both dates are counted the same way
+const describeDate = (dateString, today) => {
+  const days = Math.round((Date.parse(`${dateString}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / DAY_MS);
   const abs = Math.abs(days);
   let span;
   if (abs < 14) span = `${abs} day${abs === 1 ? '' : 's'}`;
@@ -75,8 +76,8 @@ const describeDate = (dateString) => {
 };
 
 // One line per service, newest first, with how long and how many miles ago it was done
-const describeRecord = (record, currentMileage) => {
-  const parts = [`${record.service_date} (${describeDate(record.service_date)})`, record.service_type];
+const describeRecord = (record, currentMileage, today) => {
+  const parts = [`${record.service_date} (${describeDate(record.service_date, today)})`, record.service_type];
 
   if (record.mileage !== null) {
     let at = `at ${formatMiles(record.mileage)}`;
@@ -92,12 +93,11 @@ const describeRecord = (record, currentMileage) => {
 };
 
 // Upcoming services from the reminders table, marked OVERDUE when past their date or mileage
-const describeReminder = (reminder, currentMileage) => {
+const describeReminder = (reminder, currentMileage, today) => {
   const due = [];
-  if (reminder.due_date) due.push(`by ${reminder.due_date} (${describeDate(reminder.due_date)})`);
+  if (reminder.due_date) due.push(`by ${reminder.due_date} (${describeDate(reminder.due_date, today)})`);
   if (reminder.due_mileage !== null) due.push(`at ${formatMiles(reminder.due_mileage)}`);
 
-  const today = new Date().toISOString().slice(0, 10);
   const overdue = (reminder.due_date && reminder.due_date < today) ||
     (reminder.due_mileage !== null && currentMileage !== null && currentMileage >= reminder.due_mileage);
 
@@ -122,7 +122,7 @@ const buildVehicleContext = async (userId, vehicleId) => {
   }
 
   const ids = vehicles.rows.map((car) => car.id);
-  const [records, reminders] = await Promise.all([
+  const [records, reminders, today] = await Promise.all([
     pool.query(
       `SELECT vehicle_id, service_date, service_type, mileage, cost, service_location FROM maintenance_records
        WHERE vehicle_id = ANY($1) ORDER BY service_date DESC, id DESC`,
@@ -133,6 +133,7 @@ const buildVehicleContext = async (userId, vehicleId) => {
        WHERE vehicle_id = ANY($1) AND NOT is_done ORDER BY due_date NULLS LAST, due_mileage NULLS LAST`,
       [ids]
     ),
+    getToday(),
   ]);
 
   const intro = vehicles.rows.length > 1
@@ -142,11 +143,11 @@ const buildVehicleContext = async (userId, vehicleId) => {
   return intro + vehicles.rows.map((car) => {
     const mileage = car.current_mileage;
     const carRecords = records.rows.filter((log) => log.vehicle_id === car.id);
-    const logs = carRecords.slice(0, RECORDS_IN_CONTEXT).map((log) => describeRecord(log, mileage));
+    const logs = carRecords.slice(0, RECORDS_IN_CONTEXT).map((log) => describeRecord(log, mileage, today));
     if (carRecords.length > RECORDS_IN_CONTEXT) {
       logs.push(`- ...${carRecords.length - RECORDS_IN_CONTEXT} older records not shown. Use get_maintenance_records to search them.`);
     }
-    const pending = reminders.rows.filter((r) => r.vehicle_id === car.id).map((r) => describeReminder(r, mileage));
+    const pending = reminders.rows.filter((r) => r.vehicle_id === car.id).map((r) => describeReminder(r, mileage, today));
 
     return [
       `VEHICLE (id ${car.id}): ${car.year} ${car.make} ${car.model}`,

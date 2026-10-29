@@ -262,10 +262,53 @@ const { vehicle } = await authFetch('/api/vehicles', {
 | Method | Path | Body |
 |---|---|---|
 | `GET` | `/api/vehicles/:vehicleId/maintenance` | |
+| `GET` | `/api/vehicles/:vehicleId/maintenance/summary` | none. Optional `?period=year` (default), `month` or `all` |
 | `POST` | `/api/vehicles/:vehicleId/maintenance` | `service_type`, `service_date`, optional `mileage`, `cost`, `service_location` |
 | `GET` | `/api/maintenance/:id` | |
 | `PATCH` | `/api/maintenance/:id` | any of the fields above |
 | `DELETE` | `/api/maintenance/:id` | |
+
+Every record these routes return also has a `category` and `category_icon`, worked out from `service_type` by [`maintenanceCategories.js`](server/maintenanceCategories.js): Brakes 🛑, Tires 🛞, Oil & Fluids 🛢️, Filters 🌬️, Engine ⚙️, Electrical 🔋 or Other 🔧. For example "Front brake pads" is Brakes and "Oil change and filter" is Oil & Fluids. To change how services are grouped, edit the keyword lists in that file.
+
+`GET /api/vehicles/:vehicleId/maintenance/summary` returns the numbers for the maintenance page's stat cards and costs chart:
+
+```json
+{
+  "period": "year",
+  "total_records": 5,
+  "records_in_period": 3,
+  "total_spent": 642.5,
+  "total_spent_all_time": 812.5,
+  "last_service": { "service_type": "Oil Change", "service_date": "2026-09-15", "mileage": 42000, "category": "Oil & Fluids", "...": "..." },
+  "upcoming_services": 3,
+  "overdue_services": 1,
+  "cost_by_category": [
+    { "category": "Brakes", "icon": "🛑", "total": 350, "percent": 54 },
+    { "category": "Tires", "icon": "🛞", "total": 120, "percent": 19 }
+  ]
+}
+```
+
+`total_spent`, `records_in_period` and `cost_by_category` cover the chosen period (this calendar year, this calendar month, or all time). `cost_by_category` always lists every category in the same order, with `0` for unused ones. `last_service` is `null` when there are no records. `upcoming_services` and `overdue_services` count the vehicle's open reminders.
+
+**Connecting the maintenance page's add-record form.** The form's fields map to the API like this:
+
+| Form field | API field |
+|---|---|
+| `service` | `service_type` |
+| `date` | `service_date` (`YYYY-MM-DD`, which is what `<input type="date">` gives) |
+| `mileage` | `mileage` |
+| `cost` | `cost` |
+| `location` | `service_location` |
+
+```js
+await authFetch(`/api/vehicles/${vehicleId}/maintenance`, {
+  method: 'POST',
+  body: { service_type: service, service_date: date, mileage, cost, service_location: location },
+})
+```
+
+Use `record.category` and `record.category_icon` from the API instead of the sample data's `category` / `icon`. Edit with `PATCH /api/maintenance/:id` and delete with `DELETE /api/maintenance/:id`.
 
 Logging or editing a record with a `mileage` higher than the vehicle's `current_mileage` raises the vehicle's `current_mileage` to match. It is never lowered, so older records and deletions don't wind it back.
 
