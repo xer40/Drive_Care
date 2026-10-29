@@ -41,7 +41,7 @@ function Navbar() {
 
         <button
           className="dc-nav-item"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/home")}
         >
           <span className="dc-nav-icon">⌂</span>
           <span>Home</span>

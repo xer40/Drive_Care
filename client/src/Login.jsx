@@ -51,7 +51,7 @@ function Login() {
       if (response.ok) {
         // Keep this user's JWT; protected API calls send it as "Authorization: Bearer <token>"
         saveToken(data.token)
-        navigate('/')
+        navigate('/home')
       } else {
         setStatus({ text: data.message || data.error || 'Login failed.', error: true })
       }

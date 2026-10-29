@@ -5,6 +5,7 @@ import Maintenance from './maint&diag.jsx'
 import Homepage from './Homepage.jsx'
 import Community from "./Pages/community.jsx"
 import Layout from "./Components/Layout.jsx"
+import RequireAuth from './RequireAuth.jsx'
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/home" element={<Homepage />} />
+      <Route path="/home" element={<RequireAuth><Homepage /></RequireAuth>} />
 
       <Route path="/maintenance" element={
         <Layout>
