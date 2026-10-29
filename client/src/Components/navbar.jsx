@@ -65,25 +65,6 @@ function Navbar() {
           <span>Maintenance</span>
         </button>
 
-
-        <button
-          className="dc-nav-item"
-          onClick={() => navigate("/reminders")}
-        >
-          <span className="dc-nav-icon">📅</span>
-          <span>Reminders</span>
-        </button>
-
-
-        <button
-          className="dc-nav-item"
-          onClick={() => navigate("/expenses")}
-        >
-          <span className="dc-nav-icon">＄</span>
-          <span>Expenses</span>
-        </button>
-
-
         <button
           className="dc-nav-item"
           onClick={() => navigate("/community")}
