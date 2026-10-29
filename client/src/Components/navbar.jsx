@@ -48,13 +48,7 @@ function Navbar() {
         </button>
 
 
-        <button
-          className="dc-nav-item"
-          onClick={() => navigate("/garage")}
-        >
-          <span className="dc-nav-icon">🚗</span>
-          <span>My Garage</span>
-        </button>
+       
 
 
         <button
