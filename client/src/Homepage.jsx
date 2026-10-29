@@ -597,6 +597,7 @@ export default function Homepage() {
                 <input 
                   type="number" 
                   value={newVehicle.current_mileage}
+                  min = "0"
                   onChange={(e) => setNewVehicle({...newVehicle, current_mileage: e.target.value})}
                   placeholder="e.g. 42500"
                 />
