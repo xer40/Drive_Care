@@ -2,389 +2,171 @@
    DriveCare Modern Dashboard Homepage Styles
    ========================================================== */
 
+
+/* ==========================================================
+   THEME VARIABLES
+   ========================================================== */
+
 :root {
   --dc-bg-page: #f8fafc;
+
   --dc-sidebar-bg: #0b1324;
   --dc-sidebar-item: #94a3b8;
   --dc-sidebar-item-active: #ffffff;
+
   --dc-primary-blue: #2563eb;
   --dc-primary-hover: #1d4ed8;
+
   --dc-card-bg: #ffffff;
   --dc-border-subtle: #e2e8f0;
+
   --dc-text-heading: #0f172a;
   --dc-text-muted: #64748b;
   --dc-text-light: #94a3b8;
-  --dc-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --dc-font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+
+/* ==========================================================
+   HOMEPAGE ROOT
+   ========================================================== */
 
 .dc-dashboard {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  background-color: var(--dc-bg-page);
-  font-family: var(--dc-font-family);
-  color: var(--dc-text-heading);
-  overflow: hidden;
-}
-
-/* ==========================================================
-   SIDEBAR
-   ========================================================== */
-.dc-sidebar {
-  width: 250px;
-  min-width: 250px;
-  background-color: var(--dc-sidebar-bg);
-  display: flex;
-  flex-direction: column;
-  padding: 24px 16px;
-  border-right: 1px solid #1e293b;
-  height: 100%;
-}
-
-.dc-sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 12px 28px 12px;
-}
-
-.dc-logo-icon {
-  width: 28px;
-  height: 28px;
-  color: #38bdf8;
-}
-
-.dc-logo-text {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -0.5px;
-}
-
-.dc-nav-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-}
-
-.dc-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: transparent;
-  border: none;
-  color: var(--dc-sidebar-item);
-  font-size: 0.925rem;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.15s ease-in-out;
-}
-
-.dc-nav-item svg {
-  width: 18px;
-  height: 18px;
-  stroke: currentColor;
-}
-
-.dc-nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.06);
-  color: #f1f5f9;
-}
-
-.dc-nav-item.active {
-  background-color: var(--dc-primary-blue);
-  color: var(--dc-sidebar-item-active);
-  font-weight: 600;
-}
-
-.dc-sidebar-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #1e293b;
-}
-
-.dc-unlock-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 10px 12px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.dc-unlock-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.dc-unlock-icon {
-  font-size: 1.2rem;
-}
-
-.dc-unlock-info h4 {
-  font-size: 0.825rem;
-  color: #f8fafc;
-  font-weight: 600;
-}
-
-.dc-unlock-info p {
-  font-size: 0.72rem;
-  color: var(--dc-sidebar-item);
-}
-
-.dc-arrow {
-  color: var(--dc-sidebar-item);
-  margin-left: auto;
-  font-size: 1.1rem;
-}
-
-.dc-bottom-links {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.dc-bottom-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  background: none;
-  border: none;
-  color: var(--dc-sidebar-item);
-  font-size: 0.85rem;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: color 0.15s ease;
-}
-
-.dc-bottom-link svg {
-  width: 16px;
-  height: 16px;
-}
-
-.dc-bottom-link:hover {
-  color: #ffffff;
-}
-
-/* ==========================================================
-   MAIN CONTENT AREA
-   ========================================================== */
-.dc-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
-}
-
-/* Topbar */
-.dc-topbar {
-  height: 70px;
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--dc-border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
-.dc-search-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #f1f5f9;
-  border: 1px solid var(--dc-border-subtle);
-  border-radius: 20px;
-  padding: 8px 16px;
-  width: 480px;
-  transition: border-color 0.15s ease;
-}
-
-.dc-search-container:focus-within {
-  border-color: var(--dc-primary-blue);
-  background-color: #ffffff;
-}
-
-.dc-search-icon {
-  width: 18px;
-  height: 18px;
-  color: var(--dc-text-muted);
-}
-
-.dc-search-input {
-  border: none;
-  background: transparent;
-  outline: none;
   width: 100%;
-  font-size: 0.875rem;
+  min-height: 100%;
+
+  background-color: var(--dc-bg-page);
+
+  font-family: var(--dc-font-family);
+
   color: var(--dc-text-heading);
 }
 
-.dc-search-badge {
-  background: #ffffff;
-  border: 1px solid var(--dc-border-subtle);
-  border-radius: 6px;
-  padding: 2px 6px;
-  font-size: 0.725rem;
-  color: var(--dc-text-muted);
-  font-family: inherit;
-  font-weight: 600;
-}
-
-.dc-topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.dc-notification-btn {
-  position: relative;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--dc-text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  border-radius: 50%;
-  transition: color 0.15s;
-}
-
-.dc-notification-btn:hover {
-  color: var(--dc-text-heading);
-}
-
-.dc-notification-btn svg {
-  width: 20px;
-  height: 20px;
-}
-
-.dc-notif-dot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 7px;
-  height: 7px;
-  background-color: #ef4444;
-  border-radius: 50%;
-}
-
-.dc-user-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-}
-
-.dc-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.dc-user-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.dc-user-name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--dc-text-heading);
-}
-
-.dc-user-role {
-  font-size: 0.75rem;
-  color: var(--dc-text-muted);
-}
 
 /* ==========================================================
    CONTENT BODY
    ========================================================== */
+
 .dc-content-body {
+  width: 100%;
+  max-width: 1600px;
+
+  margin: 0 auto;
+
   padding: 28px 32px;
+
   display: flex;
   flex-direction: column;
+
   gap: 28px;
-  max-width: 1600px;
-  width: 100%;
-  margin: 0 auto;
 }
 
-/* Hero Row */
+
+/* ==========================================================
+   HERO ROW
+   ========================================================== */
+
 .dc-hero-row {
   display: grid;
+
   grid-template-columns: 2fr 1fr;
+
   gap: 24px;
 }
 
-/* Welcome Banner */
+
+/* ==========================================================
+   WELCOME BANNER
+   ========================================================== */
+
 .dc-welcome-banner {
-  background: linear-gradient(135deg, #090e17 0%, #17253d 100%);
-  border-radius: 16px;
-  padding: 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  padding: 32px;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #090e17 0%,
+      #17253d 100%
+    );
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .dc-banner-content {
   max-width: 420px;
+
   z-index: 2;
 }
 
 .dc-banner-title {
+  margin-bottom: 12px;
+
   color: #ffffff;
+
   font-size: 2.1rem;
   font-weight: 800;
+
   line-height: 1.15;
-  margin-bottom: 12px;
+
   letter-spacing: -0.5px;
 }
 
 .dc-banner-subtitle {
-  color: #cbd5e1;
-  font-size: 0.925rem;
-  line-height: 1.5;
   margin-bottom: 22px;
+
+  color: #cbd5e1;
+
+  font-size: 0.925rem;
+
+  line-height: 1.5;
 }
 
+
+/* ==========================================================
+   PRIMARY BUTTON
+   ========================================================== */
+
 .dc-btn-primary {
-  background-color: var(--dc-primary-blue);
-  color: #ffffff;
-  border: none;
-  padding: 10px 22px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
   display: inline-flex;
   align-items: center;
+
   gap: 8px;
+
+  padding: 10px 22px;
+
+  border: none;
+  border-radius: 8px;
+
+  background-color: var(--dc-primary-blue);
+
+  color: #ffffff;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+
   cursor: pointer;
-  transition: background-color 0.15s ease;
+
+  transition:
+    background-color 0.15s ease;
 }
 
 .dc-btn-primary:hover {
@@ -395,82 +177,142 @@
   font-size: 1.1rem;
 }
 
+
+/* ==========================================================
+   BANNER VEHICLE IMAGE
+   ========================================================== */
+
 .dc-banner-car-image {
   position: absolute;
+
   right: -20px;
   bottom: -15px;
+
   width: 52%;
   height: 100%;
-  pointer-events: none;
+
   display: flex;
   align-items: center;
   justify-content: flex-end;
+
+  pointer-events: none;
 }
 
 .dc-banner-car-image img {
   width: 100%;
   height: 95%;
+
   object-fit: cover;
+
   border-radius: 14px;
-  mask-image: linear-gradient(to right, transparent 0%, black 35%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 35%);
+
+  mask-image:
+    linear-gradient(
+      to right,
+      transparent 0%,
+      black 35%
+    );
+
+  -webkit-mask-image:
+    linear-gradient(
+      to right,
+      transparent 0%,
+      black 35%
+    );
 }
 
-/* AI Assistant Card */
+
+/* ==========================================================
+   AI ASSISTANT CARD
+   ========================================================== */
+
 .dc-ai-card {
-  background-color: #111c30;
-  border-radius: 16px;
-  padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  padding: 24px;
+
   border: 1px solid #1e293b;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+
+  background-color: #111c30;
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .dc-ai-header {
   display: flex;
   align-items: flex-start;
+
   gap: 12px;
 }
 
 .dc-ai-icon-badge {
-  background: rgba(56, 189, 248, 0.15);
-  border-radius: 8px;
   padding: 6px 8px;
+
+  border-radius: 8px;
+
+  background:
+    rgba(56, 189, 248, 0.15);
+
   font-size: 1.1rem;
 }
 
 .dc-ai-title {
+  margin-bottom: 4px;
+
   color: #ffffff;
+
   font-size: 1.1rem;
   font-weight: 700;
-  margin-bottom: 4px;
 }
 
 .dc-ai-subtitle {
   color: #94a3b8;
+
   font-size: 0.8rem;
+
   line-height: 1.4;
 }
 
+
+/* ==========================================================
+   AI INPUT
+   ========================================================== */
+
 .dc-ai-input-wrapper {
   position: relative;
-  margin: 16px 0;
+
   display: flex;
   align-items: center;
+
+  margin: 16px 0;
 }
 
 .dc-ai-input {
   width: 100%;
-  background-color: #1b263b;
+
+  padding:
+    10px
+    42px
+    10px
+    16px;
+
   border: 1px solid #334155;
   border-radius: 20px;
-  padding: 10px 42px 10px 16px;
-  color: #f8fafc;
-  font-size: 0.85rem;
+
   outline: none;
-  transition: border-color 0.15s ease;
+
+  background-color: #1b263b;
+
+  color: #f8fafc;
+
+  font-size: 0.85rem;
+
+  transition:
+    border-color 0.15s ease;
 }
 
 .dc-ai-input:focus {
@@ -479,82 +321,141 @@
 
 .dc-ai-submit-btn {
   position: absolute;
+
   right: 6px;
+
   width: 30px;
   height: 30px;
-  background-color: var(--dc-primary-blue);
-  border: none;
-  border-radius: 50%;
-  color: #ffffff;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+
+  border: none;
+  border-radius: 50%;
+
+  background-color: var(--dc-primary-blue);
+
+  color: #ffffff;
+
   font-size: 0.9rem;
-  transition: background 0.15s;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease;
 }
 
 .dc-ai-submit-btn:hover {
   background-color: var(--dc-primary-hover);
 }
 
+
+/* ==========================================================
+   AI PROMPT PILLS
+   ========================================================== */
+
 .dc-ai-pills {
   display: flex;
   flex-direction: column;
+
   gap: 8px;
 }
 
 .dc-ai-pill-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
   padding: 6px 14px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius: 20px;
+
+  background:
+    rgba(255, 255, 255, 0.05);
+
   color: #cbd5e1;
+
   font-size: 0.775rem;
+
   text-align: left;
+
   cursor: pointer;
+
   transition: all 0.15s ease;
 }
 
 .dc-ai-pill-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background:
+    rgba(255, 255, 255, 0.1);
+
   color: #ffffff;
 }
+
 
 /* ==========================================================
    METRIC STATS ROW
    ========================================================== */
+
 .dc-stats-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
   gap: 18px;
 }
 
 .dc-stat-card {
-  background: var(--dc-card-bg);
-  border: 1px solid var(--dc-border-subtle);
-  border-radius: 12px;
-  padding: 16px 20px;
   display: flex;
   align-items: center;
+
   gap: 16px;
+
+  padding: 16px 20px;
+
+  border:
+    1px solid
+    var(--dc-border-subtle);
+
+  border-radius: 12px;
+
+  background:
+    var(--dc-card-bg);
+
+  box-shadow:
+    0 1px 3px
+    rgba(0, 0, 0, 0.04);
+
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .dc-stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  box-shadow:
+    0 4px 12px
+    rgba(0, 0, 0, 0.06);
 }
+
+
+/* ==========================================================
+   STAT ICONS
+   ========================================================== */
 
 .dc-stat-icon-wrapper {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  border-radius: 50%;
 }
 
 .dc-stat-icon-wrapper svg {
@@ -587,34 +488,53 @@
   font-weight: 700;
 }
 
+
+/* ==========================================================
+   STAT TEXT
+   ========================================================== */
+
 .dc-stat-details {
   display: flex;
   flex-direction: column;
 }
 
 .dc-stat-number {
+  color:
+    var(--dc-text-heading);
+
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--dc-text-heading);
 }
 
 .dc-stat-label {
+  color:
+    var(--dc-text-muted);
+
   font-size: 0.775rem;
-  color: var(--dc-text-muted);
 }
 
 .dc-stat-chevron {
   margin-left: auto;
-  color: var(--dc-text-light);
+
+  color:
+    var(--dc-text-light);
+
   font-size: 1.2rem;
 }
 
+
 /* ==========================================================
-   3-COLUMN MAIN GRID
+   3-COLUMN GRID
    ========================================================== */
+
 .dc-columns-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+
+  grid-template-columns:
+    1fr
+    1fr
+    1fr;
+
   gap: 24px;
 }
 
@@ -623,52 +543,88 @@
   flex-direction: column;
 }
 
+
+/* ==========================================================
+   SECTION HEADERS
+   ========================================================== */
+
 .dc-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   margin-bottom: 14px;
 }
 
 .dc-section-header h2 {
+  color:
+    var(--dc-text-heading);
+
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--dc-text-heading);
 }
 
 .dc-view-all {
+  color:
+    var(--dc-primary-blue);
+
   font-size: 0.8rem;
-  color: var(--dc-primary-blue);
-  text-decoration: none;
   font-weight: 600;
+
+  text-decoration: none;
 }
 
 .dc-view-all:hover {
   text-decoration: underline;
 }
 
-/* Options Button (...) */
+
+/* ==========================================================
+   OPTIONS BUTTON
+   ========================================================== */
+
 .dc-options-btn {
-  background: none;
   border: none;
-  color: var(--dc-text-muted);
+
+  background: none;
+
+  color:
+    var(--dc-text-muted);
+
   font-size: 1rem;
-  cursor: pointer;
+
   letter-spacing: 1px;
+
+  cursor: pointer;
 }
 
-/* Column 1: Vehicles */
+
+/* ==========================================================
+   VEHICLE CARDS
+   ========================================================== */
+
 .dc-vehicle-card {
-  background: var(--dc-card-bg);
-  border: 1px solid var(--dc-border-subtle);
-  border-radius: 12px;
   overflow: hidden;
+
   margin-bottom: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  border:
+    1px solid
+    var(--dc-border-subtle);
+
+  border-radius: 12px;
+
+  background:
+    var(--dc-card-bg);
+
+  box-shadow:
+    0 1px 3px
+    rgba(0, 0, 0, 0.04);
 }
 
 .dc-vehicle-img-wrapper {
   position: relative;
+
   width: 100%;
   height: 160px;
 }
@@ -676,19 +632,26 @@
 .dc-vehicle-img-wrapper img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
 }
 
 .dc-badge.primary {
   position: absolute;
+
   top: 12px;
   right: 12px;
+
+  padding: 3px 10px;
+
+  border-radius: 12px;
+
   background-color: #dbeafe;
+
   color: #1e40af;
+
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 12px;
 }
 
 .dc-vehicle-body {
@@ -697,56 +660,88 @@
 
 .dc-vehicle-title-row {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
+
   margin-bottom: 10px;
 }
 
 .dc-vehicle-title-row h3 {
+  color:
+    var(--dc-text-heading);
+
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--dc-text-heading);
 }
 
 .dc-vehicle-trim {
+  color:
+    var(--dc-text-muted);
+
   font-size: 0.8rem;
-  color: var(--dc-text-muted);
 }
+
+
+/* ==========================================================
+   VEHICLE TAGS
+   ========================================================== */
 
 .dc-vehicle-tags {
   display: flex;
   flex-wrap: wrap;
+
   gap: 6px;
+
   margin-bottom: 12px;
 }
 
 .dc-tag {
-  background-color: #f1f5f9;
-  border-radius: 6px;
   padding: 3px 8px;
+
+  border-radius: 6px;
+
+  background-color: #f1f5f9;
+
+  color:
+    var(--dc-text-muted);
+
   font-size: 0.725rem;
-  color: var(--dc-text-muted);
   font-weight: 500;
 }
 
 .dc-vehicle-odometer {
-  font-size: 0.8rem;
-  color: var(--dc-text-muted);
-  border-top: 1px solid #f1f5f9;
   padding-top: 10px;
+
+  border-top:
+    1px solid
+    #f1f5f9;
+
+  color:
+    var(--dc-text-muted);
+
+  font-size: 0.8rem;
 }
+
+
+/* ==========================================================
+   SECONDARY VEHICLES
+   ========================================================== */
 
 .dc-vehicle-card.secondary {
   display: flex;
   align-items: center;
-  padding: 12px;
+
   gap: 12px;
+
+  padding: 12px;
 }
 
 .dc-small-thumb {
   width: 80px;
   height: 60px;
+
   border-radius: 8px;
+
   object-fit: cover;
 }
 
@@ -755,50 +750,94 @@
 }
 
 .dc-secondary-details h4 {
+  color:
+    var(--dc-text-heading);
+
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--dc-text-heading);
 }
 
 .dc-vehicle-odometer-small {
+  color:
+    var(--dc-text-muted);
+
   font-size: 0.75rem;
-  color: var(--dc-text-muted);
 }
 
+
+/* ==========================================================
+   ADD VEHICLE BUTTON
+   ========================================================== */
+
 .dc-add-vehicle-outline-btn {
-  background-color: transparent;
-  border: 1.5px dashed var(--dc-border-subtle);
-  border-radius: 10px;
+  width: 100%;
+
   padding: 12px;
-  color: var(--dc-primary-blue);
+
+  border:
+    1.5px dashed
+    var(--dc-border-subtle);
+
+  border-radius: 10px;
+
+  background-color:
+    transparent;
+
+  color:
+    var(--dc-primary-blue);
+
   font-size: 0.85rem;
   font-weight: 600;
+
   cursor: pointer;
+
   transition: all 0.15s ease;
-  width: 100%;
 }
 
 .dc-add-vehicle-outline-btn:hover {
+  border-color:
+    var(--dc-primary-blue);
+
   background-color: #eff6ff;
-  border-color: var(--dc-primary-blue);
 }
 
-/* Column 2: Maintenance Lists */
+
+/* ==========================================================
+   MAINTENANCE LIST
+   ========================================================== */
+
 .dc-service-list {
-  background: var(--dc-card-bg);
-  border: 1px solid var(--dc-border-subtle);
+  border:
+    1px solid
+    var(--dc-border-subtle);
+
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  background:
+    var(--dc-card-bg);
+
+  box-shadow:
+    0 1px 3px
+    rgba(0, 0, 0, 0.04);
 }
 
 .dc-service-item {
   display: flex;
   align-items: center;
+
   gap: 14px;
+
   padding: 14px 16px;
-  border-bottom: 1px solid #f1f5f9;
+
+  border-bottom:
+    1px solid
+    #f1f5f9;
+
   cursor: pointer;
-  transition: background-color 0.15s ease;
+
+  transition:
+    background-color
+    0.15s ease;
 }
 
 .dc-service-item:last-child {
@@ -809,22 +848,60 @@
   background-color: #f8fafc;
 }
 
+
+/* ==========================================================
+   SERVICE ICONS
+   ========================================================== */
+
 .dc-service-icon {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  border-radius: 50%;
+
   font-size: 0.95rem;
 }
 
-.dc-service-icon.orange { background: #fff7ed; color: #ea580c; }
-.dc-service-icon.amber { background: #fefce8; color: #ca8a04; }
-.dc-service-icon.slate { background: #f1f5f9; color: #475569; }
-.dc-service-icon.green { background: #ecfdf5; color: #10b981; font-weight: bold; }
-.dc-service-icon.blue { background: #eff6ff; color: #2563eb; }
-.dc-service-icon.gray { background: #f8fafc; color: #64748b; }
+.dc-service-icon.orange {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.dc-service-icon.amber {
+  background: #fefce8;
+  color: #ca8a04;
+}
+
+.dc-service-icon.slate {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.dc-service-icon.green {
+  background: #ecfdf5;
+  color: #10b981;
+
+  font-weight: bold;
+}
+
+.dc-service-icon.blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.dc-service-icon.gray {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+
+/* ==========================================================
+   SERVICE DETAILS
+   ========================================================== */
 
 .dc-service-info {
   flex: 1;
@@ -834,98 +911,141 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   margin-bottom: 3px;
 }
 
 .dc-service-name {
+  color:
+    var(--dc-text-heading);
+
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--dc-text-heading);
 }
 
 .dc-service-price {
+  color:
+    var(--dc-text-heading);
+
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--dc-text-heading);
 }
 
 .dc-status-pill.amber {
+  padding: 2px 8px;
+
+  border-radius: 10px;
+
   background-color: #fef3c7;
+
   color: #b45309;
+
   font-size: 0.68rem;
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 10px;
 }
 
 .dc-service-sub {
+  color:
+    var(--dc-text-muted);
+
   font-size: 0.725rem;
-  color: var(--dc-text-muted);
 }
 
 .dc-item-arrow {
-  color: var(--dc-text-light);
+  color:
+    var(--dc-text-light);
+
   font-size: 1.1rem;
 }
 
-/* Column 3: Community Feed */
+
+/* ==========================================================
+   COMMUNITY FEED
+   ========================================================== */
+
 .dc-feed-card {
-  background: var(--dc-card-bg);
-  border: 1px solid var(--dc-border-subtle);
-  border-radius: 12px;
-  padding: 16px;
   margin-bottom: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  padding: 16px;
+
+  border:
+    1px solid
+    var(--dc-border-subtle);
+
+  border-radius: 12px;
+
+  background:
+    var(--dc-card-bg);
+
+  box-shadow:
+    0 1px 3px
+    rgba(0, 0, 0, 0.04);
 }
 
 .dc-feed-header {
   display: flex;
   align-items: center;
+
   gap: 10px;
+
   margin-bottom: 10px;
 }
 
 .dc-feed-avatar {
   width: 34px;
   height: 34px;
+
   border-radius: 50%;
+
   object-fit: cover;
 }
 
 .dc-feed-user {
+  flex: 1;
+
   display: flex;
   flex-direction: column;
-  flex: 1;
 }
 
 .dc-feed-name {
+  color:
+    var(--dc-text-heading);
+
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--dc-text-heading);
 }
 
 .dc-feed-time {
+  color:
+    var(--dc-text-muted);
+
   font-size: 0.7rem;
-  color: var(--dc-text-muted);
 }
 
 .dc-feed-text {
-  font-size: 0.825rem;
-  color: #334155;
-  line-height: 1.45;
   margin-bottom: 10px;
+
+  color: #334155;
+
+  font-size: 0.825rem;
+
+  line-height: 1.45;
 }
 
 .dc-feed-img-wrapper {
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 12px;
   height: 140px;
+
+  overflow: hidden;
+
+  margin-bottom: 12px;
+
+  border-radius: 8px;
 }
 
 .dc-feed-img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
 }
 
@@ -933,59 +1053,67 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #f1f5f9;
+
   padding-top: 10px;
+
+  border-top:
+    1px solid
+    #f1f5f9;
 }
 
 .dc-feed-actions {
   display: flex;
+
   gap: 16px;
 }
 
 .dc-feed-btn {
-  background: none;
-  border: none;
   display: flex;
   align-items: center;
+
   gap: 5px;
+
+  border: none;
+
+  background: none;
+
+  color:
+    var(--dc-text-muted);
+
   font-size: 0.775rem;
-  color: var(--dc-text-muted);
+
   cursor: pointer;
 }
 
 .dc-feed-btn:hover {
-  color: var(--dc-text-heading);
+  color:
+    var(--dc-text-heading);
 }
-
-/* ==========================================================
-   RESPONSIVE DESIGN (Tablets & Smaller screens)
-   ========================================================== */
-@media (max-width: 1200px) {
-  .dc-columns-grid {
-    grid-template-columns: 1fr;
-  }
-  .dc-hero-row {
-    grid-template-columns: 1fr;
-  }
-  .dc-stats-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 
 
 /* ==========================================================
    DEMO TOGGLE BUTTON
    ========================================================== */
+
 .dc-demo-toggle-btn {
-  background: #f1f5f9;
-  border: 1px solid var(--dc-border-subtle);
-  border-radius: 8px;
   padding: 6px 12px;
+
+  border:
+    1px solid
+    var(--dc-border-subtle);
+
+  border-radius: 8px;
+
+  background: #f1f5f9;
+
+  color:
+    var(--dc-primary-blue);
+
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--dc-primary-blue);
+
   cursor: pointer;
+
   transition: all 0.15s ease;
 }
 
@@ -993,50 +1121,69 @@
   background: #e2e8f0;
 }
 
+
 /* ==========================================================
    EMPTY STATE CARDS
    ========================================================== */
+
 .dc-empty-state-card {
-  background: #ffffff;
-  border: 2px dashed #cbd5e1;
-  border-radius: 14px;
-  padding: 32px 20px;
-  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+
   gap: 12px;
+
+  padding: 32px 20px;
+
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  text-align: center;
 }
 
 .dc-empty-icon {
-  font-size: 2.5rem;
-  background: #f1f5f9;
   width: 60px;
   height: 60px;
-  border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  border-radius: 50%;
+
+  background: #f1f5f9;
+
+  font-size: 2.5rem;
 }
 
 .dc-empty-state-card h3 {
+  color:
+    var(--dc-text-heading);
+
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--dc-text-heading);
 }
 
 .dc-empty-state-card p {
-  font-size: 0.825rem;
-  color: var(--dc-text-muted);
   max-width: 280px;
+
+  color:
+    var(--dc-text-muted);
+
+  font-size: 0.825rem;
+
   line-height: 1.4;
 }
 
 .dc-empty-state-card.small {
   padding: 20px 16px;
+
   gap: 8px;
-  border-style: solid;
+
   border-width: 1px;
+  border-style: solid;
 }
 
 .dc-empty-icon-small {
@@ -1044,149 +1191,278 @@
 }
 
 .dc-empty-state-card.small h4 {
+  color:
+    var(--dc-text-heading);
+
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--dc-text-heading);
 }
+
 
 /* ==========================================================
    ADD VEHICLE MODAL
    ========================================================== */
+
 .dc-modal-backdrop {
   position: fixed;
+
   top: 0;
   left: 0;
+
   width: 100vw;
   height: 100vh;
-  background-color: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(4px);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  background-color:
+    rgba(15, 23, 42, 0.6);
+
+  backdrop-filter: blur(4px);
+
   z-index: 1000;
-  animation: fadeIn 0.15s ease-out;
+
+  animation:
+    fadeIn
+    0.15s
+    ease-out;
 }
 
 .dc-modal-container {
-  background-color: #ffffff;
   width: 90%;
   max-width: 520px;
-  border-radius: 16px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
   overflow: hidden;
-  animation: scaleUp 0.15s ease-out;
+
+  border-radius: 16px;
+
+  background-color: #ffffff;
+
+  box-shadow:
+    0 20px 25px -5px
+      rgba(0, 0, 0, 0.2),
+    0 10px 10px -5px
+      rgba(0, 0, 0, 0.04);
+
+  animation:
+    scaleUp
+    0.15s
+    ease-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleUp {
-  from { transform: scale(0.96); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .dc-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   padding: 20px 24px;
-  border-bottom: 1px solid var(--dc-border-subtle);
+
+  border-bottom:
+    1px solid
+    var(--dc-border-subtle);
 }
 
 .dc-modal-header h3 {
+  color:
+    var(--dc-text-heading);
+
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--dc-text-heading);
 }
 
 .dc-modal-close-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  color: var(--dc-text-muted);
-  cursor: pointer;
   padding: 4px;
+
+  border: none;
   border-radius: 4px;
+
+  background: none;
+
+  color:
+    var(--dc-text-muted);
+
+  font-size: 1.2rem;
+
+  cursor: pointer;
 }
 
 .dc-modal-close-btn:hover {
-  color: var(--dc-text-heading);
+  color:
+    var(--dc-text-heading);
 }
 
 .dc-modal-form {
-  padding: 24px;
   display: flex;
   flex-direction: column;
+
   gap: 16px;
+
+  padding: 24px;
 }
 
 .dc-form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+
+  grid-template-columns:
+    1fr 1fr;
+
   gap: 16px;
 }
 
 .dc-form-group {
   display: flex;
   flex-direction: column;
+
   gap: 6px;
 }
 
 .dc-form-group label {
+  color:
+    var(--dc-text-heading);
+
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--dc-text-heading);
 }
 
 .dc-form-group input {
   padding: 10px 12px;
-  border: 1px solid var(--dc-border-subtle);
+
+  border:
+    1px solid
+    var(--dc-border-subtle);
+
   border-radius: 8px;
-  font-size: 0.875rem;
+
   outline: none;
-  transition: border-color 0.15s ease;
+
+  font-size: 0.875rem;
+
+  transition:
+    border-color
+    0.15s ease;
 }
 
 .dc-form-group input:focus {
-  border-color: var(--dc-primary-blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color:
+    var(--dc-primary-blue);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.1);
 }
 
 .dc-modal-actions {
   display: flex;
   justify-content: flex-end;
+
   gap: 12px;
+
   margin-top: 10px;
 }
 
 .dc-modal-btn {
   padding: 10px 18px;
+
   border-radius: 8px;
+
   font-size: 0.875rem;
   font-weight: 600;
+
   cursor: pointer;
+
   transition: all 0.15s ease;
 }
 
 .dc-modal-btn.cancel {
+  border:
+    1px solid
+    var(--dc-border-subtle);
+
   background: #f1f5f9;
-  border: 1px solid var(--dc-border-subtle);
-  color: var(--dc-text-muted);
+
+  color:
+    var(--dc-text-muted);
 }
 
 .dc-modal-btn.cancel:hover {
   background: #e2e8f0;
-  color: var(--dc-text-heading);
+
+  color:
+    var(--dc-text-heading);
 }
 
 .dc-modal-btn.submit {
-  background: var(--dc-primary-blue);
   border: none;
+
+  background:
+    var(--dc-primary-blue);
+
   color: #ffffff;
 }
 
 .dc-modal-btn.submit:hover {
-  background: var(--dc-primary-hover);
+  background:
+    var(--dc-primary-hover);
+}
+
+
+/* ==========================================================
+   RESPONSIVE DESIGN
+   ========================================================== */
+
+@media (max-width: 1200px) {
+
+  .dc-columns-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dc-hero-row {
+    grid-template-columns: 1fr;
+  }
+
+  .dc-stats-row {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .dc-content-body {
+    padding: 20px 16px;
+  }
+
+  .dc-stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .dc-form-row {
+    grid-template-columns: 1fr;
+  }
+
 }
