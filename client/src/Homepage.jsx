@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getToken, getTokenPayload, isLoggedIn, logout } from './auth.js';
 import './Homepage.css';
+import { Link } from "react-router-dom";
 
 const backend = import.meta.env.VITE_BACKEND_LINK || 'http://localhost:5001';
 
@@ -463,8 +464,12 @@ export default function Homepage() {
             {/* COLUMN 3: Community Feed */}
             <div className="dc-grid-col">
               <div className="dc-section-header">
+
                 <h2>Community Feed</h2>
-                <span className="dc-view-all">View All →</span>
+                
+                <Link to="/community" className="dc-view-all">
+                View All →
+                </Link>
               </div>
 
               {/* Feed Card 1 */}
