@@ -13,16 +13,21 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/home" element={<RequireAuth><Homepage /></RequireAuth>} />
+
+      
+
+
+      <Route path="/home" element={
+        <Layout>
+          <RequireAuth><Homepage /></RequireAuth>
+        </Layout>
+      } />
 
       <Route path="/maintenance" element={
         <Layout>
           <Maintenance/>
         </Layout>
       } />
-
-      
-
 
       <Route
       path="/community"
