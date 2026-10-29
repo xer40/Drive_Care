@@ -728,3 +728,171 @@
 .community-photo-preview button:hover {
   background-color: rgba(15, 23, 42, 0.9);
 }
+
+
+/* =========================================
+   COMMENTS (open under a post)
+========================================= */
+
+.community-post-actions button.active {
+  color: #2563eb;
+}
+
+.community-comments {
+  margin-top: 12px;
+
+  padding-top: 12px;
+
+  border-top: 1px solid #e2e8f0;
+}
+
+.community-comments-note {
+  margin: 0 0 10px;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+.community-comment {
+  display: flex;
+
+  gap: 10px;
+
+  margin-bottom: 12px;
+}
+
+.community-comment-avatar {
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  width: 30px;
+  height: 30px;
+
+  border-radius: 50%;
+
+  background-color: #dbeafe;
+
+  color: #1d4ed8;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.community-comment-body {
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  background-color: #f8fafc;
+}
+
+.community-comment-meta {
+  display: flex;
+  align-items: baseline;
+
+  gap: 8px;
+
+  font-size: 13px;
+}
+
+.community-comment-meta span {
+  color: #94a3b8;
+
+  font-size: 12px;
+}
+
+.community-comment-meta button {
+  margin-left: auto;
+
+  padding: 0;
+
+  border: none;
+
+  background: none;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.community-comment-meta button:hover {
+  color: #dc2626;
+}
+
+.community-comment-body p {
+  margin: 4px 0 0;
+
+  color: #334155;
+
+  font-size: 14px;
+
+  overflow-wrap: anywhere;
+}
+
+.community-comments-error {
+  margin: 0 0 10px;
+
+  color: #b91c1c;
+
+  font-size: 13px;
+}
+
+.community-comment-form {
+  display: flex;
+
+  gap: 8px;
+}
+
+.community-comment-form input {
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 9px 12px;
+
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+
+  background-color: white;
+
+  color: #1e293b;
+
+  font: inherit;
+  font-size: 14px;
+
+  outline: none;
+}
+
+.community-comment-form input:focus {
+  border-color: #2563eb;
+}
+
+.community-comment-form button {
+  padding: 9px 16px;
+
+  border: none;
+  border-radius: 8px;
+
+  background-color: #2563eb;
+
+  color: white;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.community-comment-form button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}

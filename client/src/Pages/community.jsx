@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { authFetch } from "../auth.js"
 import { checkPhotoFile, limitedPhoto, uploadPostPhoto } from "../cloudinary.js"
+import PostComments from "../Components/PostComments.jsx"
 import "../Styles/community.css"
 
 // Topics a post can have. Used for the post form and the Explore filter, so every post's topic
@@ -42,6 +43,22 @@ function Community() {
   const [photoPreview, setPhotoPreview] = useState("")
   const [posting, setPosting] = useState(false)
   const photoInputRef = useRef(null)
+
+  // Ids of posts whose comments are open
+  const [openComments, setOpenComments] = useState([])
+
+  const toggleComments = (postId) =>
+    setOpenComments((open) =>
+      open.includes(postId) ? open.filter((id) => id !== postId) : [...open, postId]
+    )
+
+  // Keep a post's 💬 count in step when a comment is added (+1) or deleted (-1)
+  const changeCommentCount = (postId, change) =>
+    setPosts((previousPosts) =>
+      previousPosts.map((p) =>
+        p.id === postId ? { ...p, comment_count: Number(p.comment_count || 0) + change } : p
+      )
+    )
 
   const [loading, setLoading] = useState(true)
   const [statusMessage, setStatusMessage] = useState("")
@@ -604,13 +621,27 @@ function Community() {
                   </button>
 
 
-                  <button type="button">
+                  <button
+                    type="button"
+                    className={openComments.includes(post.id) ? "active" : ""}
+                    onClick={() => toggleComments(post.id)}
+                    aria-expanded={openComments.includes(post.id)}
+                  >
 
                     💬 {post.comment_count || 0}
 
                   </button>
 
                 </div>
+
+
+                {/* Comments open under the post when the 💬 button is clicked */}
+                {openComments.includes(post.id) && (
+                  <PostComments
+                    postId={post.id}
+                    onCountChange={(change) => changeCommentCount(post.id, change)}
+                  />
+                )}
 
               </article>
 

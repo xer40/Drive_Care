@@ -59,7 +59,7 @@ function Register() {
       if (response.ok) {
         // Registering also logs the user in: keep the JWT so authenticated requests work right away
         saveToken(data.token)
-        navigate('/maintenance')
+        navigate('/home')
       } else {
         setStatus({ text: data.message || 'Registration failed.', error: true })
       }
