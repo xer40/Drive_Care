@@ -6,7 +6,6 @@ import Homepage from './Homepage.jsx'
 import Community from "./Pages/community.jsx"
 import Layout from "./Components/Layout.jsx"
 import RequireAuth from './RequireAuth.jsx'
-import Profile from './profile.jsx'
 
 function App() {
   return (
@@ -42,13 +41,6 @@ function App() {
       }
         />
 
-      <Route path="/profile" element={
-        <RequireAuth>
-          <Layout>
-            <Profile />
-          </Layout>
-        </RequireAuth>
-      } />
       
     </Routes>
   )
