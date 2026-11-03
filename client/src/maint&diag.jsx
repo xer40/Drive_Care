@@ -63,6 +63,7 @@ const donutBackground = (costByCategory = []) => {
 
 function Maintenance() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [selectedServiceInfo, setSelectedServiceInfo] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -755,9 +756,6 @@ const cancelRecord = () => {
     <div className="common-services-header">
       <h2>Common Services for Your Vehicle</h2>
 
-      <button type="button" className="common-view-all">
-        View All →
-      </button>
     </div>
 
     <div className="common-service-item">
@@ -769,8 +767,12 @@ const cancelRecord = () => {
         <span>Every 5,000 – 7,500 mi</span>
       </div>
 
-      <button type="button" className="common-learn-button">
-        Learn More
+      <button
+        type="button"
+        className="common-learn-button"
+        onClick={() => setSelectedServiceInfo("oil")}
+      >
+          Learn More
       </button>
 
     </div>
@@ -784,9 +786,13 @@ const cancelRecord = () => {
         <span>Every 5,000 – 8,000 mi</span>
       </div>
 
-      <button type="button" className="common-learn-button">
-        Learn More
-      </button>
+      <button
+          type="button"
+          className="common-learn-button"
+          onClick={() => setSelectedServiceInfo("tires")}
+        >
+          Learn More
+        </button>
 
     </div>
 
@@ -799,7 +805,11 @@ const cancelRecord = () => {
         <span>Every 10,000 – 15,000 mi</span>
       </div>
 
-      <button type="button" className="common-learn-button">
+      <button
+        type="button"
+        className="common-learn-button"
+        onClick={() => setSelectedServiceInfo("brakes")}
+      >
         Learn More
       </button>
 
@@ -1075,7 +1085,228 @@ const cancelRecord = () => {
 
   
 )}
+{/* ===================================
+    COMMON SERVICE INFORMATION POPUP
+=================================== */}
 
+{selectedServiceInfo === "oil" && (
+  <div
+    className="service-info-overlay"
+    style={{
+      position: "fixed",
+      inset: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+    <div
+      className="service-info-modal"
+      style={{
+        backgroundColor: "white",
+        padding: "30px",
+        borderRadius: "12px",
+        maxWidth: "500px",
+        width: "90%",
+      }}
+    >
+      <h2>🛢️ Oil Change</h2>
+
+      <h3>What is it?</h3>
+      <p>
+        An oil change replaces old engine oil with fresh oil to
+        keep your engine properly lubricated.
+      </p>
+
+      <h3>Why is it important?</h3>
+      <p>
+        Regular oil changes help reduce engine wear,
+        prevent overheating, and maintain performance.
+      </p>
+
+      <h3>Common Warning Signs</h3>
+      <ul>
+        <li>Oil change reminder appears.</li>
+        <li>Low engine oil level.</li>
+        <li>Unusual engine noises.</li>
+      </ul>
+
+      <h3>Recommended Interval</h3>
+      <p>
+        Follow your vehicle manufacturer's maintenance schedule.
+        Intervals vary depending on the vehicle, oil type,
+        and driving conditions.
+      </p>
+
+      <button
+        type="button"
+        onClick={() => setSelectedServiceInfo(null)}
+        style={{
+          marginTop: "20px",
+          padding: "10px 20px",
+          backgroundColor: "#2563eb",
+          color: "white",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+        }}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+{/* ===================================
+    TIRE ROTATION INFORMATION POPUP
+=================================== */}
+
+{selectedServiceInfo === "tires" && (
+  <div
+    className="service-info-overlay"
+    style={{
+      position: "fixed",
+      inset: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+    <div
+      className="service-info-modal"
+      style={{
+        backgroundColor: "white",
+        padding: "30px",
+        borderRadius: "12px",
+        maxWidth: "500px",
+        width: "90%",
+      }}
+    >
+      <h2>🛞 Tire Rotation</h2>
+
+      <h3>What is it?</h3>
+      <p>
+        Tire rotation involves moving your tires to different
+        positions on your vehicle to promote more even wear.
+      </p>
+
+      <h3>Why is it important?</h3>
+      <p>
+        Regular tire rotations help extend tire life,
+        maintain balanced handling, and reduce uneven wear.
+      </p>
+
+      <h3>Common Warning Signs</h3>
+      <ul>
+        <li>Uneven tire tread wear.</li>
+        <li>Noticeable vibration while driving.</li>
+        <li>One set of tires wearing faster than the others.</li>
+      </ul>
+
+      <h3>Recommended Interval</h3>
+      <p>
+        Many vehicles recommend rotating tires approximately
+        every 5,000–8,000 miles. Always follow your vehicle
+        manufacturer's recommendations.
+      </p>
+
+      <button
+        type="button"
+        onClick={() => setSelectedServiceInfo(null)}
+        style={{
+          marginTop: "20px",
+          padding: "10px 20px",
+          backgroundColor: "#2563eb",
+          color: "white",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+        }}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+{/* ===================================
+    BRAKE INSPECTION INFORMATION POPUP
+=================================== */}
+
+{selectedServiceInfo === "brakes" && (
+  <div
+    className="service-info-overlay"
+    style={{
+      position: "fixed",
+      inset: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+    <div
+      className="service-info-modal"
+      style={{
+        backgroundColor: "white",
+        padding: "30px",
+        borderRadius: "12px",
+        maxWidth: "500px",
+        width: "90%",
+      }}
+    >
+      <h2>🔧 Brake Inspection</h2>
+
+      <h3>What is it?</h3>
+      <p>
+        A brake inspection involves checking your vehicle's
+        braking system, including brake pads, rotors, calipers,
+        and brake fluid.
+      </p>
+
+      <h3>Why is it important?</h3>
+      <p>
+        Regular brake inspections help identify worn or damaged
+        components and maintain safe braking performance.
+      </p>
+
+      <h3>Common Warning Signs</h3>
+      <ul>
+        <li>Squeaking, squealing, or grinding when braking.</li>
+        <li>Vibration when pressing the brake pedal.</li>
+        <li>Reduced braking performance.</li>
+        <li>Brake warning light appears on the dashboard.</li>
+      </ul>
+
+      <h3>Recommended Interval</h3>
+      <p>
+        Brake inspection intervals vary by vehicle and driving
+        conditions. Many vehicles benefit from brake inspections
+        during regular tire rotations or scheduled maintenance.
+        Always follow your manufacturer's recommendations.
+      </p>
+
+      <button
+        type="button"
+        onClick={() => setSelectedServiceInfo(null)}
+        style={{
+          marginTop: "20px",
+          padding: "10px 20px",
+          backgroundColor: "#2563eb",
+          color: "white",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+        }}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 }
