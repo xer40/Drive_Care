@@ -17,7 +17,8 @@ export default function Homepage() {
 
   // Vehicles and maintenance dynamic state (starts EMPTY for new user experience)
   const [vehicles, setVehicles] = useState([]);
-  const [maintenance, setMaintenance] = useState([]);
+  const [maintenanceRecords, setMaintenanceRecords] = useState([]);
+  const [maintenanceLoading, setMaintenanceLoading] = useState(true);
   const [aiQuestion, setAiQuestion] = useState('');
 
   // Modal State for adding a vehicle
@@ -84,27 +85,64 @@ export default function Homepage() {
   };
 
   // Try fetching real vehicles from backend if user is logged in
-  useEffect(() => {
-    async function fetchUserData() {
-      const token = getToken();
-      if (!token) return;
-
-      try {
-        const res = await fetch(`${backend}/api/vehicles`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.vehicles && data.vehicles.length > 0) {
-            setVehicles(data.vehicles);
-          }
-        }
-      } catch {
-        // Backend not running or .env not set: safely stay in local mode
-      }
+  // Load the user's vehicles and maintenance records
+useEffect(() => {
+  async function fetchUserData() {
+    if (!getToken()) {
+      setMaintenanceLoading(false);
+      return;
     }
-    fetchUserData();
-  }, []);
+
+    try {
+      // Fetch vehicles
+      const vehicleData = await authFetch('/api/vehicles');
+      const userVehicles = vehicleData.vehicles || [];
+
+      setVehicles(userVehicles);
+
+      // Fetch maintenance records for each vehicle
+      const maintenanceResults = await Promise.all(
+        userVehicles.map(async (vehicle) => {
+          try {
+            const data = await authFetch(
+              `/api/vehicles/${vehicle.id}/maintenance`
+            );
+
+            return (data.records || []).map((record) => ({
+              ...record,
+              vehicleId: vehicle.id,
+              vehicleName: `${vehicle.year} ${vehicle.make} ${vehicle.model}`
+            }));
+          } catch (error) {
+            console.error(
+              `Could not load maintenance for vehicle ${vehicle.id}:`,
+              error
+            );
+            return [];
+          }
+        })
+      );
+
+      // Combine all vehicle maintenance records
+      const allRecords = maintenanceResults.flat();
+
+      // Sort newest services first
+      allRecords.sort(
+        (a, b) =>
+          new Date(b.service_date) - new Date(a.service_date)
+      );
+
+      setMaintenanceRecords(allRecords);
+
+    } catch (error) {
+      console.error('Could not load dashboard data:', error);
+    } finally {
+      setMaintenanceLoading(false);
+    }
+  }
+
+  fetchUserData();
+}, []);
 
   // Handle adding a vehicle. Logged in: upload the photo to Cloudinary, then save the vehicle (with the photo
   // link) to the database. Logged out: keep it on this page only, as before
@@ -154,39 +192,30 @@ export default function Homepage() {
     }
   };
 
-  // Helper function to toggle demo mockup data on and off for testing
-  const toggleDemoData = () => {
-    if (vehicles.length === 0) {
-      setVehicles([
-        {
-          id: 1,
-          year: 2019,
-          make: 'Audi',
-          model: 'A4',
-          trim: 'Premium Plus S Line 45 TFSI ',
-          current_mileage: 78000,
-          imageUrl: 'https://static0.carbuzzimages.com/wordpress/wp-content/uploads/gallery-images/original/435000/500/435552.jpg'
-        },
-        {
-          id: 2,
-          year: 2020,
-          make: 'Honda',
-          model: 'Civic',
-          trim: 'Sport',
-          current_mileage: 28320,
-          imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/img-9756-1590075686.jpg?resize=980:*'
-        }
-      ]);
-      setMaintenance([
-        { id: 1, name: 'Oil Change', status: 'Due in 1,200 mi', date: 'Oct 15, 2026 • 44,000 mi', type: 'upcoming' },
-        { id: 2, name: 'Tire Rotation', status: 'Due in 2,500 mi', date: 'Nov 10, 2026 • 45,500 mi', type: 'upcoming' },
-        { id: 3, name: 'Brake Inspection', status: 'Due in 4,000 mi', date: 'Dec 15, 2026 • 47,000 mi', type: 'upcoming' }
-      ]);
-    } else {
-      setVehicles([]);
-      setMaintenance([]);
-    }
-  };
+  // Dashboard statistics calculated from actual maintenance records
+const totalMaintenanceRecords = maintenanceRecords.length;
+
+const totalExpenses = maintenanceRecords.reduce(
+  (total, record) => total + Number(record.cost || 0),
+  0
+);
+
+const lastService = maintenanceRecords.length > 0
+  ? maintenanceRecords[0]
+  : null;
+
+const formatMoney = (amount) =>
+  `$${Number(amount || 0).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })}`;
+
+const formatServiceDate = (date) =>
+  new Date(`${date}T00:00:00`).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
 
   return (
     <div className="dc-dashboard">
@@ -288,34 +317,46 @@ export default function Homepage() {
                 </svg>
               </div>
               <div className="dc-stat-details">
-                <span className="dc-stat-number">{vehicles.length > 0 ? '5' : '0'}</span>
+                <span className="dc-stat-number">{maintenanceLoading ? '...' : totalMaintenanceRecords}
+                </span>
                 <span className="dc-stat-label">Maintenance Records</span>
               </div>
               <span className="dc-stat-chevron">›</span>
             </div>
 
             <div className="dc-stat-card" onClick={() => navigate('/maintenance')}>
-              <div className="dc-stat-icon-wrapper soft-blue">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-              </div>
-              <div className="dc-stat-details">
-                <span className="dc-stat-number">{vehicles.length > 0 ? maintenance.length : '0'}</span>
-                <span className="dc-stat-label">Upcoming Services</span>
-              </div>
-              <span className="dc-stat-chevron">›</span>
-            </div>
+  <div className="dc-stat-icon-wrapper soft-blue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  </div>
 
-            <div className="dc-stat-card">
+  <div className="dc-stat-details">
+    <span className="dc-stat-number">
+      {maintenanceLoading
+        ? '...'
+        : lastService
+          ? formatServiceDate(lastService.service_date)
+          : 'None yet'}
+    </span>
+
+    <span className="dc-stat-label">Last Service</span>
+  </div>
+
+  <span className="dc-stat-chevron">›</span>
+</div>
+          
+
+        <div className="dc-stat-card">
               <div className="dc-stat-icon-wrapper pale-blue">
                 <span className="dc-currency-symbol">$</span>
               </div>
               <div className="dc-stat-details">
-                <span className="dc-stat-number">{vehicles.length > 0 ? '$642' : '$0'}</span>
+                <span className="dc-stat-number">{maintenanceLoading ? '...' : formatMoney(totalExpenses)}
+                </span>
                 <span className="dc-stat-label">Total Expenses</span>
               </div>
               <span className="dc-stat-chevron">›</span>
@@ -398,98 +439,63 @@ export default function Homepage() {
               )}
             </div>
 
-            {/* COLUMN 2: Upcoming & Recent Maintenance */}
+            {/* COLUMN 2: RECENT MAINTENANCE */}
             <div className="dc-grid-col">
-              <div className="dc-section-header">
-                <h2>Upcoming Maintenance</h2>
-                <span className="dc-view-all" onClick={() => navigate('/maintenance')} style={{ cursor: 'pointer' }}>View All →</span>
-              </div>
-
-              {vehicles.length === 0 ? (
-                <div className="dc-empty-state-card small">
-                  <div className="dc-empty-icon-small">🔧</div>
-                  <h4>No upcoming services</h4>
-                  <p>Service intervals will appear here once you add a car.</p>
-                </div>
-              ) : (
-                <div className="dc-service-list upcoming">
-                  <div className="dc-service-item" onClick={() => navigate('/maintenance')}>
-                    <div className="dc-service-icon orange">🛢️</div>
-                    <div className="dc-service-info">
-                      <div className="dc-service-top">
-                        <span className="dc-service-name">Oil Change</span>
-                        <span className="dc-status-pill amber">Due in 1,200 mi</span>
-                      </div>
-                      <span className="dc-service-sub">Estimated: Oct 15, 2026 • 44,000 mi</span>
-                    </div>
-                    <span className="dc-item-arrow">›</span>
-                  </div>
-
-                  <div className="dc-service-item" onClick={() => navigate('/maintenance')}>
-                    <div className="dc-service-icon amber">⚙️</div>
-                    <div className="dc-service-info">
-                      <div className="dc-service-top">
-                        <span className="dc-service-name">Tire Rotation</span>
-                        <span className="dc-status-pill amber">Due in 2,500 mi</span>
-                      </div>
-                      <span className="dc-service-sub">Estimated: Nov 10, 2026 • 45,500 mi</span>
-                    </div>
-                    <span className="dc-item-arrow">›</span>
-                  </div>
-
-                  <div className="dc-service-item" onClick={() => navigate('/maintenance')}>
-                    <div className="dc-service-icon slate">🛑</div>
-                    <div className="dc-service-info">
-                      <div className="dc-service-top">
-                        <span className="dc-service-name">Brake Inspection</span>
-                        <span className="dc-status-pill amber">Due in 4,000 mi</span>
-                      </div>
-                      <span className="dc-service-sub">Estimated: Dec 15, 2026 • 47,000 mi</span>
-                    </div>
-                    <span className="dc-item-arrow">›</span>
-                  </div>
-                </div>
-              )}
+              
 
               {/* Recent Maintenance Section */}
-              <div className="dc-section-header" style={{ marginTop: '28px' }}>
+              <div className="dc-section-header">
                 <h2>Recent Maintenance</h2>
                 <span className="dc-view-all" onClick={() => navigate('/maintenance')} style={{ cursor: 'pointer' }}>View All →</span>
               </div>
 
-              {vehicles.length === 0 ? (
-                <div className="dc-empty-state-card small">
-                  <div className="dc-empty-icon-small">📋</div>
-                  <h4>No service records</h4>
-                  <p>Completed repairs and logged services will show up here.</p>
-                </div>
-              ) : (
-                <div className="dc-service-list recent">
-                  <div className="dc-service-item" onClick={() => navigate('/maintenance')}>
-                    <div className="dc-service-icon green">✓</div>
-                    <div className="dc-service-info">
-                      <div className="dc-service-top">
-                        <span className="dc-service-name">Oil Change</span>
-                        <span className="dc-service-price">$89.99</span>
-                      </div>
-                      <span className="dc-service-sub">Sep 15, 2026 • 42,000 mi • Valvoline</span>
-                    </div>
-                    <span className="dc-item-arrow">›</span>
-                  </div>
+              {maintenanceLoading ? (
+  <div className="dc-empty-state-card small">
+    <p>Loading maintenance records...</p>
+  </div>
+) : maintenanceRecords.length === 0 ? (
+  <div className="dc-empty-state-card small">
+    <div className="dc-empty-icon-small">📋</div>
+    <h4>No service records</h4>
+    <p>Completed repairs and logged services will show up here.</p>
+  </div>
+) : (
+  <div className="dc-service-list recent">
+    {maintenanceRecords.slice(0, 3).map((record) => (
+      <div
+        key={`${record.vehicleId}-${record.id}`}
+        className="dc-service-item"
+        onClick={() => navigate('/maintenance')}
+      >
+        <div className="dc-service-icon green">✓</div>
 
-                  <div className="dc-service-item" onClick={() => navigate('/maintenance')}>
-                    <div className="dc-service-icon blue">🔧</div>
-                    <div className="dc-service-info">
-                      <div className="dc-service-top">
-                        <span className="dc-service-name">Brake Pads (Front)</span>
-                        <span className="dc-service-price">$350.00</span>
-                      </div>
-                      <span className="dc-service-sub">Aug 2, 2026 • 39,400 mi • Local Shop</span>
-                    </div>
-                    <span className="dc-item-arrow">›</span>
-                  </div>
-                </div>
-              )}
+        <div className="dc-service-info">
+          <div className="dc-service-top">
+            <span className="dc-service-name">
+              {record.service_type || record.title || 'Maintenance Service'}
+            </span>
+
+            <span className="dc-service-price">
+              {formatMoney(record.cost)}
+            </span>
+          </div>
+
+          <span className="dc-service-sub">
+            {record.service_date
+              ? formatServiceDate(record.service_date)
+              : 'Date unavailable'}
+            {' • '}
+            {record.vehicleName}
+            {record.mileage != null &&
+              ` • ${Number(record.mileage).toLocaleString()} mi`}
+          </span>
+        </div>
+
+        <span className="dc-item-arrow">›</span>
+      </div>
+    ))}
+  </div>
+)} 
             </div>
 
             {/* COLUMN 3: Community Feed */}

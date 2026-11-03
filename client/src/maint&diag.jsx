@@ -125,16 +125,13 @@ function Maintenance() {
   const [yearSummary, setYearSummary] = useState(null);
   const [costPeriod, setCostPeriod] = useState("year");
   const [costSummary, setCostSummary] = useState(null);
-  // The car's next open reminder, for the Next Maintenance card
-  const [nextReminder, setNextReminder] = useState(null);
   const [savingRecord, setSavingRecord] = useState(false);
   // Bumped after a save or delete so everything below reloads
   const [dataVersion, setDataVersion] = useState(0);
   // Which car (and version) the records on screen belong to; anything else means they're still loading
   const [recordsLoadedFor, setRecordsLoadedFor] = useState(null);
   const recordsLoading = Boolean(selectedVehicleId) && recordsLoadedFor !== `${selectedVehicleId}-${dataVersion}`;
-
-  // Load the selected car's records, this year's summary and its next reminder
+// Load the selected car's maintenance records and yearly summary
   useEffect(() => {
     if (!selectedVehicleId) return;
 
@@ -147,10 +144,7 @@ function Maintenance() {
       .then((data) => setYearSummary(data))
       .catch((err) => console.error("Could not load maintenance summary:", err.message));
 
-    // Open reminders come back soonest first
-    authFetch(`/api/vehicles/${selectedVehicleId}/reminders`)
-      .then((data) => setNextReminder(data.reminders.find((r) => !r.is_done) || null))
-      .catch((err) => console.error("Could not load reminders:", err.message));
+    
   }, [selectedVehicleId, dataVersion]);
 
   // The costs chart, for the period picked in its dropdown
@@ -169,21 +163,6 @@ function Maintenance() {
     authFetch(`/api/vehicles/${selectedVehicleId}`)
       .then((data) => setVehicles((prev) => prev.map((v) => (v.id === data.vehicle.id ? data.vehicle : v))))
       .catch(() => {});
-  };
-
-  // Next Maintenance card: how soon the next reminder is due
-  const describeDue = (reminder) => {
-    if (!reminder) return null;
-    const mileage = selectedVehicle?.current_mileage;
-    if (reminder.due_mileage != null && mileage != null) {
-      const left = reminder.due_mileage - mileage;
-      return left <= 0 ? <strong>Overdue</strong> : <>Due in <strong>{left.toLocaleString()} miles</strong></>;
-    }
-    if (reminder.due_date) {
-      const days = Math.round((new Date(`${reminder.due_date}T00:00:00`) - new Date()) / 86400000);
-      return days < 0 ? <strong>Overdue</strong> : <>Due on <strong>{formatDate(reminder.due_date)}</strong></>;
-    }
-    return <>Due at <strong>{Number(reminder.due_mileage).toLocaleString()} miles</strong></>;
   };
 
   const emptyRecord = {
@@ -306,7 +285,7 @@ const cancelRecord = () => {
           <h1>Maintenance & Diagnostics</h1>
 
           <p>
-            Track your maintenance history, get reminders,
+            Track your maintenance history, manage expenses,
             and diagnose issues with AI.
           </p>
         </div>
@@ -425,22 +404,24 @@ const cancelRecord = () => {
           <div className="vehicle-overview-info">
 
             <div className="vehicle-overview-heading">
-              <h2>{vehicleName || "2022 Dodge Charger"}</h2>             
-              <span className="vehicle-status">Active</span>
+              <h2>{vehicleName || "No Vehicle Selected"}</h2>
+                  {selectedVehicle && (
+                    <span className="vehicle-status">Active</span>
+                  )}
             </div>
 
-            <p className="vehicle-trim">SRT Hellcat Widebody</p>
+            <p className="vehicle-trim">
+              {selectedVehicle?.trim || "Vehicle Overview"}
+            </p>
 
             <div className="vehicle-overview-details">
 
               <div>
                 <span>Current Mileage</span>
                 <strong>
-                  {selectedVehicle
-                    ? selectedVehicle.current_mileage != null
-                      ? `${Number(selectedVehicle.current_mileage).toLocaleString()} mi`
-                      : "Not set"
-                    : "42,500 mi"}
+                  {selectedVehicle?.current_mileage != null
+                  ? `${Number(selectedVehicle.current_mileage).toLocaleString()} mi`
+                   : "Not set"}
                 </strong>
               </div>
 
@@ -463,82 +444,8 @@ const cancelRecord = () => {
           </div>
 
         </div>
-
-        {/* ===================================
-            ⭐ NEW CARD ADDED HERE ⭐
-            CARD 2: NEXT MAINTENANCE
-        =================================== */}
-
-        <div className="next-maintenance-card">
-
-          {/* Card Header */}
-          <div className="next-maintenance-header">
-            <h2>Next Maintenance</h2>
-            <span className="maintenance-icon">🔧</span>
-          </div>
-
-          {/* Maintenance Information */}
-          <div className="next-maintenance-content">
-
-            <span className="maintenance-label">
-              UPCOMING SERVICE
-            </span>
-
-            {nextReminder ? (
-              <>
-                <h3>{nextReminder.service_type}</h3>
-
-                <p className="maintenance-due">
-                  {describeDue(nextReminder)}
-                </p>
-
-                {/* Mileage progress: how close the odometer is to the due mileage */}
-                {nextReminder.due_mileage != null && selectedVehicle?.current_mileage != null && (
-                  <>
-                    <div className="maintenance-progress">
-                      <div
-                        className="maintenance-progress-fill"
-                        style={{ width: `${Math.min(100, Math.round((selectedVehicle.current_mileage / nextReminder.due_mileage) * 100))}%` }}
-                      ></div>
-                    </div>
-
-                    <div className="maintenance-mileage">
-                      <span>{Number(selectedVehicle.current_mileage).toLocaleString()} mi</span>
-                      <span>{Number(nextReminder.due_mileage).toLocaleString()} mi</span>
-                    </div>
-                  </>
-                )}
-              </>
-            ) : (
-              <>
-                <h3>Nothing scheduled</h3>
-                <p className="maintenance-due">No upcoming services for this vehicle.</p>
-              </>
-            )}
-
-            {/* Reminder Message */}
-            <div className="maintenance-reminder">
-              <span>🔔</span>
-              <p>
-                Keep your vehicle running smoothly
-                by staying on schedule.
-              </p>
-            </div>
-
-          </div>
-
-          {/* Service Schedule Button */}
-          <button
-            type="button"
-            className="maintenance-schedule-button"
-            onClick={() => setActiveTab("schedule")}
-          >
-            View Service Schedule →
-          </button>
-
-        </div>
                 {/* ===================================
-            CARD 3: QUICK DIAGNOSTICS
+            CARD 2: QUICK DIAGNOSTICS
         =================================== */}
 
         <div className="quick-diagnostics-card">
@@ -622,7 +529,7 @@ const cancelRecord = () => {
 
         </div>
 
-        {/* CARD 3: UPCOMING SERVICES */}
+        {/* CARD 3: LAST SERVICES */}
         <div className="maintenance-stat-card">
 
           <div className="stat-icon stat-icon-blue">
@@ -630,34 +537,42 @@ const cancelRecord = () => {
           </div>
 
           <div className="stat-info">
-            <h3>{yearSummary?.upcoming_services ?? 0}</h3>
-            <p>Upcoming Services</p>
+            <h3>
+              {yearSummary?.last_service?.service_date
+                ? formatDate(yearSummary.last_service.service_date)
+                : "None yet"}
+            </h3>
+            <p>Last Service</p>
           </div>
 
           <span className="stat-arrow">›</span>
 
         </div>
 
-        {/* CARD 4: VEHICLE HEALTH */}
-        <div className="maintenance-stat-card">
+        
+        {/* CARD 4: AVERAGE SERVICE COST */}
+          <div className="maintenance-stat-card">
 
-          {/* Vehicle health: flags overdue services from the car's reminders */}
-          <div className={`stat-icon ${yearSummary?.overdue_services > 0 ? "stat-icon-blue" : "stat-icon-green"}`}>
-            {yearSummary?.overdue_services > 0 ? "⚠" : "✓"}
+            <div className="stat-icon stat-icon-green">
+              💰
+            </div>
+
+            <div className="stat-info">
+              <h3>
+                {formatMoney(
+                  yearSummary?.records_in_period > 0
+                    ? Number(yearSummary.total_spent || 0) /
+                        Number(yearSummary.records_in_period)
+                    : 0
+                )}
+              </h3>
+
+              <p>Average Service Cost (This Year)</p>
+            </div>
+
+            <span className="stat-arrow">›</span>
+
           </div>
-
-          <div className="stat-info">
-            <h3>{yearSummary?.overdue_services > 0 ? "Needs Attention" : "All Good"}</h3>
-            <p>
-              {yearSummary?.overdue_services > 0
-                ? `${yearSummary.overdue_services} overdue service${yearSummary.overdue_services === 1 ? "" : "s"}`
-                : "No overdue services"}
-            </p>
-          </div>
-
-          <span className="stat-arrow">›</span>
-
-        </div>
 
       </div>
       
