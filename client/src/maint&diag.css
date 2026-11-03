@@ -356,6 +356,8 @@
 /* Vehicle Image */
 
 .maintenance-page .vehicle-image {
+  /* relative: lets the "Change photo" button sit over the image */
+  position: relative;
   width: 100%;
   height: 180px;
   overflow: hidden;
@@ -1635,4 +1637,27 @@
     align-items: stretch;
   }
 
+}
+
+/* =============================
+   CONNECTED DATA: extra chart colours and empty states
+============================= */
+
+.maintenance-page .legend-dot.engine {
+  background: #ef4444;
+}
+
+.maintenance-page .legend-dot.electrical {
+  background: #eab308;
+}
+
+.maintenance-page .costs-empty {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.maintenance-page .record-save-button:disabled {
+  opacity: 0.6;
+  cursor: progress;
 }

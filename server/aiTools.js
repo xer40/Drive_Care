@@ -35,10 +35,10 @@ const getMaintenanceRecords = async (userId, { vehicle_id, keyword, limit }) => 
   if (!vehicleId) return { error: 'vehicle_id is required. Call list_my_vehicles to find it.' };
 
   const result = await pool.query(
-    `SELECT m.service_date, m.service_type, m.mileage, m.cost, m.notes
+    `SELECT m.service_date, m.service_type, m.mileage, m.cost, m.service_location
      FROM maintenance_records m JOIN vehicles v ON v.id = m.vehicle_id
      WHERE v.id = $1 AND v.user_id = $2
-       AND ($3::text IS NULL OR m.service_type ILIKE $3 OR m.notes ILIKE $3)
+       AND ($3::text IS NULL OR m.service_type ILIKE $3 OR m.service_location ILIKE $3)
      ORDER BY m.service_date DESC, m.id DESC LIMIT $4`,
     [vehicleId, userId, keyword ? likePattern(keyword) : null, toLimit(limit)]
   );
@@ -84,7 +84,7 @@ const searchCommunityPosts = async (userId, { make, model, keyword }) => {
   if (!make && !model && !keyword) return { error: 'Give at least one of make, model or keyword.' };
 
   const result = await pool.query(
-    `SELECT p.id, p.title, p.body, p.created_at, v.year, v.make, v.model,
+    `SELECT p.id, p.topic, p.body, p.created_at, v.year, v.make, v.model,
             (SELECT COUNT(*) FROM post_likes l WHERE l.post_id = p.id) AS like_count,
             (SELECT json_agg(c.body ORDER BY c.id) FROM (
                SELECT id, body FROM comments WHERE post_id = p.id ORDER BY id LIMIT 5
@@ -92,7 +92,7 @@ const searchCommunityPosts = async (userId, { make, model, keyword }) => {
      FROM posts p LEFT JOIN vehicles v ON v.id = p.vehicle_id
      WHERE ($1::text IS NULL OR v.make ILIKE $1)
        AND ($2::text IS NULL OR v.model ILIKE $2)
-       AND ($3::text IS NULL OR p.title ILIKE $3 OR p.body ILIKE $3)
+       AND ($3::text IS NULL OR p.topic ILIKE $3 OR p.body ILIKE $3)
      ORDER BY p.created_at DESC LIMIT 10`,
     [make ? likePattern(make) : null, model ? likePattern(model) : null, keyword ? likePattern(keyword) : null]
   );
@@ -124,7 +124,7 @@ const TOOLS = {
         type: 'object',
         properties: {
           vehicle_id: { type: 'integer', description: 'Id of one of the user\'s vehicles' },
-          keyword: { type: 'string', description: 'Optional word to match in the service type or notes' },
+          keyword: { type: 'string', description: 'Optional word to match in the service type or where it was done' },
           limit: { type: 'integer', description: `Max records to return (up to ${MAX_ROWS})` },
         },
         required: ['vehicle_id'],
@@ -166,7 +166,7 @@ const TOOLS = {
         properties: {
           make: { type: 'string', description: "Vehicle make, e.g. 'Ford'" },
           model: { type: 'string', description: "Vehicle model, e.g. 'Focus'" },
-          keyword: { type: 'string', description: 'Symptom or part to search for in post titles and text' },
+          keyword: { type: 'string', description: 'Symptom, part or topic to search for in post topics and text' },
         },
       },
     },

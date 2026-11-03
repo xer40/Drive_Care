@@ -41,6 +41,7 @@
 
 .dc-dashboard {
   width: 100%;
+  min-width: 0;
   min-height: 100%;
 
   background-color: var(--dc-bg-page);
@@ -48,6 +49,11 @@
   font-family: var(--dc-font-family);
 
   color: var(--dc-text-heading);
+}
+
+/* The homepage's main column. Not named dc-main, which is the shared Layout's content area */
+.dc-home-main {
+  min-width: 0;
 }
 
 
@@ -1465,4 +1471,40 @@
     grid-template-columns: 1fr;
   }
 
+}
+
+
+/* ===================== VEHICLE PHOTO UPLOAD (Add Vehicle form) ===================== */
+
+.dc-form-group input[type="file"] {
+  padding: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.dc-photo-preview {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--dc-border-subtle);
+}
+
+.dc-form-hint {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.dc-form-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.8rem;
+}
+
+/* Placeholder shown in a secondary vehicle row when the car has no photo */
+.dc-small-thumb.vehicle-photo-placeholder {
+  flex-shrink: 0;
 }

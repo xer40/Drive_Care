@@ -94,6 +94,12 @@ GEMINI_API_KEY=your-gemini-api-key
 JWT_SECRET=a-long-random-string
 PORT=5001
 
+# Cloudinary, for vehicle photos (Settings → API Keys in the Cloudinary console).
+# Keep the secret here only, never in client/.env
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
 # Which Gemini model the chatbot uses. The code falls back to gemini-2.5-flash,
 # which Google no longer offers to new API keys, so set this to a current model
 GEMINI_MODEL=gemini-3.5-flash-lite
@@ -173,10 +179,10 @@ PostgreSQL 17. [`server/schema.sql`](server/schema.sql) is the full definition a
 | Table | Holds | Belongs to |
 |---|---|---|
 | `users` | Accounts: `username`, `email`, `password_hash`, `avatar_url` | |
-| `vehicles` | A user's cars: `make`, `model`, `year`, `vin`, `current_mileage` | `users` |
-| `maintenance_records` | Services done: `service_type`, `service_date`, `mileage`, `cost`, `notes` | `vehicles` |
+| `vehicles` | A user's cars: `make`, `model`, `year`, `vin`, `current_mileage`, `photo` (Cloudinary link) | `users` |
+| `maintenance_records` | Services done: `service_type`, `service_date`, `mileage`, `cost`, `service_location` (where it was done) | `vehicles` |
 | `reminders` | Services coming up: `service_type`, `due_date`, `due_mileage`, `is_done` | `vehicles` |
-| `posts` | Community posts: `title`, `body`, `image_url`, optional tagged vehicle | `users` |
+| `posts` | Community posts: `topic` (e.g. Brakes, used to filter the feed), `body`, `image_url`, optional tagged vehicle | `users` |
 | `comments` | Comments on posts | `posts`, `users` |
 | `post_likes` | One row per user per liked post | `posts`, `users` |
 | `ai_conversations` | Chatbot conversations: `title`, optional vehicle | `users` |
@@ -243,20 +249,66 @@ const { vehicle } = await authFetch('/api/vehicles', {
 | Method | Path | Body |
 |---|---|---|
 | `GET` | `/api/vehicles` | |
-| `POST` | `/api/vehicles` | `make`, `model`, `year`, optional `vin`, `current_mileage` |
+| `POST` | `/api/vehicles` | `make`, `model`, `year`, optional `vin`, `current_mileage`, `photo` |
+| `POST` | `/api/vehicles/photo-upload` | none (returns a one-time signature for uploading a photo to Cloudinary) |
 | `GET` | `/api/vehicles/:id` | |
 | `PATCH` | `/api/vehicles/:id` | any of the fields above |
 | `DELETE` | `/api/vehicles/:id` | |
+
+**Vehicle photos** are stored on Cloudinary, and `photo` holds the link. The browser uploads the file straight to Cloudinary after getting a one-time signature from `POST /api/vehicles/photo-upload`, so only logged-in users can upload and the API secret never leaves the server. `photo` only accepts links to images in this app's Cloudinary account; send `null` to remove a photo. Uploads go into the `drivecare/vehicles` folder and are shrunk to at most 1600px. Post photos work the same way through `POST /api/posts/photo-upload`, go into `drivecare/posts`, and are saved as the post's `image_url`. On the frontend, use `uploadVehiclePhoto(file)` or `uploadPostPhoto(file)` from [`cloudinary.js`](client/src/cloudinary.js) and show photos with `<VehiclePhoto>` from [`VehiclePhoto.jsx`](client/src/VehiclePhoto.jsx), which asks Cloudinary for a copy resized to fit.
 
 ### Maintenance records
 
 | Method | Path | Body |
 |---|---|---|
 | `GET` | `/api/vehicles/:vehicleId/maintenance` | |
-| `POST` | `/api/vehicles/:vehicleId/maintenance` | `service_type`, `service_date`, optional `mileage`, `cost`, `notes` |
+| `GET` | `/api/vehicles/:vehicleId/maintenance/summary` | none. Optional `?period=year` (default), `month` or `all` |
+| `POST` | `/api/vehicles/:vehicleId/maintenance` | `service_type`, `service_date`, optional `mileage`, `cost`, `service_location` |
 | `GET` | `/api/maintenance/:id` | |
 | `PATCH` | `/api/maintenance/:id` | any of the fields above |
 | `DELETE` | `/api/maintenance/:id` | |
+
+Every record these routes return also has a `category` and `category_icon`, worked out from `service_type` by [`maintenanceCategories.js`](server/maintenanceCategories.js): Brakes 🛑, Tires 🛞, Oil & Fluids 🛢️, Filters 🌬️, Engine ⚙️, Electrical 🔋 or Other 🔧. For example "Front brake pads" is Brakes and "Oil change and filter" is Oil & Fluids. To change how services are grouped, edit the keyword lists in that file.
+
+`GET /api/vehicles/:vehicleId/maintenance/summary` returns the numbers for the maintenance page's stat cards and costs chart:
+
+```json
+{
+  "period": "year",
+  "total_records": 5,
+  "records_in_period": 3,
+  "total_spent": 642.5,
+  "total_spent_all_time": 812.5,
+  "last_service": { "service_type": "Oil Change", "service_date": "2026-09-15", "mileage": 42000, "category": "Oil & Fluids", "...": "..." },
+  "upcoming_services": 3,
+  "overdue_services": 1,
+  "cost_by_category": [
+    { "category": "Brakes", "icon": "🛑", "total": 350, "percent": 54 },
+    { "category": "Tires", "icon": "🛞", "total": 120, "percent": 19 }
+  ]
+}
+```
+
+`total_spent`, `records_in_period` and `cost_by_category` cover the chosen period (this calendar year, this calendar month, or all time). `cost_by_category` always lists every category in the same order, with `0` for unused ones. `last_service` is `null` when there are no records. `upcoming_services` and `overdue_services` count the vehicle's open reminders.
+
+**Connecting the maintenance page's add-record form.** The form's fields map to the API like this:
+
+| Form field | API field |
+|---|---|
+| `service` | `service_type` |
+| `date` | `service_date` (`YYYY-MM-DD`, which is what `<input type="date">` gives) |
+| `mileage` | `mileage` |
+| `cost` | `cost` |
+| `location` | `service_location` |
+
+```js
+await authFetch(`/api/vehicles/${vehicleId}/maintenance`, {
+  method: 'POST',
+  body: { service_type: service, service_date: date, mileage, cost, service_location: location },
+})
+```
+
+Use `record.category` and `record.category_icon` from the API instead of the sample data's `category` / `icon`. Edit with `PATCH /api/maintenance/:id` and delete with `DELETE /api/maintenance/:id`.
 
 Logging or editing a record with a `mileage` higher than the vehicle's `current_mileage` raises the vehicle's `current_mileage` to match. It is never lowered, so older records and deletions don't wind it back.
 
@@ -276,8 +328,10 @@ Any logged-in user can read posts and comments. Only the author can edit or dele
 
 | Method | Path | Body | Notes |
 |---|---|---|---|
-| `GET` | `/api/posts` | | Newest first. Optional `?user_id=`, `?limit=` (max 100), `?offset=` |
-| `POST` | `/api/posts` | `title`, optional `body`, `image_url`, `vehicle_id` | `vehicle_id` must be one of your vehicles |
+| `GET` | `/api/posts` | | Newest first. Optional `?topic=` (ignores capitals), `?user_id=`, `?limit=` (max 100), `?offset=` |
+| `GET` | `/api/posts/topics` | | Topics in use with their `post_count`, most popular first |
+| `POST` | `/api/posts/photo-upload` | | Returns a one-time signature for uploading a post photo to Cloudinary |
+| `POST` | `/api/posts` | `topic`, optional `body`, `image_url`, `vehicle_id` | `vehicle_id` must be one of your vehicles. `image_url` must be a photo uploaded through DriveCare |
 | `GET` | `/api/posts/:id` | | |
 | `PATCH` | `/api/posts/:id` | any of the fields above | |
 | `DELETE` | `/api/posts/:id` | | |
