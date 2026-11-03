@@ -15,7 +15,10 @@ function Navbar() {
     <aside className="dc-sidebar">
 
       {/* Logo */}
-      <div className="dc-sidebar-logo">
+      <div
+        className="dc-sidebar-logo"
+        onClick={() => navigate("/home")}
+      >
 
         <svg
           className="dc-logo-icon"
@@ -48,9 +51,6 @@ function Navbar() {
         </button>
 
 
-       
-
-
         <button
           className="dc-nav-item"
           onClick={() => navigate("/maintenance")}
@@ -58,6 +58,7 @@ function Navbar() {
           <span className="dc-nav-icon">🔧</span>
           <span>Maintenance</span>
         </button>
+
 
         <button
           className="dc-nav-item"
@@ -80,11 +81,15 @@ function Navbar() {
           </div>
 
           <div className="dc-unlock-info">
-            <h4>Unlock More</h4>
+
+            <h4>
+              Unlock More
+            </h4>
 
             <p>
               Premium features coming soon
             </p>
+
           </div>
 
           <span className="dc-arrow">
