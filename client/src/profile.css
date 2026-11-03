@@ -1,0 +1,76 @@
+body {
+
+    background-color: #F6F9FC
+}
+
+.header {
+    font-size: 36px;
+    margin-left: -850px;
+    font-family: Inter;
+    font-weight: 700;
+
+}
+
+.subheader {
+    font-size: 20px;
+    margin-left: -600px;
+    font-family: Inter;
+    font-weight: 450;
+
+}
+.profile-section {
+
+    
+    justify-content: center;
+    
+    margin-top: 100px;
+    background-color: #fefdfd;
+    border-radius: 15px;
+    width: 500px;
+    height: 200px;
+    border: 3px solid #f1f3f7;`
+    
+   
+}
+
+.account-info {
+
+    
+    display: flex;
+    margin: 0 auto;
+    margin-top: 10px;
+    background-color: #fefdfd;
+    border-radius: 12px;
+    width: 500px;
+    height: 72px;
+    border: 3px solid #f1f3f7;
+    margin-left: 307px;
+
+
+}
+
+.notifications {
+
+    display: flex;
+    margin: 0 auto;
+    margin-top: 10px;
+    background-color: #fefdfd;
+    border-radius: 12px;
+    width: 500px;
+    height: 72px;
+    border: 3px solid #f1f3f7;
+    margin-left: 307px;
+}
+
+.privacy {
+
+    display: flex;
+    margin: 0 auto;
+    margin-top: 10px;
+    background-color: #fefdfd;
+    border-radius: 12px;
+    width: 500px;
+    height: 72px;
+    border: 3px solid #f1f3f7;
+    margin-left: 307px;
+}
