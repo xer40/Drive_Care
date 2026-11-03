@@ -6,7 +6,7 @@ import {
 
 import "../Styles/topbar.css"
 
-function Topbar() {
+function Topbar({ theme, toggleTheme }) {
   const navigate = useNavigate()
 
   const userPayload = getTokenPayload()
@@ -42,7 +42,6 @@ function Topbar() {
 
         </svg>
 
-
         <input
           type="text"
           placeholder="Search for maintenance tips, parts, or community posts..."
@@ -67,6 +66,21 @@ function Topbar() {
           <span className="dc-notif-dot"></span>
 
         </button>
+
+
+        {/* Light / Dark Mode Switch */}
+        <label className="theme-switch">
+
+          <input
+            type="checkbox"
+            checked={theme === "dark"}
+            onChange={toggleTheme}
+            aria-label="Toggle dark mode"
+          />
+
+          <span className="theme-slider"></span>
+
+        </label>
 
 
         <div
