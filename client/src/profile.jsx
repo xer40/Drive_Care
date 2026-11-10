@@ -8,7 +8,9 @@ export default function Profile() {
       
 
     <div className = "profile-section">
-
+      <div className = "pfp-section">
+        
+      </div>
        </div>
 
     
