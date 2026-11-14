@@ -3,7 +3,7 @@
  * box for the AI assistant.
  *
  * **Module name:** client/Homepage  
- * **Programmer(s):** Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04), Daniel Ray, Sopnel Saha, Angel Saavedra  
+ * **Programmer(s):** Shafayat Ahmed Khan Chowdhury, Kevin Aguilar, Daniel Ray, Sopnel Saha, Angel Saavedra  
  * **Date:** 2026-10-19 (last updated 2026-11-02)
  *
  * **Important functions (inputs -> outputs):**
@@ -21,7 +21,7 @@
  * `vehicles` and `maintenanceRecords` arrays; `newVehicle` form object.
  *
  * @module client/Homepage
- * @author Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04), Daniel Ray, Sopnel Saha, Angel Saavedra
+ * @author Shafayat Ahmed Khan Chowdhury, Kevin Aguilar, Daniel Ray, Sopnel Saha, Angel Saavedra
  * @since 2026-10-19 (last updated 2026-11-02)
  */
 import React, { useState, useEffect } from 'react';

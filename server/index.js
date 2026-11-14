@@ -3,7 +3,7 @@
  * every route file under /api, and starts the HTTP server.
  *
  * **Module name:** server/index  
- * **Programmer(s):** Daniel Ray, Kevin (GitHub: KevOrt04)  
+ * **Programmer(s):** Daniel Ray, Kevin Aguilar  
  * **Date:** 2026-09-02 (last updated 2026-10-19)
  *
  * **Important functions (inputs -> outputs):**
@@ -29,7 +29,7 @@
  * one `app.use('/api', requireAuth)` line protects every route mounted after it.
  *
  * @module server/index
- * @author Daniel Ray, Kevin (GitHub: KevOrt04)
+ * @author Daniel Ray, Kevin Aguilar
  * @since 2026-09-02 (last updated 2026-10-19)
  */
 // Load environment variables from your server/.env file

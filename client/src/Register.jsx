@@ -2,7 +2,7 @@
  * Sign-up page.
  *
  * **Module name:** client/Register  
- * **Programmer(s):** Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04)  
+ * **Programmer(s):** Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin Aguilar  
  * **Date:** 2026-10-07 (last updated 2026-10-28)
  *
  * **Important functions (inputs -> outputs):**
@@ -22,7 +22,7 @@
  * again because requests do not have to come from this page.
  *
  * @module client/Register
- * @author Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04)
+ * @author Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin Aguilar
  * @since 2026-10-07 (last updated 2026-10-28)
  */
 import { useState } from 'react'

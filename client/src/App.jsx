@@ -2,7 +2,7 @@
  * Defines every page URL (client-side routing) and which pages need a login.
  *
  * **Module name:** client/App  
- * **Programmer(s):** Sopnel Saha, Kevin (GitHub: KevOrt04), Daniel Ray, Angel Saavedra, Shafayat Ahmed Khan Chowdhury  
+ * **Programmer(s):** Sopnel Saha, Kevin Aguilar, Daniel Ray, Angel Saavedra, Shafayat Ahmed Khan Chowdhury  
  * **Date:** 2026-09-02 (last updated 2026-11-11)
  *
  * **Important functions (inputs -> outputs):**
@@ -21,7 +21,7 @@
  * instead of repeating that logic inside every page.
  *
  * @module client/App
- * @author Sopnel Saha, Kevin (GitHub: KevOrt04), Daniel Ray, Angel Saavedra, Shafayat Ahmed Khan Chowdhury
+ * @author Sopnel Saha, Kevin Aguilar, Daniel Ray, Angel Saavedra, Shafayat Ahmed Khan Chowdhury
  * @since 2026-09-02 (last updated 2026-11-11)
  */
 import { Routes, Route } from 'react-router-dom'

@@ -2,7 +2,7 @@
  * Login page.
  *
  * **Module name:** client/Login  
- * **Programmer(s):** Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04)  
+ * **Programmer(s):** Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin Aguilar  
  * **Date:** 2026-10-02 (last updated 2026-10-28)
  *
  * **Important functions (inputs -> outputs):**
@@ -17,7 +17,7 @@
  * `loginData` state `{ username, password }`; `status` state `{ text, error }`.
  *
  * @module client/Login
- * @author Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04)
+ * @author Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin Aguilar
  * @since 2026-10-02 (last updated 2026-10-28)
  */
 import { useState } from 'react'

@@ -3,7 +3,7 @@
  * record form, a costs donut chart and the AI diagnostics chat.
  *
  * **Module name:** client/maint&diag  
- * **Programmer(s):** Kevin (GitHub: KevOrt04), Daniel Ray  
+ * **Programmer(s):** Kevin Aguilar, Daniel Ray  
  * **Date:** 2026-10-12 (last updated 2026-11-02)
  *
  * **Important functions (inputs -> outputs):**
@@ -28,7 +28,7 @@
  * a chart library, to avoid an extra dependency.
  *
  * @module client/maint&diag
- * @author Kevin (GitHub: KevOrt04), Daniel Ray
+ * @author Kevin Aguilar, Daniel Ray
  * @since 2026-10-12 (last updated 2026-11-02)
  */
 import { useEffect, useRef, useState } from "react";

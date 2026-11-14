@@ -2,7 +2,7 @@
  * Chat with the AI diagnostic assistant about one vehicle.
  *
  * **Module name:** client/DiagnosticsChat  
- * **Programmer(s):** Kevin (GitHub: KevOrt04), Daniel Ray  
+ * **Programmer(s):** Kevin Aguilar, Daniel Ray  
  * **Date:** 2026-10-19 (last updated 2026-10-26)
  *
  * **Important functions (inputs -> outputs):**
@@ -21,7 +21,7 @@
  * resets all chat state without extra code.
  *
  * @module client/DiagnosticsChat
- * @author Kevin (GitHub: KevOrt04), Daniel Ray
+ * @author Kevin Aguilar, Daniel Ray
  * @since 2026-10-19 (last updated 2026-10-26)
  */
 import { useEffect, useRef, useState } from 'react'
