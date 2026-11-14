@@ -16,21 +16,23 @@
 
   padding: 24px 12px;
 
-  background-color: #ffffff;
-  border-right: 1px solid #e5e7eb;
+  background-color: var(--bg-main);
+  border-right: 1px solid var(--border-color);
 
   overflow: hidden;
 
   transition:
     width 0.25s ease,
     min-width 0.25s ease,
-    max-width 0.25s ease;
+    max-width 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 
   z-index: 1000;
 }
 
 
-/*Expand Sidebar on Hover*/
+/* Expand Sidebar on Hover */
 
 .dc-layout > .dc-sidebar:hover {
   width: 245px;
@@ -65,7 +67,7 @@
   font-size: 23px;
   font-weight: 700;
 
-  color: #111827;
+  color: var(--text-main);
 
   white-space: nowrap;
 
@@ -74,7 +76,8 @@
 
   transition:
     opacity 0.2s ease,
-    visibility 0.2s ease;
+    visibility 0.2s ease,
+    color 0.25s ease;
 }
 
 .dc-sidebar:hover .dc-logo-text {
@@ -107,7 +110,7 @@
 
   background-color: transparent;
 
-  color: #64748b;
+  color: var(--text-muted);
 
   font-size: 14px;
   text-align: left;
@@ -120,13 +123,13 @@
 }
 
 .dc-nav-item:hover {
-  background-color: #eff6ff;
+  background-color: rgba(37, 99, 235, 0.12);
 
   color: #2563eb;
 }
 
 .dc-nav-item.active {
-  background-color: #eaf2ff;
+  background-color: rgba(37, 99, 235, 0.14);
 
   color: #2563eb;
 
@@ -174,7 +177,7 @@
 }
 
 
-/* premium card */
+/* Premium card */
 
 .dc-unlock-card {
   display: flex;
@@ -188,7 +191,10 @@
 
   border-radius: 10px;
 
-  background-color: #f8fafc;
+  background-color: rgba(148, 163, 184, 0.08);
+
+  transition:
+    background-color 0.25s ease;
 }
 
 .dc-unlock-icon {
@@ -215,19 +221,19 @@
 
   font-size: 13px;
 
-  color: #1e293b;
+  color: var(--text-main);
 }
 
 .dc-unlock-info p {
   margin: 0;
 
-  color: #94a3b8;
+  color: var(--text-muted);
 
   font-size: 10px;
 }
 
 .dc-arrow {
-  color: #94a3b8;
+  color: var(--text-muted);
 
   opacity: 0;
   visibility: hidden;
@@ -247,7 +253,7 @@
 /* Bottom Links */
 
 .dc-bottom-links {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-color);
 
   padding-top: 12px;
 }
@@ -267,7 +273,7 @@
 
   background-color: transparent;
 
-  color: #64748b;
+  color: var(--text-muted);
 
   font-size: 14px;
 
@@ -279,7 +285,7 @@
 }
 
 .dc-bottom-link:hover {
-  background-color: #f1f5f9;
+  background-color: rgba(148, 163, 184, 0.12);
 
   color: #2563eb;
 }

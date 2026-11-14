@@ -6,26 +6,31 @@ import Homepage from './Homepage.jsx'
 import Community from "./Pages/community.jsx"
 import Layout from "./Components/Layout.jsx"
 import RequireAuth from './RequireAuth.jsx'
+import RedirectIfLoggedIn from './RedirectIfLoggedIn.jsx'
+import Profile from './profile.jsx'
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/" element={<RedirectIfLoggedIn><Login /></RedirectIfLoggedIn>} />
+      <Route path="/login" element={<RedirectIfLoggedIn><Login /></RedirectIfLoggedIn>} />
+      <Route path="/register" element={<RedirectIfLoggedIn><Register /></RedirectIfLoggedIn>} />
 
       
 
 
       <Route path="/home" element={
-        <Layout>
-          <RequireAuth><Homepage /></RequireAuth>
-        </Layout>
-      } />
+    <RequireAuth>
+      <Layout>
+        <Homepage />
+      </Layout>
+    </RequireAuth>
+  }
+/>
 
       <Route path="/maintenance" element={
         <Layout>
-          <Maintenance/>
+          <RequireAuth><Maintenance /></RequireAuth>
         </Layout>
       } />
 
@@ -33,10 +38,18 @@ function App() {
       path="/community"
       element = {
         <Layout>
-          <Community />
+          <RequireAuth><Community /></RequireAuth>
         </Layout>
       }
         />
+
+      <Route path="/profile" element={
+        <RequireAuth>
+        <Layout>
+          <Profile />
+        </Layout>
+    </RequireAuth>
+      } />
       
     </Routes>
   )

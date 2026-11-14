@@ -1,0 +1,259 @@
+/* =========================================
+   DARK MODE FOR THE PAGES
+   The pages' own stylesheets use fixed light colours. When dark mode is on (.dc-layout.dark), the rules
+   below swap those colours for dark partners. Light mode is unaffected.
+
+   Palette: cards #1e293b, panels #172033 and #273449, borders #334155, main text #f1f5f9, muted text #94a3b8.
+   Adding a new element with a light colour? Add a matching rule here, starting with .dc-layout.dark
+========================================= */
+
+/* Added for a moment while the theme flips (see toggleTheme in Layout.jsx) so everything changes together.
+   The toggle's own knob keeps its slide */
+.dc-theme-switching *:not(.theme-slider),
+.dc-theme-switching *:not(.theme-slider)::before,
+.dc-theme-switching *:not(.theme-slider)::after {
+  transition: none !important;
+}
+
+/* Browser-drawn controls (dropdown menus, date pickers, scrollbars) follow the theme too */
+.dc-layout.dark,
+.dc-layout.dark .maintenance-page,
+.dc-layout.dark .maintenance-page textarea {
+  color-scheme: dark;
+}
+
+/* Base colours for the Homepage's variables and for anything without its own colour */
+.dc-layout.dark {
+  --dc-bg-page: #0f172a;
+  --dc-card-bg: #1e293b;
+  --dc-border-subtle: #334155;
+  --dc-text-heading: #f1f5f9;
+  --dc-text-muted: #94a3b8;
+  --dc-text-light: #94a3b8;
+  --text: #94a3b8;
+  --text-h: #f1f5f9;
+  color: #e2e8f0;
+}
+
+/* The maintenance page's info popups set their white background inline, so this needs !important */
+.dc-layout.dark .service-info-modal {
+  background-color: #1e293b !important;
+  color: #e2e8f0;
+}
+
+.dc-layout.dark .service-info-modal h2,
+.dc-layout.dark .service-info-modal h3 {
+  color: #f1f5f9;
+}
+
+/* ---------- Homepage.css ---------- */
+.dc-layout.dark .dc-stat-icon-wrapper.blue { background: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .dc-stat-icon-wrapper.light-blue { background: #0c4a6e; color: #38bdf8; }
+.dc-layout.dark .dc-stat-icon-wrapper.soft-blue { background: #2e1065; color: #a5b4fc; }
+.dc-layout.dark .dc-stat-icon-wrapper.pale-blue { background: #1e3a5f; color: #93c5fd; }
+.dc-layout.dark .dc-badge.primary { background-color: #1e3a5f; color: #93c5fd; }
+.dc-layout.dark .dc-tag { background-color: #273449; }
+.dc-layout.dark .dc-vehicle-odometer { border-top: 1px solid #334155; }
+.dc-layout.dark .dc-add-vehicle-outline-btn:hover { background-color: #1e3a5f; }
+.dc-layout.dark .dc-service-item { border-bottom: 1px solid #334155; }
+.dc-layout.dark .dc-service-item:hover { background-color: #172033; }
+.dc-layout.dark .dc-service-icon.orange { background: #431407; color: #fdba74; }
+.dc-layout.dark .dc-service-icon.amber { background: #422006; color: #fde047; }
+.dc-layout.dark .dc-service-icon.slate { background: #273449; color: #cbd5e1; }
+.dc-layout.dark .dc-service-icon.green { background: #064e3b; color: #34d399; }
+.dc-layout.dark .dc-service-icon.blue { background: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .dc-service-icon.gray { background: #172033; color: #94a3b8; }
+.dc-layout.dark .dc-status-pill.amber { background-color: #422006; color: #fcd34d; }
+.dc-layout.dark .dc-feed-text { color: #cbd5e1; }
+.dc-layout.dark .dc-feed-footer { border-top: 1px solid #334155; }
+.dc-layout.dark .dc-demo-toggle-btn { background: #273449; }
+.dc-layout.dark .dc-demo-toggle-btn:hover { background: #334155; }
+.dc-layout.dark .dc-empty-state-card { border: 2px dashed #475569; background: #1e293b; }
+.dc-layout.dark .dc-empty-icon { background: #273449; }
+.dc-layout.dark .dc-modal-container { background-color: #1e293b; }
+.dc-layout.dark .dc-modal-btn.cancel { background: #273449; }
+.dc-layout.dark .dc-modal-btn.cancel:hover { background: #334155; }
+.dc-layout.dark .dc-form-hint { color: #94a3b8; }
+.dc-layout.dark .dc-form-error { background: #450a0a; color: #fca5a5; }
+
+/* ---------- maint&diag.css ---------- */
+.dc-layout.dark .maintenance-page { background-color: #172033; color: #f1f5f9; }
+.dc-layout.dark .maintenance-page h1 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page > p { color: #94a3b8; }
+.dc-layout.dark .maintenance-page section { background-color: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page section h2 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page select { border: 1px solid #475569; background-color: #1e293b; color: #cbd5e1; }
+.dc-layout.dark .maintenance-page input { border: 1px solid #475569; background-color: #1e293b; color: #f1f5f9; }
+.dc-layout.dark .maintenance-card { background-color: #172033; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-card:hover { border-color: #1e40af; }
+.dc-layout.dark .maintenance-card h3 { color: #93c5fd; }
+.dc-layout.dark .maintenance-card p { color: #cbd5e1; }
+.dc-layout.dark .maintenance-page textarea { border: 1px solid #475569; }
+.dc-layout.dark .maintenance-page .maintenance-header-text h1 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .maintenance-header-text p { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .maintenance-vehicle-selector select { border: 1px solid #334155; background-color: #1e293b; color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .maintenance-tabs { border-bottom: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .maintenance-tabs button { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .maintenance-tabs button:hover { color: #60a5fa; }
+.dc-layout.dark .maintenance-page .maintenance-tabs button.active { color: #60a5fa; }
+.dc-layout.dark .maintenance-page .vehicle-overview-card { background-color: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .vehicle-overview-heading h2 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .vehicle-status { background-color: #14532d; color: #4ade80; }
+.dc-layout.dark .maintenance-page .vehicle-trim { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .vehicle-overview-details span { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .vehicle-overview-details strong { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .vehicle-details-button { background-color: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .maintenance-page .vehicle-details-button:hover { background-color: #1e3a5f; }
+.dc-layout.dark .maintenance-page .next-maintenance-card { background-color: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .next-maintenance-header h2 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .maintenance-icon { background-color: #1e3a5f; }
+.dc-layout.dark .maintenance-page .maintenance-label { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .next-maintenance-content h3 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .maintenance-due { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .maintenance-due strong { color: #60a5fa; }
+.dc-layout.dark .maintenance-page .maintenance-progress { background-color: #334155; }
+.dc-layout.dark .maintenance-page .maintenance-mileage { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .maintenance-reminder { background-color: #172033; }
+.dc-layout.dark .maintenance-page .maintenance-reminder p { color: #cbd5e1; }
+.dc-layout.dark .maintenance-page .maintenance-schedule-button { background-color: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .maintenance-page .maintenance-schedule-button:hover { background-color: #1e3a5f; }
+.dc-layout.dark .maintenance-page .quick-diagnostics-card { background-color: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .quick-diagnostics-header h2 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .diagnostics-icon { background-color: #1e3a5f; }
+.dc-layout.dark .maintenance-page .quick-diagnostics-description { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .quick-diagnostics-input { border: 1px solid #334155; background-color: #172033; color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .diagnostics-suggestions > span { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .diagnostics-chips button { background-color: #273449; color: #cbd5e1; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .diagnostics-chips button:hover { background-color: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .maintenance-page .maintenance-stat-card { background-color: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .maintenance-stat-card:hover { border-color: #1e40af; }
+.dc-layout.dark .maintenance-page .stat-icon-blue { background-color: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .maintenance-page .stat-icon-green { background-color: #14532d; color: #4ade80; }
+.dc-layout.dark .maintenance-page .stat-info h3 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .stat-info p { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .stat-arrow { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .maintenance-history-section { background-color: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .history-header h2 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .history-filter-button { background-color: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .history-filter-button:hover { background-color: #172033; }
+.dc-layout.dark .maintenance-page .history-table thead { background-color: #172033; }
+.dc-layout.dark .maintenance-page .history-table th { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .history-table td { color: #cbd5e1; border-bottom: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .history-table tbody tr:hover { background-color: #172033; }
+.dc-layout.dark .maintenance-page .history-service-icon { background-color: #1e3a5f; }
+.dc-layout.dark .maintenance-page .history-service-info strong { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .history-service-info span { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .history-table td.history-cost { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .history-actions-button { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .history-actions-button:hover { background-color: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .maintenance-page .maintenance-costs-card { background: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .common-services-card { background: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .costs-header h2 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .common-services-header h2 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .costs-header select { border: 1px solid #334155; background: #1e293b; color: #cbd5e1; }
+.dc-layout.dark .maintenance-page .costs-donut-center { background: #1e293b; }
+.dc-layout.dark .maintenance-page .costs-donut-center strong { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .costs-donut-center span { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .legend-name { color: #cbd5e1; }
+.dc-layout.dark .maintenance-page .costs-legend-item strong { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .common-view-all { color: #60a5fa; }
+.dc-layout.dark .maintenance-page .common-view-all:hover { background: #1e3a5f; }
+.dc-layout.dark .maintenance-page .common-service-item { border-bottom: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .common-service-icon { background: #273449; }
+.dc-layout.dark .maintenance-page .oil-icon { background: #431407; }
+.dc-layout.dark .maintenance-page .tire-icon { background: #1e3a5f; }
+.dc-layout.dark .maintenance-page .brake-icon { background: #273449; }
+.dc-layout.dark .maintenance-page .common-service-info strong { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .common-service-info span { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .common-learn-button { background: #1e3a5f; color: #60a5fa; border: 1px solid #1e40af; }
+.dc-layout.dark .maintenance-page .common-learn-button:hover { background: #1e3a5f; }
+.dc-layout.dark .maintenance-page .records-page-header h2 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .records-page-header p { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .records-summary-card { background: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .records-summary-card span { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .records-summary-card h3 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .records-table-container { background: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .records-table thead { background: #172033; }
+.dc-layout.dark .maintenance-page .records-table th { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .records-table td { border-top: 1px solid #334155; color: #cbd5e1; }
+.dc-layout.dark .maintenance-page .records-table tbody tr:hover { background: #172033; }
+.dc-layout.dark .maintenance-page .add-record-header h2 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .add-record-header p { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .add-record-card { background: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .add-record-field label { color: #cbd5e1; }
+.dc-layout.dark .maintenance-page .add-record-field input { color: #f1f5f9; background: #1e293b; border: 1px solid #475569; }
+.dc-layout.dark .maintenance-page .record-cancel-button { background: #1e293b; color: #cbd5e1; border: 1px solid #475569; }
+.dc-layout.dark .maintenance-page .record-cancel-button:hover { background: #273449; }
+.dc-layout.dark .maintenance-page .record-edit-button { background: #1e3a5f; color: #60a5fa; border: 1px solid #1e40af; }
+.dc-layout.dark .maintenance-page .record-edit-button:hover { background: #1e3a5f; }
+.dc-layout.dark .maintenance-page .record-delete-button { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
+.dc-layout.dark .maintenance-page .record-delete-button:hover { background: #450a0a; }
+
+/* ---------- Styles/community.css ---------- */
+.dc-layout.dark .community-page { background-color: #0f172a; }
+.dc-layout.dark .community-tabs button { border: 1px solid #334155; background-color: #1e293b; color: #cbd5e1; }
+.dc-layout.dark .community-tabs button:hover { background-color: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .community-card { background-color: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .community-card h2 { color: #f1f5f9; }
+.dc-layout.dark .community-left .community-card > button { color: #cbd5e1; }
+.dc-layout.dark .community-left .community-card > button:hover { background-color: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .community-topics span { background-color: #273449; color: #cbd5e1; }
+.dc-layout.dark .community-topics span:hover { background-color: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .community-create-post { background-color: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .community-create-post textarea { border: 1px solid #334155; color: #f1f5f9; background-color: #172033; }
+.dc-layout.dark .community-create-post textarea:focus { background-color: #1e293b; }
+.dc-layout.dark .community-post-options select { border: 1px solid #334155; background-color: #1e293b; color: #cbd5e1; }
+.dc-layout.dark .community-status { background-color: #1e3a5f; color: #93c5fd; }
+.dc-layout.dark .community-empty { border: 1px solid #334155; background-color: #1e293b; }
+.dc-layout.dark .community-empty h3 { color: #f1f5f9; }
+.dc-layout.dark .community-empty p { color: #94a3b8; }
+.dc-layout.dark .community-post-card { background-color: #1e293b; border: 1px solid #334155; }
+.dc-layout.dark .community-avatar { background-color: #1e3a5f; color: #93c5fd; }
+.dc-layout.dark .community-post-user strong { color: #f1f5f9; }
+.dc-layout.dark .community-vehicle-tag { background-color: #1e3a5f; color: #60a5fa; }
+.dc-layout.dark .community-post-text { color: #cbd5e1; }
+.dc-layout.dark .community-post-actions { border-top: 1px solid #334155; }
+.dc-layout.dark .community-post-actions button { color: #94a3b8; }
+.dc-layout.dark .community-post-actions button:hover { color: #60a5fa; }
+.dc-layout.dark .community-vehicle { border-bottom: 1px solid #334155; }
+.dc-layout.dark .community-vehicle strong { color: #f1f5f9; }
+.dc-layout.dark .community-vehicle span { color: #94a3b8; }
+.dc-layout.dark .community-right li { color: #94a3b8; }
+.dc-layout.dark .community-left .community-card > button.active { background-color: #1e3a5f; color: #93c5fd; }
+.dc-layout.dark .community-topics span.active { background-color: #1e3a5f; color: #93c5fd; }
+.dc-layout.dark .community-topics p { color: #94a3b8; }
+.dc-layout.dark .community-post-actions button.liked { color: #fb7185; }
+.dc-layout.dark .community-photo-button { border: 1px solid #334155; background-color: #1e293b; color: #cbd5e1; }
+.dc-layout.dark .community-photo-button:hover { color: #60a5fa; }
+.dc-layout.dark .community-photo-preview img { border: 1px solid #334155; }
+.dc-layout.dark .community-post-actions button.active { color: #60a5fa; }
+.dc-layout.dark .community-comments { border-top: 1px solid #334155; }
+.dc-layout.dark .community-comments-note { color: #94a3b8; }
+.dc-layout.dark .community-comment-avatar { background-color: #1e3a5f; color: #93c5fd; }
+.dc-layout.dark .community-comment-body { background-color: #172033; }
+.dc-layout.dark .community-comment-meta button:hover { color: #fca5a5; }
+.dc-layout.dark .community-comment-body p { color: #cbd5e1; }
+.dc-layout.dark .community-comments-error { color: #fca5a5; }
+.dc-layout.dark .community-comment-form input { border: 1px solid #334155; background-color: #1e293b; color: #f1f5f9; }
+
+/* ---------- DiagnosticsChat.css ---------- */
+.dc-layout.dark .maintenance-page .diag-header p { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .diag-empty { color: #cbd5e1; }
+.dc-layout.dark .maintenance-page .diag-suggestions button { border: 1px solid #1e40af; background: #1e3a5f; color: #93c5fd; }
+.dc-layout.dark .maintenance-page .diag-suggestions button:hover { background: #1e3a5f; }
+.dc-layout.dark .maintenance-page .md h4 { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .md p { color: #f1f5f9; }
+.dc-layout.dark .maintenance-page .md hr { border-top: 1px solid #334155; }
+.dc-layout.dark .maintenance-page .md code { background: #334155; }
+.dc-layout.dark .maintenance-page .diag-disclaimer { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .diag-composer textarea::placeholder { color: #94a3b8; }
+.dc-layout.dark .maintenance-page .diag-input-footer { color: #94a3b8; }
+
+/* ---------- profile.css ---------- */
+.dc-layout.dark .profile-section { background-color: #1e293b; border: 3px solid #334155; }
+.dc-layout.dark .account-info { background-color: #1e293b; border: 3px solid #334155; }
+.dc-layout.dark .notifications { background-color: #1e293b; border: 3px solid #334155; }
+.dc-layout.dark .privacy { background-color: #1e293b; border: 3px solid #334155; }
+
+/* ---------- VehiclePhoto.css ---------- */
+.dc-layout.dark .vehicle-photo-placeholder { background: linear-gradient(135deg, #334155, #273449); }

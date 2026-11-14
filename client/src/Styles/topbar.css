@@ -11,9 +11,14 @@
 
   padding: 0 28px;
 
-  background-color: #ffffff;
+  background-color: var(--bg-main);
 
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
 }
 
 
@@ -31,10 +36,14 @@
 
   padding: 10px 14px;
 
-  border: 1px solid #dbe1e8;
+  border: 1px solid var(--border-color);
   border-radius: 9px;
 
-  background-color: #f8fafc;
+  background-color: var(--bg-main);
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .dc-search-icon {
@@ -54,7 +63,7 @@
 
   background-color: transparent;
 
-  color: #334155;
+  color: var(--text-main);
 
   font-size: 13px;
 }
@@ -76,7 +85,9 @@
 }
 
 
-/* Notification */
+/* =========================================
+   NOTIFICATION
+========================================= */
 
 .dc-notification-btn {
   width: 38px;
@@ -93,11 +104,17 @@
 
   background-color: transparent;
 
+  color: var(--text-main);
+
   cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .dc-notification-btn:hover {
-  background-color: #f1f5f9;
+  background-color: rgba(148, 163, 184, 0.12);
 }
 
 .dc-notif-dot {
@@ -109,10 +126,84 @@
   top: 8px;
   right: 8px;
 
-  border: 2px solid white;
+  border: 2px solid var(--bg-main);
   border-radius: 50%;
 
   background-color: #ef4444;
+
+  transition:
+    border-color 0.25s ease;
+}
+
+
+/* =========================================
+   LIGHT / DARK MODE SWITCH
+========================================= */
+
+.theme-switch {
+  position: relative;
+
+  width: 46px;
+  height: 24px;
+
+  display: inline-block;
+
+  flex-shrink: 0;
+}
+
+.theme-switch input {
+  width: 0;
+  height: 0;
+
+  opacity: 0;
+}
+
+.theme-slider {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  border-radius: 24px;
+
+  background-color: #cbd5e1;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.25s ease;
+}
+
+.theme-slider::before {
+  content: "";
+
+  position: absolute;
+
+  width: 18px;
+  height: 18px;
+
+  left: 3px;
+  top: 3px;
+
+  border-radius: 50%;
+
+  background-color: #ffffff;
+
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.2);
+
+  transition:
+    transform 0.25s ease;
+}
+
+.theme-switch input:checked + .theme-slider {
+  background-color: #2563eb;
+}
+
+.theme-switch input:checked + .theme-slider::before {
+  transform: translateX(22px);
 }
 
 
@@ -152,7 +243,7 @@
 }
 
 .dc-user-name {
-  color: #1e293b;
+  color: var(--text-main);
 
   font-size: 13px;
   font-weight: 600;
