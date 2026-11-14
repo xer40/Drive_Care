@@ -1,3 +1,31 @@
+/**
+ * Client-side login helpers: stores the JWT and makes authenticated API calls.
+ *
+ * **Module name:** client/auth  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-19)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `getToken()` -> token string or null; `saveToken(token)`; `logout()` removes the token.
+ * - `getTokenPayload()` -> `{ id, username, exp }` decoded from the token (not verified), or null.
+ * - `isLoggedIn()` -> true if a token exists and has not expired.
+ * - `authFetch(path, { method, body })` -> Promise of the JSON response. Adds `Authorization: Bearer
+ *   <token>`, throws an Error with the server's message on failure, and logs the user out on a 401.
+ *
+ * **Important data structures:**
+ *
+ * JWT string in localStorage under the key `token`.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Facade: pages call one function instead of building headers, parsing JSON and handling expired
+ * sessions themselves.
+ *
+ * @module client/auth
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-19)
+ */
 // Helpers for the JWT the backend returns from /api/login and /api/register.
 // The token is saved in localStorage and sent as "Authorization: Bearer <token>" on protected API calls
 

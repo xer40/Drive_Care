@@ -1,3 +1,29 @@
+/**
+ * Chat with the AI diagnostic assistant about one vehicle.
+ *
+ * **Module name:** client/DiagnosticsChat  
+ * **Programmer(s):** Kevin (GitHub: KevOrt04), Daniel Ray  
+ * **Date:** 2026-10-19 (last updated 2026-10-26)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `DiagnosticsChat({ vehicleId, vehicleName, initialMessage })`: shows the conversation and input box.
+ * - `send(text)`: POSTs `{ message, conversation_id, vehicle_id }` to `/api/chat` and appends the reply.
+ * - `handleSubmit(e)`, `handleKeyDown(e)` (Enter sends), `startOver()` (new conversation).
+ *
+ * **Important data structures:**
+ *
+ * `messages` array of `{ role, content, tools_used }`; `conversationId`.
+ *
+ * **Algorithm / design choice:**
+ *
+ * The parent re-mounts this component with a new React `key` when the selected car changes, which
+ * resets all chat state without extra code.
+ *
+ * @module client/DiagnosticsChat
+ * @author Kevin (GitHub: KevOrt04), Daniel Ray
+ * @since 2026-10-19 (last updated 2026-10-26)
+ */
 import { useEffect, useRef, useState } from 'react'
 import { authFetch } from './auth.js'
 import Markdown from './Markdown.jsx'

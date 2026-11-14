@@ -1,3 +1,34 @@
+/**
+ * Community feed API: posts, likes and comments. Any logged-in user can read; only the author can edit
+ * or delete.
+ *
+ * **Module name:** server/routes/posts  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-28)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `GET /api/posts?topic=&user_id=&limit=&offset=` -> posts with author, vehicle, like_count and
+ *   liked_by_me.
+ * - `GET /api/posts/topics` -> list of topics.
+ * - `POST /api/posts`: input `{ topic, body?, vehicle_id?, image_url? }`; output the new post.
+ * - `GET|PATCH|DELETE /api/posts/:id`; `POST /api/posts/photo-upload` -> upload signature.
+ * - `PUT|DELETE /api/posts/:postId/like` -> new like count.
+ * - `GET|POST /api/posts/:postId/comments`; `PATCH|DELETE /api/comments/:id`.
+ *
+ * **Important data structures:**
+ *
+ * `POST_SELECT` SQL with sub-queries for like counts; `posts`, `comments`, `post_likes` tables.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Likes use a (post_id, user_id) primary key so liking twice is impossible and PUT/DELETE are
+ * idempotent.
+ *
+ * @module server/routes/posts
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-28)
+ */
 const express = require('express');
 const pool = require('../db');
 const { HttpError, isBlank, orNull, requireFields, buildUpdate, checkId, getOwnedVehicle } = require('../helpers');

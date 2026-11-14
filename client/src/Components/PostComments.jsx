@@ -1,3 +1,23 @@
+/**
+ * Comments under one community post.
+ *
+ * **Module name:** client/Components/PostComments  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-28
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `PostComments({ postId, onCountChange })`: loads `/api/posts/:postId/comments` when opened, adds
+ *   comments, deletes the user's own, and calls `onCountChange(+1 / -1)`.
+ *
+ * **Important data structures:**
+ *
+ * `comments` array.
+ *
+ * @module client/Components/PostComments
+ * @author Daniel Ray
+ * @since 2026-10-28
+ */
 import { useEffect, useState } from "react"
 import { authFetch, getTokenPayload } from "../auth.js"
 

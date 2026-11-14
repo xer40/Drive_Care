@@ -1,3 +1,40 @@
+/**
+ * AI diagnostic chatbot API: conversation history and sending messages to Google Gemini with the
+ * user's vehicle data as context.
+ *
+ * **Module name:** server/routes/ai  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-28)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `GET /api/conversations`, `POST /api/conversations`, `GET|PATCH|DELETE /api/conversations/:id`:
+ *   list, create, read, rename and delete the user's chats.
+ * - `POST /api/conversations/:id/messages` and `POST /api/chat`: input `{ message, conversation_id?,
+ *   vehicle_id? }`; output `{ conversation, messages, reply, tools_used }`.
+ * - `sendMessage(userId, conversation, content)`: builds the prompt, runs the tool-calling loop, saves
+ *   the question and answer, returns the reply.
+ * - `buildVehicleContext(userId, vehicleId)` -> text summary of the vehicle, recent records and
+ *   reminders for the system prompt.
+ * - `withRetry(request, attempts)`: re-runs a Gemini call on temporary errors (429/500/503/504).
+ *
+ * **Important data structures:**
+ *
+ * Gemini `contents` array of `{ role: 'user'|'model', parts }` holding the last 40 messages;
+ * `toolsUsed` list.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Tool-calling loop of at most 4 rounds: the model may request lookups, the server runs them in
+ * parallel (Promise.all) and sends the results back; on the last round lookups are disabled so the
+ * model must answer. Retry uses linear backoff (1 s, 2 s) because Gemini's busy errors usually clear
+ * within seconds. Messages are saved only after a successful reply, so a failed request never leaves
+ * an unanswered question.
+ *
+ * @module server/routes/ai
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-28)
+ */
 const express = require('express');
 // Import the official Google Gen AI SDK
 const { GoogleGenAI } = require('@google/genai');

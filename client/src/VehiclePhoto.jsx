@@ -1,3 +1,21 @@
+/**
+ * Components for showing and changing a vehicle's photo.
+ *
+ * **Module name:** client/VehiclePhoto  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-28
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `VehiclePhoto({ vehicle, width, height, fallback, className })`: shows the uploaded photo, else the
+ *   fallback image, else a placeholder.
+ * - `ChangePhotoButton({ vehicle, onUpdated, className })`: lets the owner pick a new photo, uploads it,
+ *   PATCHes the vehicle, then calls `onUpdated(updatedVehicle)`.
+ *
+ * @module client/VehiclePhoto
+ * @author Daniel Ray
+ * @since 2026-10-28
+ */
 import { useRef, useState } from 'react'
 import { authFetch } from './auth.js'
 import { sizedPhoto, uploadVehiclePhoto } from './cloudinary.js'

@@ -1,3 +1,25 @@
+/**
+ * Login page.
+ *
+ * **Module name:** client/Login  
+ * **Programmer(s):** Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04)  
+ * **Date:** 2026-10-02 (last updated 2026-10-28)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Login()`: shows the login form and any message passed from another page (e.g. "Please log in to
+ *   continue.").
+ * - Submit handler: POSTs `{ username, password }` to `/api/login`; on success saves the JWT and goes to
+ *   `/home`, otherwise shows the error.
+ *
+ * **Important data structures:**
+ *
+ * `loginData` state `{ username, password }`; `status` state `{ text, error }`.
+ *
+ * @module client/Login
+ * @author Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04)
+ * @since 2026-10-02 (last updated 2026-10-28)
+ */
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { saveToken } from './auth.js'

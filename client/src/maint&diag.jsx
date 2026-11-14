@@ -1,3 +1,36 @@
+/**
+ * Maintenance and diagnostics page: tabs for an overview, the service records table, an add/edit
+ * record form, a costs donut chart and the AI diagnostics chat.
+ *
+ * **Module name:** client/maint&diag  
+ * **Programmer(s):** Kevin (GitHub: KevOrt04), Daniel Ray  
+ * **Date:** 2026-10-12 (last updated 2026-11-02)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Maintenance()`: loads the user's vehicles, then the selected vehicle's records and summaries.
+ * - `saveRecord(recordData)`: POSTs a new record or PATCHes the one being edited, then refreshes.
+ * - `editRecord(record)`, `deleteRecord(id)`, `cancelRecord()`: record table actions.
+ * - `openDiagnostics(question)`: switches to the AI tab with an optional starting question.
+ * - `toPageRecord(record)` / `toApiRecord(record)`: convert between the API's field names and the
+ *   page's.
+ * - `donutBackground(costByCategory)` -> CSS conic-gradient string for the costs chart.
+ *
+ * **Important data structures:**
+ *
+ * `records` array; `yearSummary` and `costSummary` objects from `/maintenance/summary`; `dataVersion`
+ * counter used to trigger reloads.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Adapter: `toPageRecord`/`toApiRecord` translate record shapes so the page and API can name fields
+ * differently. The donut chart is drawn with a CSS conic-gradient (cumulative percentages) instead of
+ * a chart library, to avoid an extra dependency.
+ *
+ * @module client/maint&diag
+ * @author Kevin (GitHub: KevOrt04), Daniel Ray
+ * @since 2026-10-12 (last updated 2026-11-02)
+ */
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./maint&diag.css";

@@ -1,3 +1,31 @@
+/**
+ * JWT authentication: issues signed login tokens and checks them on protected requests.
+ *
+ * **Module name:** server/middleware/auth  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-19)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `requireAuth(req, res, next)`: input is a request with header `Authorization: Bearer <token>`. If
+ *   the token is valid it sets `req.user = { id, username }` and calls `next()`; otherwise it responds
+ *   401.
+ * - `signToken(user)`: input `{ id, username }`; output a JWT string signed with `JWT_SECRET` that
+ *   expires in 1 hour.
+ *
+ * **Important data structures:**
+ *
+ * JWT payload `{ id, username, exp }`.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Stateless JWT (HMAC-SHA256 signature) instead of server-side sessions: the server stores nothing per
+ * login, which suits a small API and lets the React client keep the token in localStorage.
+ *
+ * @module server/middleware/auth
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-19)
+ */
 const jwt = require('jsonwebtoken');
 
 // Auth middleware: verifies the JWT sent as "Authorization: Bearer <token>"

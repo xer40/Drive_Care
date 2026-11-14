@@ -1,3 +1,19 @@
+/**
+ * Top bar with search, the logged-in user's name and the dark-mode switch.
+ *
+ * **Module name:** client/Components/Topbar  
+ * **Programmer(s):** Angel Saavedra  
+ * **Date:** 2026-10-12 (last updated 2026-11-02)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Topbar({ theme, toggleTheme })`: shows the user name from the token and calls `toggleTheme` when
+ *   the switch is flipped.
+ *
+ * @module client/Components/Topbar
+ * @author Angel Saavedra
+ * @since 2026-10-12 (last updated 2026-11-02)
+ */
 import { useNavigate } from "react-router-dom"
 import {
   getTokenPayload,

@@ -1,3 +1,28 @@
+/**
+ * Uploads car and post photos from the browser straight to Cloudinary and builds resized image links.
+ *
+ * **Module name:** client/cloudinary  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-28
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `checkPhotoFile(file)` -> error message string, or '' if the file is an allowed image under the size
+ *   limit.
+ * - `uploadVehiclePhoto(file)`, `uploadPostPhoto(file)` -> Promise of the uploaded image URL (asks the
+ *   backend for a signature first).
+ * - `sizedPhoto(url, width, height)` -> URL of a cropped copy; `limitedPhoto(url, maxWidth)` -> URL of a
+ *   copy no wider than maxWidth.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Signed direct upload: the server signs, the browser uploads. Resizing is done by Cloudinary URL
+ * transformations so pages never download full-size photos.
+ *
+ * @module client/cloudinary
+ * @author Daniel Ray
+ * @since 2026-10-28
+ */
 import { authFetch } from './auth.js'
 
 // Photos (cars and community posts) go straight from the browser to Cloudinary. The backend first gives us a

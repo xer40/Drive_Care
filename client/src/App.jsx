@@ -1,3 +1,29 @@
+/**
+ * Defines every page URL (client-side routing) and which pages need a login.
+ *
+ * **Module name:** client/App  
+ * **Programmer(s):** Sopnel Saha, Kevin (GitHub: KevOrt04), Daniel Ray, Angel Saavedra, Shafayat Ahmed Khan Chowdhury  
+ * **Date:** 2026-09-02 (last updated 2026-11-11)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `App()`: no props; returns the `<Routes>` table: `/`, `/login`, `/register` (wrapped in
+ *   RedirectIfLoggedIn) and `/home`, `/maintenance`, `/community`, `/profile` (wrapped in RequireAuth
+ *   and Layout).
+ *
+ * **Important data structures:**
+ *
+ * React Router route table.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Wrapper components (Decorator pattern) add login checks and the shared page frame around each page,
+ * instead of repeating that logic inside every page.
+ *
+ * @module client/App
+ * @author Sopnel Saha, Kevin (GitHub: KevOrt04), Daniel Ray, Angel Saavedra, Shafayat Ahmed Khan Chowdhury
+ * @since 2026-09-02 (last updated 2026-11-11)
+ */
 import { Routes, Route } from 'react-router-dom'
 import Login from './Login.jsx'
 import Register from './Register.jsx'

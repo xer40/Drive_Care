@@ -1,3 +1,19 @@
+/**
+ * Sidebar navigation with links to Home, Maintenance, Community and Profile, plus Log out.
+ *
+ * **Module name:** client/Components/navbar  
+ * **Programmer(s):** Angel Saavedra, Kevin (GitHub: KevOrt04)  
+ * **Date:** 2026-10-12 (last updated 2026-11-02)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Navbar()`: returns the sidebar.
+ * - `handleLogout()`: clears the token and goes to `/login`.
+ *
+ * @module client/Components/navbar
+ * @author Angel Saavedra, Kevin (GitHub: KevOrt04)
+ * @since 2026-10-12 (last updated 2026-11-02)
+ */
 import { useNavigate } from "react-router-dom"
 import { isLoggedIn, logout } from "../auth.js"
 

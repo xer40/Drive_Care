@@ -1,3 +1,35 @@
+/**
+ * Maintenance record routes, plus the cost summary used by the maintenance page's chart.
+ *
+ * **Module name:** server/routes/maintenance  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-28)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `GET /api/vehicles/:vehicleId/maintenance` -> the vehicle's records with categories.
+ * - `GET /api/vehicles/:vehicleId/maintenance/summary?period=year|month|all` -> total spent, cost by
+ *   category with percentages, upcoming and overdue reminder counts.
+ * - `POST /api/vehicles/:vehicleId/maintenance`: input `{ service_type, service_date, mileage?, cost?,
+ *   service_location? }`; output the new record.
+ * - `GET|PATCH|DELETE /api/maintenance/:id`: read, update or delete one record.
+ * - `raiseVehicleMileage(record)` (private): raises the vehicle's odometer if the record's mileage is
+ *   higher.
+ *
+ * **Important data structures:**
+ *
+ * `maintenance_records` rows; `costByCategory` array of `{ category, icon, total, percent }`.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Summary filters by period with string comparison on 'YYYY-MM-DD' dates, sums with rounding to cents,
+ * and always lists every category in a fixed order so the chart legend never jumps around. Mileage is
+ * only ever raised, never lowered, so logging an older record cannot wind the odometer back.
+ *
+ * @module server/routes/maintenance
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-28)
+ */
 const express = require('express');
 const pool = require('../db');
 const { HttpError, orNull, requireFields, requireDates, buildUpdate, checkId, getOwnedVehicle, getToday } = require('../helpers');

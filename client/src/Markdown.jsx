@@ -1,3 +1,29 @@
+/**
+ * Renders the small subset of Markdown used in AI replies (headings, bold, italic, code, lists,
+ * dividers, paragraphs).
+ *
+ * **Module name:** client/Markdown  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-19
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Markdown({ text })`: input a Markdown string; output React elements.
+ * - `renderInline(text)` (private) -> React nodes for **bold**, *italic* and `code` within one line.
+ *
+ * **Important data structures:**
+ *
+ * Array of React elements built line by line, with nested lists for indented items.
+ *
+ * **Algorithm / design choice:**
+ *
+ * A small line-by-line parser that builds React elements instead of using a library or
+ * `dangerouslySetInnerHTML`, so nothing in an AI reply can inject HTML into the page.
+ *
+ * @module client/Markdown
+ * @author Daniel Ray
+ * @since 2026-10-19
+ */
 // Renders the small subset of Markdown the AI assistant uses: headings, **bold**, *italic*, `code`,
 // bullet and numbered lists, --- dividers and paragraphs. It builds React elements rather than raw HTML,
 // so nothing in a reply can inject markup into the page

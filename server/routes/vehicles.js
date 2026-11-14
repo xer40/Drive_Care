@@ -1,3 +1,30 @@
+/**
+ * CRUD routes for the logged-in user's vehicles.
+ *
+ * **Module name:** server/routes/vehicles  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-28)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `GET /api/vehicles` -> `{ vehicles }`, newest first.
+ * - `POST /api/vehicles`: input `{ make, model, year, vin?, current_mileage?, photo? }`; output the new
+ *   vehicle.
+ * - `GET|PATCH|DELETE /api/vehicles/:id`: read, update or delete one vehicle.
+ * - `POST /api/vehicles/photo-upload` -> Cloudinary upload signature.
+ *
+ * **Important data structures:**
+ *
+ * `vehicles` table row.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Every query filters on `user_id` from the token, so users can only touch their own vehicles.
+ *
+ * @module server/routes/vehicles
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-28)
+ */
 const express = require('express');
 const pool = require('../db');
 const { HttpError, orNull, requireFields, buildUpdate, checkId } = require('../helpers');

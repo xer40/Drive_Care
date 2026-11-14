@@ -1,3 +1,40 @@
+/**
+ * Shared validation, ownership and error-handling helpers used by every route file.
+ *
+ * **Module name:** server/helpers  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-28)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `HttpError(status, message)`: class; throw it from any route to send that status and message.
+ * - `isBlank(value)` -> boolean; `orNull(value)` -> value or null for empty form input.
+ * - `requireFields(body, fields)`, `requirePassword(password)`, `requireEmail(email)`,
+ *   `requireDates(body, fields)`: throw a 400 HttpError when input is invalid; return nothing otherwise.
+ * - `buildUpdate(body, allowed, notBlank)` -> `{ sets, values }`: the `col = $1, ...` part of an UPDATE
+ *   built only from whitelisted columns.
+ * - `checkId(req, res, next, value)`: router.param callback; 404 unless the URL id is a whole number.
+ * - `getOwnedVehicle(userId, vehicleId)` -> Promise of the vehicle row, or a 404 if it belongs to
+ *   someone else.
+ * - `getToday()` -> Promise of today's date as 'YYYY-MM-DD', according to the database clock.
+ * - `errorHandler(err, req, res, next)`: Express error middleware; maps HttpError and PostgreSQL error
+ *   codes (23505, 23514, ...) to JSON responses.
+ *
+ * **Important data structures:**
+ *
+ * `CONSTRAINT_MESSAGES`: object mapping database constraint names to user-friendly messages.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Dynamic UPDATE building uses column names only from a fixed allow-list and passes values as
+ * parameters, which prevents SQL injection while still allowing partial (PATCH) updates. Central error
+ * handling was chosen over try/catch in every route because Express 5 forwards errors from async
+ * routes automatically.
+ *
+ * @module server/helpers
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-28)
+ */
 const pool = require('./db');
 
 // Throw this from any route to send a specific status + message to the client

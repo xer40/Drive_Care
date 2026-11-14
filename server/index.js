@@ -1,3 +1,37 @@
+/**
+ * Entry point of the DriveCare backend. Creates the Express app, registers global middleware, mounts
+ * every route file under /api, and starts the HTTP server.
+ *
+ * **Module name:** server/index  
+ * **Programmer(s):** Daniel Ray, Kevin (GitHub: KevOrt04)  
+ * **Date:** 2026-09-02 (last updated 2026-10-19)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - Anonymous body-default middleware: input `req, res, next`; sets `req.body` to `{}` when no JSON body
+ *   was sent, then calls `next()`.
+ * - `GET /` : no input; output is a plain-text health message.
+ * - `GET /api/test-db` : no input; output `{ success, message, timestamp }` from `SELECT NOW()`, or a
+ *   500 error.
+ * - Public routes from `routes/auth.js` are mounted before `requireAuth`; all routes mounted after it
+ *   require a valid JWT.
+ * - 404 handler and `errorHandler` (from helpers.js) are registered last so every unmatched URL or
+ *   thrown error becomes a JSON response.
+ *
+ * **Important data structures:**
+ *
+ * The Express middleware stack (an ordered list of functions each request passes through).
+ *
+ * **Algorithm / design choice:**
+ *
+ * Middleware chain (Chain of Responsibility): each request passes through CORS, JSON parsing,
+ * authentication and finally a router. This was chosen over checking auth inside every route because
+ * one `app.use('/api', requireAuth)` line protects every route mounted after it.
+ *
+ * @module server/index
+ * @author Daniel Ray, Kevin (GitHub: KevOrt04)
+ * @since 2026-09-02 (last updated 2026-10-19)
+ */
 // Load environment variables from your server/.env file
 require('dotenv').config();
 const express = require('express');

@@ -1,3 +1,29 @@
+/**
+ * Home dashboard: the user's vehicles, recent maintenance, an add-vehicle form and a quick question
+ * box for the AI assistant.
+ *
+ * **Module name:** client/Homepage  
+ * **Programmer(s):** Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04), Daniel Ray, Sopnel Saha, Angel Saavedra  
+ * **Date:** 2026-10-19 (last updated 2026-11-02)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Homepage()`: loads `/api/vehicles` and each vehicle's maintenance records on mount.
+ * - `handleAddVehicle(e)`: uploads the chosen photo (if any) and POSTs the new vehicle to
+ *   `/api/vehicles`.
+ * - `askAi(e)`: opens the maintenance page's diagnostics tab with the typed question.
+ * - `choosePhoto(e)`, `resetAddForm()`, `handleVehicleUpdated(updated)`: add-vehicle form and photo
+ *   helpers.
+ * - `formatMoney(amount)`, `formatServiceDate(date)` -> display strings.
+ *
+ * **Important data structures:**
+ *
+ * `vehicles` and `maintenanceRecords` arrays; `newVehicle` form object.
+ *
+ * @module client/Homepage
+ * @author Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04), Daniel Ray, Sopnel Saha, Angel Saavedra
+ * @since 2026-10-19 (last updated 2026-11-02)
+ */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authFetch, getToken, getTokenPayload, isLoggedIn, logout } from './auth.js';

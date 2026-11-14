@@ -1,3 +1,33 @@
+/**
+ * Works out a category (Brakes, Tires, Oil & Fluids, Filters, Engine, Electrical, Other) and icon for
+ * each maintenance record from its service name.
+ *
+ * **Module name:** server/maintenanceCategories  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-28
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `categorize(serviceType)`: input a service name string; output `{ name, icon }` of the first
+ *   matching category, or Other.
+ * - `withCategory(record)`: input a maintenance record row; output the same record plus `category` and
+ *   `category_icon`.
+ * - Exports `CATEGORY_NAMES` (fixed order for chart legends) and `CATEGORY_ICONS` (name -> icon).
+ *
+ * **Important data structures:**
+ *
+ * `CATEGORIES`: ordered array of `{ name, icon, keywords[] }`.
+ *
+ * **Algorithm / design choice:**
+ *
+ * First-match keyword search, ordered from most to least specific (e.g. Oil before Filters so 'oil
+ * change and filter' is an oil change). Chosen over storing a category column or using ML because the
+ * add-record form only asks for a name and the rules are easy for the team to read and edit.
+ *
+ * @module server/maintenanceCategories
+ * @author Daniel Ray
+ * @since 2026-10-28
+ */
 // Groups maintenance records into categories (for the maintenance page's list, icons and costs chart).
 // The add-record form only asks for the service name, so the category is worked out from that name.
 // The first category whose keywords appear in the name wins, so more specific ones are listed first.

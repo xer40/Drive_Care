@@ -1,3 +1,30 @@
+/**
+ * Sign-up page.
+ *
+ * **Module name:** client/Register  
+ * **Programmer(s):** Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04)  
+ * **Date:** 2026-10-07 (last updated 2026-10-28)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Register()`: shows the sign-up form.
+ * - Change handler: updates `formData` as the user types.
+ * - Submit handler: checks the email format, POSTs `{ username, email, password }` to `/api/register`,
+ *   saves the returned JWT and goes to `/home`.
+ *
+ * **Important data structures:**
+ *
+ * `formData` state `{ username, email, password }`.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Email is checked with a regular expression in the browser for quick feedback; the server checks it
+ * again because requests do not have to come from this page.
+ *
+ * @module client/Register
+ * @author Sopnel Saha, Daniel Ray, Shafayat Ahmed Khan Chowdhury, Kevin (GitHub: KevOrt04)
+ * @since 2026-10-07 (last updated 2026-10-28)
+ */
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { saveToken } from './auth.js'

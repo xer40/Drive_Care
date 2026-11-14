@@ -1,3 +1,31 @@
+/**
+ * Service reminder routes (due by date and/or mileage).
+ *
+ * **Module name:** server/routes/reminders  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-19)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `GET /api/reminders?done=true|false` -> reminders across all of the user's vehicles.
+ * - `GET /api/vehicles/:vehicleId/reminders` -> one vehicle's reminders.
+ * - `POST /api/vehicles/:vehicleId/reminders`: input `{ service_type, due_date?, due_mileage? }` (at
+ *   least one due value).
+ * - `PATCH|DELETE /api/reminders/:id`: update (e.g. mark done) or delete.
+ *
+ * **Important data structures:**
+ *
+ * `reminders` table row.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Sorted by not-done first, then soonest due date, with mileage-only reminders last (`ORDER BY
+ * is_done, due_date NULLS LAST, due_mileage NULLS LAST`).
+ *
+ * @module server/routes/reminders
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-19)
+ */
 const express = require('express');
 const pool = require('../db');
 const { HttpError, orNull, requireFields, requireDates, buildUpdate, checkId, getOwnedVehicle } = require('../helpers');

@@ -1,3 +1,33 @@
+/**
+ * Profile routes for the logged-in user.
+ *
+ * **Module name:** server/routes/users  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-19)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `GET /api/users/me` -> the user's profile.
+ * - `PATCH /api/users/me`: input any of `{ username, email, avatar_url }`; output the updated user.
+ * - `PUT /api/users/me/password`: input `{ current_password, new_password }`; checks the old password
+ *   first.
+ * - `DELETE /api/users/me`: input `{ password }`; deletes the account.
+ * - `GET /api/users/:id` -> another user's public profile.
+ * - `verifyPassword(userId, password)` (private): throws 401 if the password is wrong.
+ *
+ * **Important data structures:**
+ *
+ * `users` table row (USER_COLUMNS).
+ *
+ * **Algorithm / design choice:**
+ *
+ * Sensitive changes re-check the password with bcrypt.compare so a stolen token alone cannot change
+ * the password or delete the account.
+ *
+ * @module server/routes/users
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-19)
+ */
 const express = require('express');
 const bcrypt = require('bcrypt');
 const pool = require('../db');

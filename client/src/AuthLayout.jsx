@@ -1,3 +1,28 @@
+/**
+ * Shared layout for the login and sign-up pages: a photo with the app's pitch on the left and the form
+ * on the right.
+ *
+ * **Module name:** client/AuthLayout  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-19
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `AuthLayout({ image, heading, tagline, prompt, linkText, linkTo, footer, children })`: returns the
+ *   two-column page.
+ * - `AuthField({ label, icon, ...inputProps })`: labelled input with an icon.
+ * - `PasswordField({ label, ...inputProps })`: password input with a show/hide button.
+ * - Icon components (`UserIcon`, `MailIcon`, `ArrowRightIcon`, ...): inline SVG icons.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Template/composition: Login and Register pass their form as `children`, so both pages share one
+ * layout.
+ *
+ * @module client/AuthLayout
+ * @author Daniel Ray
+ * @since 2026-10-19
+ */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './AuthLayout.css'

@@ -1,3 +1,38 @@
+/**
+ * Read-only database lookups that the Gemini diagnostic assistant may call (function calling) while
+ * answering a question.
+ *
+ * **Module name:** server/aiTools  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-19 (last updated 2026-10-28)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `listMyVehicles(userId)` -> `{ vehicles }` with mileage, record count and last service date.
+ * - `getMaintenanceRecords(userId, { vehicle_id, keyword, limit })` -> `{ records, note }`.
+ * - `getReminders(userId, { vehicle_id, include_done })` -> `{ reminders }` with an `overdue` flag.
+ * - `searchPastDiagnoses(...)` and `searchCommunityPosts(...)` -> matching past chats and community
+ *   posts, shortened to snippets.
+ * - `runTool(userId, call, context)`: input a Gemini function call `{ name, args }`; output the result
+ *   of the matching tool, or `{ error }` for an unknown tool.
+ * - Exports `TOOL_DECLARATIONS`: the name, description and JSON schema of each tool, sent to Gemini.
+ *
+ * **Important data structures:**
+ *
+ * `TOOLS`: object mapping tool name -> `{ run, declaration }`.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Command/Strategy lookup table: the model only chooses a tool name and arguments, and the server runs
+ * the matching function with the user id taken from the verified token. This was chosen over letting
+ * the model write SQL so it can only read the logged-in user's own data. Keyword search uses SQL ILIKE
+ * with % and _ escaped; results are capped at 25 rows and long text is cut to 400 characters to keep
+ * prompts small.
+ *
+ * @module server/aiTools
+ * @author Daniel Ray
+ * @since 2026-10-19 (last updated 2026-10-28)
+ */
 const pool = require('./db');
 
 // Lookups the AI assistant can run while it works on a diagnosis.

@@ -1,3 +1,33 @@
+/**
+ * Signs photo uploads so the browser can upload vehicle and post photos straight to Cloudinary without
+ * ever seeing the API secret.
+ *
+ * **Module name:** server/cloudinary  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-28
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `photoUploadParams(kind)`: input 'vehicle' or 'post'; output `{ folder, timestamp, transformation,
+ *   signature, api_key, upload_url }`. Throws 503 if Cloudinary is not configured.
+ * - `requirePhotoUrl(url, field)`: throws a 400 unless the URL is empty or an image in this app's
+ *   Cloudinary account.
+ * - `signParams(params)` (private): output the SHA-1 hex signature Cloudinary expects.
+ *
+ * **Important data structures:**
+ *
+ * `FOLDERS`: photo kind -> Cloudinary folder name.
+ *
+ * **Algorithm / design choice:**
+ *
+ * Cloudinary's signed-upload scheme: parameters sorted by key, joined as `a=1&b=2`, the secret
+ * appended, then SHA-1 hashed. Direct browser upload was chosen over sending images through our server
+ * so large files never pass through the API.
+ *
+ * @module server/cloudinary
+ * @author Daniel Ray
+ * @since 2026-10-28
+ */
 const crypto = require('crypto');
 const { HttpError, isBlank } = require('./helpers');
 

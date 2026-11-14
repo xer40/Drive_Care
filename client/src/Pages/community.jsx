@@ -1,3 +1,27 @@
+/**
+ * Community page: a feed of posts from other owners with topics, photos, likes and comments.
+ *
+ * **Module name:** client/Pages/community  
+ * **Programmer(s):** Angel Saavedra, Daniel Ray  
+ * **Date:** 2026-10-12 (last updated 2026-10-28)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Community()`: loads posts, the user's vehicles and popular topics.
+ * - `handleCreatePost(event)`: uploads an optional photo, then POSTs `{ topic, body, vehicle_id,
+ *   image_url }` to `/api/posts`.
+ * - `handleLike(post)`: PUT or DELETE `/api/posts/:id/like` and updates the count.
+ * - `toggleComments(postId)`, `changeCommentCount(postId, change)`, `handleChoosePhoto(event)`,
+ *   `removePhoto()`.
+ *
+ * **Important data structures:**
+ *
+ * `posts` array; `openComments` array of post ids; `TOPICS` list used for the form and filter.
+ *
+ * @module client/Pages/community
+ * @author Angel Saavedra, Daniel Ray
+ * @since 2026-10-12 (last updated 2026-10-28)
+ */
 import { useEffect, useRef, useState } from "react"
 import { authFetch } from "../auth.js"
 import { checkPhotoFile, limitedPhoto, uploadPostPhoto } from "../cloudinary.js"

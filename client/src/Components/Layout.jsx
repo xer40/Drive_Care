@@ -1,3 +1,30 @@
+/**
+ * Shared page frame (sidebar + top bar) around every logged-in page, and owner of the light/dark
+ * theme.
+ *
+ * **Module name:** client/Components/Layout  
+ * **Programmer(s):** Angel Saavedra, Daniel Ray  
+ * **Date:** 2026-10-12 (last updated 2026-11-11)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Layout({ children })`: renders Navbar, Topbar and the page.
+ * - `toggleTheme()`: switches theme, saves it to localStorage and briefly turns off CSS transitions so
+ *   the whole page changes in one frame.
+ *
+ * **Important data structures:**
+ *
+ * `theme` state ('light' | 'dark').
+ *
+ * **Algorithm / design choice:**
+ *
+ * Composite: pages are nested inside Layout, which contains Navbar and Topbar. The theme is applied as
+ * a class on the page, and observer-style React state re-renders every child when it changes.
+ *
+ * @module client/Components/Layout
+ * @author Angel Saavedra, Daniel Ray
+ * @since 2026-10-12 (last updated 2026-11-11)
+ */
 import { useEffect, useState } from "react"
 
 import Navbar from "./navbar"

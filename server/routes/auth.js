@@ -1,3 +1,30 @@
+/**
+ * Public account routes: sign up and log in.
+ *
+ * **Module name:** server/routes/auth  
+ * **Programmer(s):** Daniel Ray  
+ * **Date:** 2026-10-14 (last updated 2026-10-19)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `POST /api/register`: input `{ username, email, password }`; output `{ success, token, user }`.
+ *   Password is hashed with bcrypt.
+ * - `POST /api/login`: input `{ username, password }`; output `{ success, token, user }` or 401.
+ * - Exports `USER_COLUMNS`: the user columns safe to send to the client (never the password hash).
+ *
+ * **Important data structures:**
+ *
+ * `users` table row.
+ *
+ * **Algorithm / design choice:**
+ *
+ * bcrypt password hashing (salted, deliberately slow) chosen over SHA-256 or plain storage because it
+ * resists brute-force attacks if the database leaks.
+ *
+ * @module server/routes/auth
+ * @author Daniel Ray
+ * @since 2026-10-14 (last updated 2026-10-19)
+ */
 const express = require('express');
 const bcrypt = require('bcrypt');
 const pool = require('../db');
