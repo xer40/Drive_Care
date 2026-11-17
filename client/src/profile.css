@@ -20,41 +20,89 @@ body {
 }
 .profile-section {
 
-    
     justify-content: center;
     margin-top: 50px;
     background-color: #fefdfd;
     border-radius: 15px;
     width: 860px;
     height: 240px;
-    border: 3px solid #f1f3f7;
-    margin-left: 307px;
+    border: 3px solid #F7F8FB;
+    margin-left: 207px;
     
    
 }
 
- .pfp-section {
-    width: 180px;              /* Sets explicit visual width matching your guideline sketch */
-    height: 100%;
+ .edit-profile-btn {
+    
     display: flex;
-    box-sizing: border-box
-    border-right: 3px solid #2a68e4;
+    background-color: #F4F6F9;
+    color: #494D58;
+    border: solid 2px #E9ECF1;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-family: inter;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-left: 680px;
+    gap: 7px;
+
 }
+
+.edit-profile-icon {
+    width: 18px;
+    height: 18px;
+    color:#121B30;
+    stroke-width: 3px;
+}
+
+.edit-profile-btn:hover {
+    background-color: #adb3bc;
+}
+
+.profile-section .pfp-section {
+
+  border-right: 3px solid #2c58d1; 
+  padding-right: 20px;
+}
+
+
+
+
 
 .account-info {
 
     
     display: flex;
-    margin: 0 auto;
+    margin: auto;
     margin-top: 10px;
     background-color: #fefdfd;
     border-radius: 12px;
     width: 860px;
-    height: 88px;
+    height: 80px;
     border: 3px solid #f1f3f7;
-    margin-left: 307px;
+    margin-left: 207px;
+    gap: 95px;
+    justify-content: flex-start;
 
+}
+.account-info .profile-icon { 
 
+    width: 40px;
+    flex: 0 0 8%;
+    height: 40px;
+    transform: translateY(16px);
+    stroke-width: 2px;
+}
+
+.account-info-header, .account-info-subheader {
+
+    font-size: 18px;
+    font-family: inter;
+    font-weight: 700;
+    margin-right: 500px;
+    padding-left: 25px;
 }
 
 .notifications {
@@ -67,7 +115,7 @@ body {
     width: 860px;
     height: 88px;
     border: 3px solid #f1f3f7;
-    margin-left: 307px;
+    margin-left: 207px;
 }
 
 .privacy {
@@ -80,5 +128,5 @@ body {
     width: 860px;
     height: 88px;
     border: 3px solid #f1f3f7;
-    margin-left: 307px;
+    margin-left: 207px;
 }
