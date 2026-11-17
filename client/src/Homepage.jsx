@@ -408,7 +408,7 @@ const formatServiceDate = (date) =>
                         <span className="dc-tag">📅 {vehicles[0].year}</span>
                         <span className="dc-tag">⚙ {vehicles[0].make}</span>
                         <span className="dc-tag">{vehicles[0].model}</span>
-                        <span className="dc-tag">🏷 {vehicles[0].trim}</span>
+    
                       </div>
 
                       <div className="dc-vehicle-odometer">
