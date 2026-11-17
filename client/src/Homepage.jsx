@@ -1,3 +1,30 @@
+/**
+ * Home dashboard: the user's vehicles, recent maintenance, an add-vehicle form and a quick question
+ * box for the AI assistant.
+ *
+ * **Module name:** client/Homepage  
+ * **Programmer(s):** Shafayat Ahmed Khan Chowdhury, Kevin Aguilar, Daniel Ray, Sopnel Saha, Angel Saavedra  
+ * **Date:** 2026-10-19 (last updated 2026-11-13)
+ *
+ * **Important functions (inputs -> outputs):**
+ *
+ * - `Homepage()`: loads `/api/vehicles`, each vehicle's maintenance records, and community posts
+ *   (`/api/posts`) on mount.
+ * - `handleAddVehicle(e)`: uploads the chosen photo (if any) and POSTs the new vehicle to
+ *   `/api/vehicles`.
+ * - `askAi(e)`: opens the maintenance page's diagnostics tab with the typed question.
+ * - `choosePhoto(e)`, `resetAddForm()`, `handleVehicleUpdated(updated)`: add-vehicle form and photo
+ *   helpers.
+ * - `formatMoney(amount)`, `formatServiceDate(date)` -> display strings.
+ *
+ * **Important data structures:**
+ *
+ * `vehicles`, `maintenanceRecords`, and `posts` arrays; `newVehicle` form object.
+ *
+ * @module client/Homepage
+ * @author Shafayat Ahmed Khan Chowdhury, Kevin Aguilar, Daniel Ray, Sopnel Saha, Angel Saavedra
+ * @since 2026-10-19 (last updated 2026-11-13)
+ */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authFetch, getToken, getTokenPayload, isLoggedIn, logout } from './auth.js';
@@ -19,6 +46,8 @@ export default function Homepage() {
   const [vehicles, setVehicles] = useState([]);
   const [maintenanceRecords, setMaintenanceRecords] = useState([]);
   const [maintenanceLoading, setMaintenanceLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(true);
   const [aiQuestion, setAiQuestion] = useState('');
 
   // Modal State for adding a vehicle
@@ -90,6 +119,7 @@ useEffect(() => {
   async function fetchUserData() {
     if (!getToken()) {
       setMaintenanceLoading(false);
+      setPostsLoading(false);
       return;
     }
 
@@ -134,10 +164,26 @@ useEffect(() => {
 
       setMaintenanceRecords(allRecords);
 
+      // Fetch real community posts and prioritize posts matching the user's vehicles
+      try {
+        const postData = await authFetch('/api/posts?limit=10');
+        const allPosts = postData.posts || [];
+        const ownedMakes = new Set(userVehicles.map((v) => v.make?.toLowerCase()).filter(Boolean));
+        const sortedPosts = [...allPosts].sort((a, b) => {
+          const aMatch = a.vehicle_make && ownedMakes.has(a.vehicle_make.toLowerCase()) ? 1 : 0;
+          const bMatch = b.vehicle_make && ownedMakes.has(b.vehicle_make.toLowerCase()) ? 1 : 0;
+          return bMatch - aMatch;
+        });
+        setPosts(sortedPosts.slice(0, 2));
+      } catch (postError) {
+        console.error('Could not load community posts:', postError);
+      }
+
     } catch (error) {
       console.error('Could not load dashboard data:', error);
     } finally {
       setMaintenanceLoading(false);
+      setPostsLoading(false);
     }
   }
 
@@ -509,64 +555,68 @@ const formatServiceDate = (date) =>
                 </Link>
               </div>
 
-              {/* Feed Card 1 */}
-              <div className="dc-feed-card">
-                <div className="dc-feed-header">
-                  <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" 
-                    alt="Daniel R." 
-                    className="dc-feed-avatar"
-                  />
-                  <div className="dc-feed-user">
-                    <span className="dc-feed-name">Daniel R.</span>
-                    <span className="dc-feed-time">2h ago</span>
+              {postsLoading ? (
+                <div className="dc-empty-state-card small">
+                  <h4>Loading community posts...</h4>
+                </div>
+              ) : posts.length === 0 ? (
+                <div className="dc-empty-state-card small">
+                  <div className="dc-empty-icon-small">💬</div>
+                  <h4>No community posts yet</h4>
+                  <p>Share maintenance tips or ask questions in the Community tab.</p>
+                </div>
+              ) : (
+                posts.map((post) => (
+                  <div key={post.id} className="dc-feed-card">
+                    <div className="dc-feed-header">
+                      {post.avatar_url ? (
+                        <img
+                          src={post.avatar_url}
+                          alt={post.username}
+                          className="dc-feed-avatar"
+                        />
+                      ) : (
+                        <div className="dc-feed-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e2e8f0', fontWeight: 700, color: '#334155' }}>
+                          {(post.username || 'U')[0].toUpperCase()}
+                        </div>
+                      )}
+                      <div className="dc-feed-user">
+                        <span className="dc-feed-name">{post.username}</span>
+                        <span className="dc-feed-time">
+                          {post.created_at
+                            ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                            : 'Recently'}
+                          {post.vehicle_make ? ` • ${post.vehicle_year || ''} ${post.vehicle_make} ${post.vehicle_model || ''}`.trimEnd() : ''}
+                        </span>
+                      </div>
+                      {post.topic && <span className="dc-tag">{post.topic}</span>}
+                    </div>
+                    {post.body && <p className="dc-feed-text">{post.body}</p>}
+                    {post.image_url && (
+                      <div className="dc-feed-img-wrapper">
+                        <img
+                          src={post.image_url}
+                          alt={post.topic || 'Community post'}
+                          className="dc-feed-img"
+                        />
+                      </div>
+                    )}
+                    <div className="dc-feed-footer">
+                      <div className="dc-feed-actions">
+                        <button className="dc-feed-btn" onClick={() => navigate('/community')}>
+                          ❤️ <span>{post.like_count ?? 0}</span>
+                        </button>
+                        <button className="dc-feed-btn" onClick={() => navigate('/community')}>
+                          💬 <span>{post.comment_count ?? 0}</span>
+                        </button>
+                      </div>
+                      <button className="dc-feed-btn" onClick={() => navigate('/community')}>
+                        View →
+                      </button>
+                    </div>
                   </div>
-                  <button className="dc-options-btn">•••</button>
-                </div>
-                <p className="dc-feed-text">
-                  Just installed new tires on my WRX! Huge difference in handling. Highly recommend the Michelin Pilot Sport 4S. 🏎️
-                </p>
-                <div className="dc-feed-img-wrapper">
-                  <img 
-                    src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600&auto=format&fit=crop&q=80" 
-                    alt="Blue Subaru WRX" 
-                    className="dc-feed-img"
-                  />
-                </div>
-                <div className="dc-feed-footer">
-                  <div className="dc-feed-actions">
-                    <button className="dc-feed-btn">❤️ <span>24</span></button>
-                    <button className="dc-feed-btn">💬 <span>8</span></button>
-                  </div>
-                  <button className="dc-feed-btn">🔖</button>
-                </div>
-              </div>
-
-              {/* Feed Card 2 */}
-              <div className="dc-feed-card">
-                <div className="dc-feed-header">
-                  <img 
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" 
-                    alt="Maria S." 
-                    className="dc-feed-avatar"
-                  />
-                  <div className="dc-feed-user">
-                    <span className="dc-feed-name">Maria S.</span>
-                    <span className="dc-feed-time">5h ago</span>
-                  </div>
-                  <button className="dc-options-btn">•••</button>
-                </div>
-                <p className="dc-feed-text">
-                  Any recommendations for brake pads for a 2019 Toyota Corolla? Looking for something reliable but not too expensive.
-                </p>
-                <div className="dc-feed-footer">
-                  <div className="dc-feed-actions">
-                    <button className="dc-feed-btn">❤️ <span>5</span></button>
-                    <button className="dc-feed-btn">💬 <span>12</span></button>
-                  </div>
-                  <button className="dc-feed-btn">🔖</button>
-                </div>
-              </div>
+                ))
+              )}
             </div>
           </section>
         </div>
