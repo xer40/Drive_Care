@@ -428,12 +428,7 @@
   color: #111827;
 }
 
-.maintenance-page .vehicle-details-button {
-  width: 100%;
-  margin-top: 20px;
-  background-color: #eff6ff;
-  color: #2563eb;
-}
+
 
 .maintenance-page .vehicle-details-button:hover {
   background-color: #dbeafe;
@@ -713,7 +708,7 @@
 }
 
 .maintenance-page .maintenance-stat-card:hover {
-  transform: translateY(-2px);
+  transform: none;
   border-color: #bfdbfe;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
@@ -765,14 +760,7 @@
   margin: 0;
 }
 
-/* Arrow */
 
-.maintenance-page .stat-arrow {
-  color: #64748b;
-  font-size: 26px;
-  font-weight: 300;
-  margin-left: auto;
-}
 
 /* Responsive Design */
 

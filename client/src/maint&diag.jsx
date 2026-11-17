@@ -435,12 +435,7 @@ const cancelRecord = () => {
 
             </div>
 
-            <button
-              type="button"
-              className="vehicle-details-button"
-            >
-              View Vehicle Details →
-            </button>
+           
 
           </div>
 
@@ -510,7 +505,7 @@ const cancelRecord = () => {
             <p>Total Records</p>
           </div>
 
-          <span className="stat-arrow">›</span>
+          
 
         </div>
 
@@ -525,8 +520,6 @@ const cancelRecord = () => {
             <h3>{formatMoney(yearSummary?.total_spent)}</h3>
             <p>Total Spent (This Year)</p>
           </div>
-
-          <span className="stat-arrow">›</span>
 
         </div>
 
@@ -545,8 +538,6 @@ const cancelRecord = () => {
             </h3>
             <p>Last Service</p>
           </div>
-
-          <span className="stat-arrow">›</span>
 
         </div>
 
@@ -571,7 +562,6 @@ const cancelRecord = () => {
               <p>Average Service Cost (This Year)</p>
             </div>
 
-            <span className="stat-arrow">›</span>
 
           </div>
 
@@ -659,14 +649,7 @@ const cancelRecord = () => {
             <td>{record.location || "Not specified"}</td>
 
             {/* Actions */}
-            <td>
-              <button
-                type="button"
-                className="history-actions-button"
-              >
-                •••
-              </button>
-            </td>
+          
 
           </tr>
 
