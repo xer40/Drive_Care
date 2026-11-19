@@ -243,7 +243,8 @@
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
-.community-create-post textarea {
+.community-create-post textarea,
+.community-post-editor textarea {
   width: 100%;
   min-height: 95px;
 
@@ -266,7 +267,8 @@
   transition: 0.2s ease;
 }
 
-.community-create-post textarea:focus {
+.community-create-post textarea:focus,
+.community-post-editor textarea:focus {
   border-color: #2563eb;
 
   background-color: white;
@@ -436,6 +438,90 @@
   font-size: 11px;
 
   white-space: nowrap;
+}
+
+.community-post-menu {
+  position: relative;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.community-post-menu summary {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  list-style: none;
+  border-radius: 8px;
+  color: #475569;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.community-post-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.community-post-menu-items {
+  position: absolute;
+  z-index: 1;
+  inset-inline-end: 0;
+  min-width: 110px;
+  padding: 4px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+.community-post-menu-items button,
+.community-post-editor-actions button {
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #334155;
+  font: inherit;
+  cursor: pointer;
+}
+
+.community-post-menu-items button {
+  width: 100%;
+  background: transparent;
+  text-align: start;
+}
+
+.community-post-menu summary:hover,
+.community-post-menu-items button:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.community-post-menu-items button:last-child,
+.community-post-error {
+  color: #b91c1c;
+}
+
+.community-post-editor {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.community-post-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.community-post-editor-actions button[type="submit"] {
+  background: #2563eb;
+  color: #fff;
+}
+
+.community-post-menu-items button:disabled,
+.community-post-editor-actions button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .community-post-text {

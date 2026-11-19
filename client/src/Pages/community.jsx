@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { authFetch } from "../auth.js"
+import { authFetch, getTokenPayload } from "../auth.js"
 import { checkPhotoFile, limitedPhoto, uploadPostPhoto } from "../cloudinary.js"
 import PostComments from "../Components/PostComments.jsx"
 import "../Styles/community.css"
@@ -62,6 +62,10 @@ function Community() {
 
   const [loading, setLoading] = useState(true)
   const [statusMessage, setStatusMessage] = useState("")
+  const [postEdit, setPostEdit] = useState(null)
+  const [pendingPostId, setPendingPostId] = useState(null)
+  const [postActionError, setPostActionError] = useState(null)
+  const viewerId = getTokenPayload()?.id
 
 
   const loadPopularTopics = () =>
@@ -228,6 +232,50 @@ function Community() {
     }
   }
 
+
+  const startPostEdit = (event, post) => {
+    event.currentTarget.closest("details").open = false
+    setPostActionError(null)
+    setPostEdit({ id: post.id, body: post.body || "" })
+  }
+
+  const updatePost = async (post, method, body) => {
+    setPendingPostId(post.id)
+    setPostActionError(null)
+
+    try {
+      const data = await authFetch("/api/posts/" + post.id, { method, body })
+
+      if (method === "DELETE") {
+        setPosts((previous) => previous.filter((item) => item.id !== post.id))
+        setOpenComments((previous) => previous.filter((id) => id !== post.id))
+        loadPopularTopics()
+      } else {
+        setPosts((previous) => previous.map((item) =>
+          item.id === post.id ? { ...item, body: data.post.body } : item
+        ))
+      }
+
+      setPostEdit((edit) => edit?.id === post.id ? null : edit)
+    } catch (error) {
+      setPostActionError({ id: post.id, message: error.message })
+    } finally {
+      setPendingPostId(null)
+    }
+  }
+
+  const savePostEdit = (event, post) => {
+    event.preventDefault()
+    const body = postEdit.body.trim()
+    if (pendingPostId !== null || (!body && !post.image_url)) return
+    updatePost(post, "PATCH", { body: body || null })
+  }
+
+  const deletePost = (event, post) => {
+    event.currentTarget.closest("details").open = false
+    if (pendingPostId !== null || !window.confirm("Delete this post and its comments?")) return
+    updatePost(post, "DELETE")
+  }
 
   //Page
 
@@ -585,14 +633,50 @@ function Community() {
 
                   )}
 
+                  {viewerId != null && String(post.user_id) === String(viewerId) && (
+                    <details className="community-post-menu">
+                      <summary aria-label="Post options">⋯</summary>
+                      <div className="community-post-menu-items">
+                        <button type="button" disabled={pendingPostId !== null} onClick={(event) => startPostEdit(event, post)}>
+                          Edit
+                        </button>
+                        <button type="button" disabled={pendingPostId !== null} onClick={(event) => deletePost(event, post)}>
+                          Delete
+                        </button>
+                      </div>
+                    </details>
+                  )}
+
                 </div>
 
+                {postEdit?.id === post.id ? (
+                  <form className="community-post-editor" onSubmit={(event) => savePostEdit(event, post)}>
+                    <textarea
+                      aria-label="Edit post text"
+                      value={postEdit.body}
+                      disabled={pendingPostId === post.id}
+                      onChange={(event) => setPostEdit({ id: post.id, body: event.target.value })}
+                      rows={4}
+                    />
+                    <div className="community-post-editor-actions">
+                      <button type="button" disabled={pendingPostId === post.id} onClick={() => {
+                        setPostEdit(null)
+                        setPostActionError(null)
+                      }}>
+                        Cancel
+                      </button>
+                      <button type="submit" disabled={pendingPostId !== null || (!postEdit.body.trim() && !post.image_url)}>
+                        Save
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <p className="community-post-text">{post.body}</p>
+                )}
 
-                <p className="community-post-text">
-
-                  {post.body}
-
-                </p>
+                {postActionError?.id === post.id && (
+                  <p className="community-post-error" role="alert">{postActionError.message}</p>
+                )}
 
 
                 {post.image_url && (

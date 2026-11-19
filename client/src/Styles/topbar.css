@@ -3,11 +3,16 @@
 ========================================= */
 
 .dc-topbar {
-  height: 72px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  height: var(--dc-topbar-height);
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 
   padding: 0 28px;
 
@@ -22,12 +27,32 @@
 }
 
 
+.dc-topbar-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  color: var(--text-main);
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dc-topbar-logo {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: #2563eb;
+}
+
 /* =========================================
    SEARCH
 ========================================= */
 
 .dc-search-container {
-  width: min(520px, 55%);
+  flex: 1;
+  min-width: 0;
+  max-width: 520px;
 
   display: flex;
   align-items: center;
@@ -82,57 +107,6 @@
   align-items: center;
 
   gap: 18px;
-}
-
-
-/* =========================================
-   NOTIFICATION
-========================================= */
-
-.dc-notification-btn {
-  width: 38px;
-  height: 38px;
-
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: none;
-  border-radius: 50%;
-
-  background-color: transparent;
-
-  color: var(--text-main);
-
-  cursor: pointer;
-
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.dc-notification-btn:hover {
-  background-color: rgba(148, 163, 184, 0.12);
-}
-
-.dc-notif-dot {
-  width: 7px;
-  height: 7px;
-
-  position: absolute;
-
-  top: 8px;
-  right: 8px;
-
-  border: 2px solid var(--bg-main);
-  border-radius: 50%;
-
-  background-color: #ef4444;
-
-  transition:
-    border-color 0.25s ease;
 }
 
 

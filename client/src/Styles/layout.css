@@ -51,6 +51,8 @@ body {
 ========================================= */
 
 .dc-layout {
+  --dc-topbar-height: 72px;
+
   width: 100%;
   min-height: 100vh;
 
@@ -69,7 +71,7 @@ body {
 
 .dc-layout > .dc-main {
   width: calc(100% - 72px);
-  min-height: 100vh;
+  min-height: calc(100vh - var(--dc-topbar-height));
 
   margin-left: 72px;
 
@@ -98,7 +100,7 @@ body {
 
 .dc-page-content {
   width: 100%;
-  min-height: calc(100vh - 72px);
+  min-height: calc(100vh - var(--dc-topbar-height));
 
   padding: 24px 28px;
 

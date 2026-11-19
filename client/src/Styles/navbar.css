@@ -5,10 +5,9 @@
   min-width: 72px;
   max-width: 72px;
 
-  height: 100vh;
-
   position: fixed;
-  top: 0;
+  top: var(--dc-topbar-height);
+  bottom: 0;
   left: 0;
 
   display: flex;
@@ -38,51 +37,6 @@
   width: 245px;
   min-width: 245px;
   max-width: 245px;
-}
-
-
-/* Sidebar Logo */
-
-.dc-sidebar-logo {
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  padding: 0 8px;
-
-  margin-bottom: 35px;
-}
-
-.dc-logo-icon {
-  width: 32px;
-  height: 32px;
-
-  min-width: 32px;
-
-  color: #2563eb;
-}
-
-.dc-logo-text {
-  font-size: 23px;
-  font-weight: 700;
-
-  color: var(--text-main);
-
-  white-space: nowrap;
-
-  opacity: 0;
-  visibility: hidden;
-
-  transition:
-    opacity 0.2s ease,
-    visibility 0.2s ease,
-    color 0.25s ease;
-}
-
-.dc-sidebar:hover .dc-logo-text {
-  opacity: 1;
-  visibility: visible;
 }
 
 

@@ -24,14 +24,14 @@ function Layout({ children }) {
   return (
     <div className={`dc-layout ${theme}`}>
 
+      <Topbar
+        theme={theme}
+        toggleTheme={toggleTheme}
+      />
+
       <Navbar />
 
       <div className="dc-main">
-
-        <Topbar
-          theme={theme}
-          toggleTheme={toggleTheme}
-        />
 
         <main className="dc-page-content">
           {children}
