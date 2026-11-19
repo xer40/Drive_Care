@@ -22,6 +22,16 @@ const formatDate = (timestamp) =>
     ? new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : "Recently"
 
+const formatPostAge = (timestamp, now) => {
+  const postedAt = Date.parse(timestamp)
+  if (!Number.isFinite(postedAt)) return "Recently"
+
+  const hours = Math.max(0, Math.floor((now - postedAt) / 3_600_000))
+  if (hours === 0) return "<1h ago"
+  if (hours < 24) return hours + "h ago"
+  return Math.floor(hours / 24) + "d ago"
+}
+
 function PostComments({ postId, onCountChange }) {
 
   const [comments, setComments] = useState([])
@@ -205,6 +215,16 @@ function Community() {
   const [pendingPostId, setPendingPostId] = useState(null)
   const [postActionError, setPostActionError] = useState(null)
   const viewerId = getTokenPayload()?.id
+  const showMyPosts = activeTab === "my-posts"
+  const visiblePosts = showMyPosts
+    ? posts.filter((post) => viewerId != null && String(post.user_id) === String(viewerId))
+    : posts
+  const [now, setNow] = useState(Date.now)
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 60_000)
+    return () => window.clearInterval(timer)
+  }, [])
 
 
   const loadPopularTopics = () =>
@@ -226,24 +246,31 @@ function Community() {
   }, [])
 
 
-  // The feed, reloaded whenever the topic filter changes
-
   useEffect(() => {
+    let ignore = false
+    const params = new URLSearchParams()
+    if (activeTopic) params.set("topic", activeTopic)
+    if (showMyPosts && viewerId != null) params.set("user_id", String(viewerId))
+    const query = params.toString()
 
-    const query = activeTopic ? `?topic=${encodeURIComponent(activeTopic)}` : ""
-
-    authFetch(`/api/posts${query}`)
+    setLoading(true)
+    authFetch(query ? "/api/posts?" + query : "/api/posts")
       .then((data) => {
+        if (ignore) return
         setPosts(data.posts || [])
         setStatusMessage("")
       })
       .catch((error) => {
+        if (ignore) return
         console.error("Could not load community:", error.message)
         setStatusMessage("Unable to load community posts.")
       })
-      .finally(() => setLoading(false))
+      .finally(() => {
+        if (!ignore) setLoading(false)
+      })
 
-  }, [activeTopic])
+    return () => { ignore = true }
+  }, [activeTopic, showMyPosts, viewerId])
 
 
   //Choosing or removing the post's photo
@@ -712,22 +739,21 @@ function Community() {
               Loading posts...
             </div>
 
-          ) : posts.length === 0 ? (
+          ) : visiblePosts.length === 0 ? (
 
             <div className="community-empty">
 
-              <h3>{activeTopic ? `No ${activeTopic} posts yet` : "No posts yet"}</h3>
+              <h3>{showMyPosts ? "You have no posts here yet" : activeTopic ? `No ${activeTopic} posts yet` : "No posts yet"}</h3>
 
               <p>
-                Be the first person to start
-                a discussion.
+                {showMyPosts ? "Your posts will appear here." : "Be the first person to start a discussion."}
               </p>
 
             </div>
 
           ) : (
 
-            posts.map((post) => (
+            visiblePosts.map((post) => (
 
               <article
                 key={post.id}
@@ -738,7 +764,12 @@ function Community() {
 
                   <div className="community-post-author">
                     <div className="community-avatar" aria-hidden="true">{post.username?.charAt(0)?.toUpperCase() || "U"}</div>
-                    <strong>{post.username || "DriveCare User"}</strong>
+                    <div className="community-post-byline">
+                      <strong>{post.username || "DriveCare User"}</strong>
+                      <time className="community-post-age" dateTime={post.created_at || undefined}>
+                        {formatPostAge(post.created_at, now)}
+                      </time>
+                    </div>
                   </div>
 
 
@@ -753,6 +784,8 @@ function Community() {
                     </span>
 
                   )}
+
+                  {post.topic && <span className="community-post-topic">#{post.topic}</span>}
 
                   {viewerId != null && String(post.user_id) === String(viewerId) && (
                     <details className="community-post-menu">
@@ -769,11 +802,6 @@ function Community() {
                   )}
 
                 </div>
-
-                <p className="community-post-meta">
-                  {formatDate(post.created_at)}
-                  {post.topic && <> &middot; #{post.topic}</>}
-                </p>
 
                 {postEdit?.id === post.id ? (
                   <form className="community-post-editor" onSubmit={(event) => savePostEdit(event, post)}>
