@@ -405,27 +405,25 @@
   font-weight: 700;
 }
 
-.community-post-user {
+.community-post-author {
   display: flex;
-  flex-direction: column;
-
+  align-items: center;
+  gap: 12px;
   flex: 1;
-}
-
-.community-post-user strong {
+  min-width: 0;
   color: #1e293b;
-
   font-size: 14px;
 }
 
-.community-post-user span {
-  margin-top: 2px;
-
-  color: #94a3b8;
-
-  font-size: 12px;
+.community-post-author strong {
+  overflow-wrap: anywhere;
 }
 
+.community-post-meta {
+  margin: 2px 0 0 54px;
+  color: #64748b;
+  font-size: 12px;
+}
 .community-vehicle-tag {
   padding: 5px 9px;
 

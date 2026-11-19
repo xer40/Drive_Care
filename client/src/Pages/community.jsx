@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { authFetch, getTokenPayload } from "../auth.js"
 import { checkPhotoFile, limitedPhoto, uploadPostPhoto } from "../cloudinary.js"
-import PostComments from "../Components/PostComments.jsx"
 import "../Styles/community.css"
 
 // Topics a post can have. Used for the post form and the Explore filter, so every post's topic
@@ -22,6 +21,146 @@ const formatDate = (timestamp) =>
   timestamp
     ? new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : "Recently"
+
+function PostComments({ postId, onCountChange }) {
+
+  const [comments, setComments] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [text, setText] = useState("")
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState("")
+
+  // Who is logged in, so their own comments get a Delete button
+  const myId = getTokenPayload()?.id
+
+
+  useEffect(() => {
+
+    authFetch(`/api/posts/${postId}/comments`)
+      .then((data) => setComments(data.comments || []))
+      .catch((err) => setError(`Could not load comments: ${err.message}`))
+      .finally(() => setLoading(false))
+
+  }, [postId])
+
+
+  const addComment = async (event) => {
+
+    event.preventDefault()
+    if (!text.trim() || sending) return
+
+    setSending(true)
+    setError("")
+
+    try {
+
+      const data = await authFetch(`/api/posts/${postId}/comments`, {
+        method: "POST",
+        body: { body: text.trim() },
+      })
+
+      setComments((previous) => [...previous, data.comment])
+      setText("")
+      onCountChange?.(1)
+
+    } catch (err) {
+
+      setError(`Could not post comment: ${err.message}`)
+
+    } finally {
+
+      setSending(false)
+    }
+  }
+
+
+  const deleteComment = async (commentId) => {
+
+    if (!window.confirm("Delete this comment?")) return
+
+    try {
+
+      await authFetch(`/api/comments/${commentId}`, { method: "DELETE" })
+      setComments((previous) => previous.filter((comment) => comment.id !== commentId))
+      onCountChange?.(-1)
+
+    } catch (err) {
+
+      setError(`Could not delete comment: ${err.message}`)
+    }
+  }
+
+
+  return (
+
+    <div className="community-comments">
+
+      {loading ? (
+
+        <p className="community-comments-note">Loading comments...</p>
+
+      ) : comments.length === 0 ? (
+
+        <p className="community-comments-note">No comments yet. Be the first to reply.</p>
+
+      ) : (
+
+        comments.map((comment) => (
+
+          <div key={comment.id} className="community-comment">
+
+            <div className="community-comment-avatar">
+              {comment.username?.charAt(0)?.toUpperCase() || "U"}
+            </div>
+
+            <div className="community-comment-body">
+
+              <div className="community-comment-meta">
+                <strong>{comment.username || "DriveCare User"}</strong>
+                <span>{formatDate(comment.created_at)}</span>
+
+                {comment.user_id === myId && (
+                  <button type="button" onClick={() => deleteComment(comment.id)}>
+                    Delete
+                  </button>
+                )}
+              </div>
+
+              <p>{comment.body}</p>
+
+            </div>
+
+          </div>
+
+        ))
+
+      )}
+
+
+      {error && <p className="community-comments-error">{error}</p>}
+
+
+      <form className="community-comment-form" onSubmit={addComment}>
+
+        <input
+          type="text"
+          placeholder="Write a comment..."
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          maxLength={2000}
+          disabled={sending}
+        />
+
+        <button type="submit" disabled={sending || !text.trim()}>
+          {sending ? "Posting..." : "Reply"}
+        </button>
+
+      </form>
+
+    </div>
+
+  )
+}
 
 function Community() {
 
@@ -597,27 +736,9 @@ function Community() {
 
                 <div className="community-post-header">
 
-                  <div className="community-avatar">
-
-                    {post.username
-                      ?.charAt(0)
-                      ?.toUpperCase() || "U"}
-
-                  </div>
-
-
-                  <div className="community-post-user">
-
-                    <strong>
-                      {post.username ||
-                        "DriveCare User"}
-                    </strong>
-
-                    <span>
-                      {formatDate(post.created_at)}
-                      {post.topic && <> · #{post.topic}</>}
-                    </span>
-
+                  <div className="community-post-author">
+                    <div className="community-avatar" aria-hidden="true">{post.username?.charAt(0)?.toUpperCase() || "U"}</div>
+                    <strong>{post.username || "DriveCare User"}</strong>
                   </div>
 
 
@@ -648,6 +769,11 @@ function Community() {
                   )}
 
                 </div>
+
+                <p className="community-post-meta">
+                  {formatDate(post.created_at)}
+                  {post.topic && <> &middot; #{post.topic}</>}
+                </p>
 
                 {postEdit?.id === post.id ? (
                   <form className="community-post-editor" onSubmit={(event) => savePostEdit(event, post)}>
