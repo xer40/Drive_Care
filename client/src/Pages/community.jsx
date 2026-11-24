@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react"
+import { useLocation } from "react-router-dom"
 import { authFetch, getTokenPayload } from "../auth.js"
 import { checkPhotoFile, limitedPhoto, uploadPostPhoto } from "../cloudinary.js"
+import { VehiclePhoto } from "../VehiclePhoto.jsx"
 import "../Styles/community.css"
 
 // Topics a post can have. Used for the post form and the Explore filter, so every post's topic
@@ -16,13 +18,18 @@ const TOPICS = [
   "General",
 ]
 
-// "Oct 28, 2026" from the API's timestamp
-const formatDate = (timestamp) =>
-  timestamp
-    ? new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-    : "Recently"
+const TOPIC_ICONS = {
+  Maintenance: "🔧",
+  Repairs: "🛠️",
+  Troubleshooting: "🔍",
+  Tires: "🛞",
+  Brakes: "🛑",
+  Modifications: "⚙️",
+  Reviews: "⭐",
+  General: "💬",
+}
 
-const formatPostAge = (timestamp, now) => {
+const formatRelativeAge = (timestamp, now) => {
   const postedAt = Date.parse(timestamp)
   if (!Number.isFinite(postedAt)) return "Recently"
 
@@ -32,7 +39,9 @@ const formatPostAge = (timestamp, now) => {
   return Math.floor(hours / 24) + "d ago"
 }
 
-function PostComments({ postId, onCountChange }) {
+const engagementCount = (post) => Number(post.like_count ?? 0) + Number(post.comment_count ?? 0)
+
+function PostComments({ postId, now, onCountChange }) {
 
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(true)
@@ -40,7 +49,8 @@ function PostComments({ postId, onCountChange }) {
   const [sending, setSending] = useState(false)
   const [error, setError] = useState("")
 
-  // Who is logged in, so their own comments get a Delete button
+  const [edit, setEdit] = useState(null)
+  const [updating, setUpdating] = useState(false)
   const myId = getTokenPayload()?.id
 
 
@@ -84,9 +94,36 @@ function PostComments({ postId, onCountChange }) {
   }
 
 
+  const saveComment = async (event) => {
+    event.preventDefault()
+    const body = edit.text.trim()
+    if (!body || updating) return
+
+    setUpdating(true)
+    setError("")
+
+    try {
+      const data = await authFetch(`/api/comments/${edit.id}`, {
+        method: "PATCH",
+        body: { body },
+      })
+      setComments((previous) => previous.map((comment) =>
+        comment.id === edit.id ? { ...comment, ...data.comment } : comment
+      ))
+      setEdit(null)
+    } catch (err) {
+      setError(`Could not edit comment: ${err.message}`)
+    } finally {
+      setUpdating(false)
+    }
+  }
+
   const deleteComment = async (commentId) => {
 
-    if (!window.confirm("Delete this comment?")) return
+    if (updating || !window.confirm("Delete this comment?")) return
+
+    setUpdating(true)
+    setError("")
 
     try {
 
@@ -97,6 +134,8 @@ function PostComments({ postId, onCountChange }) {
     } catch (err) {
 
       setError(`Could not delete comment: ${err.message}`)
+    } finally {
+      setUpdating(false)
     }
   }
 
@@ -127,16 +166,47 @@ function PostComments({ postId, onCountChange }) {
 
               <div className="community-comment-meta">
                 <strong>{comment.username || "DriveCare User"}</strong>
-                <span>{formatDate(comment.created_at)}</span>
+                <time className="community-timestamp" dateTime={comment.created_at || undefined}>{formatRelativeAge(comment.created_at, now)}</time>
 
-                {comment.user_id === myId && (
-                  <button type="button" onClick={() => deleteComment(comment.id)}>
-                    Delete
-                  </button>
+                {myId != null && String(comment.user_id) === String(myId) && edit?.id !== comment.id && (
+                  <div className="community-comment-actions">
+                    <button type="button" disabled={updating} onClick={() => {
+                      setEdit({ id: comment.id, text: comment.body })
+                      setError("")
+                    }}>
+                      Edit
+                    </button>
+                    <button type="button" disabled={updating} onClick={() => deleteComment(comment.id)}>
+                      Delete
+                    </button>
+                  </div>
                 )}
               </div>
 
-              <p>{comment.body}</p>
+              {edit?.id === comment.id ? (
+                <form className="community-comment-form community-comment-edit" onSubmit={saveComment}>
+                  <input
+                    type="text"
+                    aria-label="Edit comment"
+                    value={edit.text}
+                    onChange={(event) => setEdit({ ...edit, text: event.target.value })}
+                    maxLength={2000}
+                    disabled={updating}
+                    autoFocus
+                  />
+                  <button type="button" disabled={updating} onClick={() => {
+                    setEdit(null)
+                    setError("")
+                  }}>
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={updating || !edit.text.trim()}>
+                    {updating ? "Saving..." : "Save"}
+                  </button>
+                </form>
+              ) : (
+                <p>{comment.body}</p>
+              )}
 
             </div>
 
@@ -147,7 +217,7 @@ function PostComments({ postId, onCountChange }) {
       )}
 
 
-      {error && <p className="community-comments-error">{error}</p>}
+      {error && <p className="community-comments-error" role="alert">{error}</p>}
 
 
       <form className="community-comment-form" onSubmit={addComment}>
@@ -174,12 +244,16 @@ function PostComments({ postId, onCountChange }) {
 
 function Community() {
 
-  const [activeTab, setActiveTab] = useState("for-you")
+  const { state } = useLocation()
+  const [activeTab, setActiveTab] = useState(state?.tab === "trending" ? "trending" : "for-you")
 
   const [posts, setPosts] = useState([])
+  const [trendingPreview, setTrendingPreview] = useState(null)
+  const [trendingRevision, setTrendingRevision] = useState(0)
+  const feedRef = useRef(null)
+
+  const refreshTrending = () => setTrendingRevision((revision) => revision + 1)
   const [vehicles, setVehicles] = useState([])
-  // Topics in use with their post counts, for "Popular Topics"
-  const [popularTopics, setPopularTopics] = useState([])
   // Topic the feed is filtered to ("" = all posts)
   const [activeTopic, setActiveTopic] = useState("")
 
@@ -202,23 +276,38 @@ function Community() {
     )
 
   // Keep a post's 💬 count in step when a comment is added (+1) or deleted (-1)
-  const changeCommentCount = (postId, change) =>
+  const changeCommentCount = (postId, change) => {
     setPosts((previousPosts) =>
       previousPosts.map((p) =>
         p.id === postId ? { ...p, comment_count: Number(p.comment_count || 0) + change } : p
       )
     )
+    refreshTrending()
+  }
 
   const [loading, setLoading] = useState(true)
   const [statusMessage, setStatusMessage] = useState("")
   const [postEdit, setPostEdit] = useState(null)
+  const editPhotoInputRef = useRef(null)
+  const editPhotoPreview = postEdit?.photoPreview
+  useEffect(() => {
+    return () => {
+      if (editPhotoPreview) URL.revokeObjectURL(editPhotoPreview)
+    }
+  }, [editPhotoPreview])
   const [pendingPostId, setPendingPostId] = useState(null)
   const [postActionError, setPostActionError] = useState(null)
   const viewerId = getTokenPayload()?.id
   const showMyPosts = activeTab === "my-posts"
-  const visiblePosts = showMyPosts
-    ? posts.filter((post) => viewerId != null && String(post.user_id) === String(viewerId))
-    : posts
+  const showTrending = activeTab === "trending"
+  let visiblePosts = posts
+  if (showMyPosts) {
+    visiblePosts = posts.filter((post) => viewerId != null && String(post.user_id) === String(viewerId))
+  } else if (showTrending) {
+    visiblePosts = [...posts].sort((a, b) =>
+      engagementCount(b) - engagementCount(a) || Date.parse(b.created_at) - Date.parse(a.created_at)
+    )
+  }
   const [now, setNow] = useState(Date.now)
 
   useEffect(() => {
@@ -227,13 +316,7 @@ function Community() {
   }, [])
 
 
-  const loadPopularTopics = () =>
-    authFetch("/api/posts/topics")
-      .then((data) => setPopularTopics(data.topics || []))
-      .catch((error) => console.error("Could not load topics:", error.message))
-
-
-  // The user's vehicles (for tagging a post) and the popular topics only need loading once
+  // Load the user's vehicles for tagging posts
 
   useEffect(() => {
 
@@ -241,7 +324,6 @@ function Community() {
       .then((data) => setVehicles(data.vehicles || []))
       .catch((error) => console.error("Could not load vehicles:", error.message))
 
-    loadPopularTopics()
 
   }, [])
 
@@ -250,6 +332,7 @@ function Community() {
     let ignore = false
     const params = new URLSearchParams()
     if (activeTopic) params.set("topic", activeTopic)
+    if (showTrending) params.set("sort", "trending")
     if (showMyPosts && viewerId != null) params.set("user_id", String(viewerId))
     const query = params.toString()
 
@@ -270,8 +353,28 @@ function Community() {
       })
 
     return () => { ignore = true }
-  }, [activeTopic, showMyPosts, viewerId])
+  }, [activeTopic, showMyPosts, showTrending, viewerId])
 
+
+  useEffect(() => {
+    let ignore = false
+
+    authFetch("/api/posts?sort=trending&limit=3")
+      .then((data) => {
+        if (!ignore) setTrendingPreview({ posts: data.posts || [], error: "" })
+      })
+      .catch(() => {
+        if (!ignore) setTrendingPreview({ posts: [], error: "Unable to load trending posts." })
+      })
+
+    return () => { ignore = true }
+  }, [trendingRevision])
+
+  const openTrendingFeed = () => {
+    setActiveTopic("")
+    setActiveTab("trending")
+    feedRef.current?.scrollIntoView({ block: "start" })
+  }
 
   //Choosing or removing the post's photo
 
@@ -352,7 +455,7 @@ function Community() {
       setSelectedTopic("")
       removePhoto()
       setStatusMessage("")
-      loadPopularTopics()
+      refreshTrending()
 
     } catch (error) {
 
@@ -388,6 +491,7 @@ function Community() {
             : p
         )
       )
+      refreshTrending()
 
     } catch (error) {
 
@@ -402,26 +506,60 @@ function Community() {
   const startPostEdit = (event, post) => {
     event.currentTarget.closest("details").open = false
     setPostActionError(null)
-    setPostEdit({ id: post.id, body: post.body || "" })
+    setPostEdit({
+      id: post.id,
+      body: post.body || "",
+      photoFile: null,
+      photoPreview: "",
+      removePhoto: false,
+    })
   }
 
-  const updatePost = async (post, method, body) => {
+  const chooseEditPhoto = (event, postId) => {
+    const file = event.target.files?.[0]
+    event.target.value = ""
+    if (!file) return
+
+    const problem = checkPhotoFile(file)
+    if (problem) {
+      setPostActionError({ id: postId, message: problem })
+      return
+    }
+
+    setPostActionError(null)
+    setPostEdit({
+      ...postEdit,
+      photoFile: file,
+      photoPreview: URL.createObjectURL(file),
+      removePhoto: false,
+    })
+  }
+
+  const removeEditPhoto = () => {
+    setPostActionError(null)
+    setPostEdit({ ...postEdit, photoFile: null, photoPreview: "", removePhoto: true })
+  }
+
+  const updatePost = async (post, method, body, replacementPhoto) => {
     setPendingPostId(post.id)
     setPostActionError(null)
 
     try {
-      const data = await authFetch("/api/posts/" + post.id, { method, body })
+      const payload = replacementPhoto
+        ? { ...body, image_url: await uploadPostPhoto(replacementPhoto) }
+        : body
+      const data = await authFetch("/api/posts/" + post.id, { method, body: payload })
 
       if (method === "DELETE") {
         setPosts((previous) => previous.filter((item) => item.id !== post.id))
         setOpenComments((previous) => previous.filter((id) => id !== post.id))
-        loadPopularTopics()
       } else {
         setPosts((previous) => previous.map((item) =>
-          item.id === post.id ? { ...item, body: data.post.body } : item
+          item.id === post.id ? { ...item, body: data.post.body, image_url: data.post.image_url } : item
         ))
       }
 
+      refreshTrending()
       setPostEdit((edit) => edit?.id === post.id ? null : edit)
     } catch (error) {
       setPostActionError({ id: post.id, message: error.message })
@@ -430,11 +568,17 @@ function Community() {
     }
   }
 
+  const postEditImage = (post) =>
+    postEdit.photoPreview || (!postEdit.removePhoto && limitedPhoto(post.image_url, 900))
+
   const savePostEdit = (event, post) => {
     event.preventDefault()
     const body = postEdit.body.trim()
-    if (pendingPostId !== null || (!body && !post.image_url)) return
-    updatePost(post, "PATCH", { body: body || null })
+    if (pendingPostId !== null || (!body && !postEditImage(post))) return
+    updatePost(post, "PATCH", {
+      body: body || null,
+      image_url: postEdit.removePhoto ? null : undefined,
+    }, postEdit.photoFile)
   }
 
   const deletePost = (event, post) => {
@@ -456,7 +600,7 @@ function Community() {
 
         <div className="community-banner-content">
 
-          <h1>Community</h1>
+          <h1>DriveCare Community</h1>
 
           <p>
             A place for car enthusiasts to
@@ -471,7 +615,7 @@ function Community() {
 
       {/* Community Navigation*/}
 
-      <div className="community-tabs">
+      <div className="community-tabs" ref={feedRef}>
 
         <button
           type="button"
@@ -553,6 +697,7 @@ function Community() {
               className={activeTopic === "" ? "active" : ""}
               onClick={() => setActiveTopic("")}
             >
+              <span className="community-explore-icon" aria-hidden="true">📋</span>
               All Posts
             </button>
 
@@ -563,38 +708,10 @@ function Community() {
                 className={activeTopic === topic ? "active" : ""}
                 onClick={() => setActiveTopic(topic)}
               >
+                <span className="community-explore-icon" aria-hidden="true">{TOPIC_ICONS[topic]}</span>
                 {topic}
               </button>
             ))}
-
-          </div>
-
-
-          <div className="community-card">
-
-            <h2>Popular Topics</h2>
-
-            <div className="community-topics">
-
-              {popularTopics.length === 0 ? (
-                <p>No topics yet. Start a discussion!</p>
-              ) : (
-                popularTopics.map(({ topic, post_count }) => (
-                  <span
-                    key={topic}
-                    role="button"
-                    tabIndex={0}
-                    className={activeTopic.toLowerCase() === topic.toLowerCase() ? "active" : ""}
-                    onClick={() => setActiveTopic(topic)}
-                    onKeyDown={(event) => event.key === "Enter" && setActiveTopic(topic)}
-                    title={`${post_count} post${post_count === 1 ? "" : "s"}`}
-                  >
-                    #{topic} ({post_count})
-                  </span>
-                ))
-              )}
-
-            </div>
 
           </div>
 
@@ -766,8 +883,8 @@ function Community() {
                     <div className="community-avatar" aria-hidden="true">{post.username?.charAt(0)?.toUpperCase() || "U"}</div>
                     <div className="community-post-byline">
                       <strong>{post.username || "DriveCare User"}</strong>
-                      <time className="community-post-age" dateTime={post.created_at || undefined}>
-                        {formatPostAge(post.created_at, now)}
+                      <time className="community-timestamp" dateTime={post.created_at || undefined}>
+                        {formatRelativeAge(post.created_at, now)}
                       </time>
                     </div>
                   </div>
@@ -809,9 +926,29 @@ function Community() {
                       aria-label="Edit post text"
                       value={postEdit.body}
                       disabled={pendingPostId === post.id}
-                      onChange={(event) => setPostEdit({ id: post.id, body: event.target.value })}
+                      onChange={(event) => setPostEdit({ ...postEdit, body: event.target.value })}
                       rows={4}
                     />
+                    {postEditImage(post) && (
+                      <img src={postEditImage(post)} alt="Post photo preview" className="community-post-image" />
+                    )}
+                    <input
+                      ref={editPhotoInputRef}
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(event) => chooseEditPhoto(event, post.id)}
+                    />
+                    <div className="community-post-editor-photo-actions">
+                      <button type="button" disabled={pendingPostId !== null} onClick={() => editPhotoInputRef.current?.click()}>
+                        {postEditImage(post) ? "Replace Photo" : "Add Photo"}
+                      </button>
+                      {postEditImage(post) && (
+                        <button type="button" disabled={pendingPostId !== null} onClick={removeEditPhoto} className="community-post-editor-remove-photo">
+                          Remove Photo
+                        </button>
+                      )}
+                    </div>
                     <div className="community-post-editor-actions">
                       <button type="button" disabled={pendingPostId === post.id} onClick={() => {
                         setPostEdit(null)
@@ -819,8 +956,8 @@ function Community() {
                       }}>
                         Cancel
                       </button>
-                      <button type="submit" disabled={pendingPostId !== null || (!postEdit.body.trim() && !post.image_url)}>
-                        Save
+                      <button type="submit" disabled={pendingPostId !== null || (!postEdit.body.trim() && !postEditImage(post))}>
+                        {pendingPostId === post.id ? "Saving..." : "Save"}
                       </button>
                     </div>
                   </form>
@@ -833,7 +970,7 @@ function Community() {
                 )}
 
 
-                {post.image_url && (
+                {postEdit?.id !== post.id && post.image_url && (
 
                   <img
                     src={limitedPhoto(post.image_url, 900)}
@@ -877,6 +1014,7 @@ function Community() {
                 {openComments.includes(post.id) && (
                   <PostComments
                     postId={post.id}
+                    now={now}
                     onCountChange={(change) => changeCommentCount(post.id, change)}
                   />
                 )}
@@ -917,8 +1055,8 @@ function Community() {
                     key={vehicle.id}
                     className="community-vehicle"
                   >
-
-                    <div>
+                    <VehiclePhoto vehicle={vehicle} width={120} height={88} className="community-vehicle-photo" />
+                    <div className="community-vehicle-details">
 
                       <strong>
                         {vehicle.year}{" "}
@@ -926,10 +1064,7 @@ function Community() {
                         {vehicle.model}
                       </strong>
 
-                      <span>
-                        {vehicle.trim ||
-                          "Vehicle"}
-                      </span>
+                      {vehicle.trim && <span>{vehicle.trim}</span>}
 
                     </div>
 
@@ -948,10 +1083,41 @@ function Community() {
 
             <h2>Trending Posts</h2>
 
-            <p>
-              Popular discussions will appear
-              here.
-            </p>
+            {trendingPreview?.posts.length > 0 ? (
+              <>
+                <ul className="community-trending-list">
+                  {trendingPreview.posts.map((post) => (
+                    <li key={post.id}>
+                      <div className="community-trending-author">
+                        {post.avatar_url ? (
+                          <img className="community-avatar" src={post.avatar_url} alt="" loading="lazy" />
+                        ) : (
+                          <span className="community-avatar" aria-hidden="true">
+                            {post.username?.charAt(0)?.toUpperCase() || "U"}
+                          </span>
+                        )}
+                        <strong>{post.username || "DriveCare User"}</strong>
+                      </div>
+                      {post.body?.trim() && <p>{post.body.trim()}</p>}
+                      {post.image_url && (
+                        <img
+                          className="community-trending-photo"
+                          src={limitedPhoto(post.image_url, 480)}
+                          alt={post.topic ? `Community post photo in ${post.topic}` : "Community post photo"}
+                          loading="lazy"
+                        />
+                      )}
+                      <small>{Number(post.like_count ?? 0)} likes · {Number(post.comment_count ?? 0)} comments</small>
+                    </li>
+                  ))}
+                </ul>
+                <button type="button" className="community-trending-link" onClick={openTrendingFeed}>
+                  View trending feed
+                </button>
+              </>
+            ) : (
+              <p>{trendingPreview ? trendingPreview.error || "No posts yet." : "Loading trending posts…"}</p>
+            )}
 
           </div>
 

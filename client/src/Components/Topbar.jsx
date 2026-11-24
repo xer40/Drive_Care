@@ -6,7 +6,7 @@ import {
 
 import "../Styles/topbar.css"
 
-function Topbar({ theme, toggleTheme }) {
+function Topbar() {
   const navigate = useNavigate()
 
   const userPayload = getTokenPayload()
@@ -68,21 +68,6 @@ function Topbar({ theme, toggleTheme }) {
       {/* Right Side */}
       <div className="dc-topbar-actions">
 
-        {/* Light / Dark Mode Switch */}
-        <label className="theme-switch">
-
-          <input
-            type="checkbox"
-            checked={theme === "dark"}
-            onChange={toggleTheme}
-            aria-label="Toggle dark mode"
-          />
-
-          <span className="theme-slider"></span>
-
-        </label>
-
-
         <div
           className="dc-user-profile"
           onClick={() => navigate("/profile")}
@@ -101,13 +86,7 @@ function Topbar({ theme, toggleTheme }) {
               {displayName}
             </span>
 
-            <span className="dc-user-role">
-
-              {isLoggedIn()
-                ? "Active Driver"
-                : "Log In"}
-
-            </span>
+            {!isLoggedIn() && <span className="dc-user-role">Log In</span>}
 
           </div>
 

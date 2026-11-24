@@ -113,13 +113,31 @@ export default function Homepage() {
     setAddError('');
   };
 
+  useEffect(() => {
+    if (!getToken()) {
+      setPostsLoading(false);
+      return;
+    }
+
+    let ignore = false;
+    authFetch('/api/posts?sort=trending&limit=3')
+      .then((data) => {
+        if (!ignore) setPosts(data.posts || []);
+      })
+      .catch((error) => console.error('Could not load trending posts:', error))
+      .finally(() => {
+        if (!ignore) setPostsLoading(false);
+      });
+
+    return () => { ignore = true; };
+  }, []);
+
   // Try fetching real vehicles from backend if user is logged in
   // Load the user's vehicles and maintenance records
 useEffect(() => {
   async function fetchUserData() {
     if (!getToken()) {
       setMaintenanceLoading(false);
-      setPostsLoading(false);
       return;
     }
 
@@ -164,26 +182,10 @@ useEffect(() => {
 
       setMaintenanceRecords(allRecords);
 
-      // Fetch real community posts and prioritize posts matching the user's vehicles
-      try {
-        const postData = await authFetch('/api/posts?limit=10');
-        const allPosts = postData.posts || [];
-        const ownedMakes = new Set(userVehicles.map((v) => v.make?.toLowerCase()).filter(Boolean));
-        const sortedPosts = [...allPosts].sort((a, b) => {
-          const aMatch = a.vehicle_make && ownedMakes.has(a.vehicle_make.toLowerCase()) ? 1 : 0;
-          const bMatch = b.vehicle_make && ownedMakes.has(b.vehicle_make.toLowerCase()) ? 1 : 0;
-          return bMatch - aMatch;
-        });
-        setPosts(sortedPosts.slice(0, 2));
-      } catch (postError) {
-        console.error('Could not load community posts:', postError);
-      }
-
     } catch (error) {
       console.error('Could not load dashboard data:', error);
     } finally {
       setMaintenanceLoading(false);
-      setPostsLoading(false);
     }
   }
 
@@ -548,16 +550,16 @@ const formatServiceDate = (date) =>
             <div className="dc-grid-col">
               <div className="dc-section-header">
 
-                <h2>Community Feed</h2>
+                <h2>Trending Community Posts</h2>
                 
-                <Link to="/community" className="dc-view-all">
+                <Link to="/community" state={{ tab: "trending" }} className="dc-view-all">
                 View All →
                 </Link>
               </div>
 
               {postsLoading ? (
                 <div className="dc-empty-state-card small">
-                  <h4>Loading community posts...</h4>
+                  <h4>Loading trending posts...</h4>
                 </div>
               ) : posts.length === 0 ? (
                 <div className="dc-empty-state-card small">
