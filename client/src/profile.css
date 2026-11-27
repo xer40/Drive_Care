@@ -1,59 +1,75 @@
 body {
 
-    background-color: #F6F9FC
+    background-color: #F6F9FC;
+    padding-bottom: 200px;
+   
+
+
 }
 
 .header {
     font-size: 36px;
-    margin-left: -850px;
+    margin-left: 100px;
     font-family: Inter;
     font-weight: 700;
+    position: absolute;
+    top: 60px;
 
 }
 
 .subheader {
     font-size: 20px;
-    margin-left: -570px;
+    margin-left: 100px;
     font-family: Inter;
     font-weight: 450;
+    position: absolute;
+    margin-top: 45px;
 
 }
+
+/*Top box*/
+
+
 .profile-section {
 
     justify-content: center;
-    margin-top: 50px;
+    margin-top: 100px;
     background-color: #fefdfd;
     border-radius: 15px;
     width: 860px;
-    height: 240px;
+    height: 220px;
     border: 3px solid #F7F8FB;
     margin-left: 207px;
+    position: absolute;
     
    
 }
+
+
 
  .edit-profile-btn {
     
     display: flex;
     background-color: #F4F6F9;
-    color: #494D58;
+    color: #161D2C;
+    align-items: center;
     border: solid 2px #E9ECF1;
     border-radius: 12px;
-    padding: 10px 20px;
+    top: 30px;
+    right: 40px;
     font-size: 18px;
     font-family: inter;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 20px;
-    margin-left: 680px;
     gap: 7px;
-
+    position: absolute;
+    padding: 14px 14px;
 }
 
 .edit-profile-icon {
     width: 18px;
     height: 18px;
-    color:#121B30;
+    color:#0E192D;
     stroke-width: 3px;
 }
 
@@ -61,21 +77,176 @@ body {
     background-color: #adb3bc;
 }
 
-.profile-section .pfp-section {
+.username {
 
-  border-right: 3px solid #2c58d1; 
-  padding-right: 20px;
+    position: absolute;
+    top: 87px;
+    left: 200px;
+    font-family: inter;
+    font-size: 16px;
+}
+
+.email-icon {
+  position: absolute;
+  top: 150px;
+  left: 220px;
+  width: 22.5px;
+  height: 22.5px;
+  stroke-width: 2px;
+}
+
+.location-icon {
+
+  position: absolute;
+  top: 153px;
+  left: 520px;
+  width: 25px;
+  height: 25px;
+  stroke-width: 2px;
+}
+
+.pfp-section {
+
+    display: flex;
+    min-width: 100px;
+    height: 150px;
+    width: 150px;
+    display: flex;
+    background-color: #DBEAFE;
+    color:  #1d4ed8;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 56px;
+    font-weight: 700;
+
+    margin-top: 35px;
+    margin-left: 30px;
+
+}
+
+.email-label {
+
+    position: absolute;
+    bottom: 47px;
+    left: 252px;
+    font-size: 15px;
+    font-family: inter;
+}
+
+.location-label {
+
+    position: absolute;
+    bottom: 46px;
+    font-size: 15px;
+    font-family: inter;
+    left: 550px;
+
+}
+
+.email {
+
+    position: absolute;
+    font-size: 16.5px;
+    padding-left: 252px;
+    bottom: 30px;
+
 }
 
 
 
 
 
+/*Account Section*/
+
+
 .account-info {
 
     
     display: flex;
-    margin: auto;
+    margin-top: 330px;
+    background-color: #fefdfd;
+    border-radius: 12px;
+    width: 860px;
+    height: 80px;
+    border: 3px solid #f1f3f7;
+    margin-left: 207px;
+    justify-content: flex-start;
+    position: absolute;
+
+}
+
+.account-info-header {
+
+    font-size: 20px;
+    font-family: inter;
+    font-weight: 700;
+    margin-top: 10px;
+    margin-left: 40px;
+    position: absolute;
+
+}
+
+.account-info-subheader {
+
+    font-size: 15px;
+    font-family: inter;
+    font-weight: 420;
+    margin-left: 40px;
+    margin-top: 37px;
+    position: absolute;
+
+
+}
+.account-info .profile-icon {
+
+    width: 40px;
+    height: 40px;
+    position: relative;
+    left: 20px;
+    top: 16px;
+    stroke-width: 1.62px;
+    
+
+}
+
+  .account-arrow { 
+
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    font-size: 25px;
+    top: 17px;
+    right: 20px;
+    cursor: pointer;
+    
+
+}
+
+.account-dropdown {
+
+    width: 860px;
+    height: 70px;
+    background-color:#e0e4ee; 
+    border-radius: 15px;
+    left: 207px;
+    position: relative;
+    top: 417px;
+    
+    
+}
+
+
+ 
+/*Privacy section*/
+
+
+.privacy {
+
+    display: flex;
     margin-top: 10px;
     background-color: #fefdfd;
     border-radius: 12px;
@@ -83,50 +254,67 @@ body {
     height: 80px;
     border: 3px solid #f1f3f7;
     margin-left: 207px;
-    gap: 95px;
-    justify-content: flex-start;
-
+    position: absolute;
+    margin-top: 420px;
 }
-.account-info .profile-icon { 
+
+ .shield-icon {
 
     width: 40px;
-    flex: 0 0 8%;
     height: 40px;
-    transform: translateY(16px);
-    stroke-width: 2px;
+    position: absolute;
+    left: 19px;
+    top: 17.5px;
+    stroke-width: 1.62px;
+
+
 }
 
-.account-info-header, .account-info-subheader {
+.privacy-header {
 
-    font-size: 18px;
+    position: absolute;
+    font-size: 20px;
     font-family: inter;
     font-weight: 700;
-    margin-right: 500px;
-    padding-left: 25px;
+    margin-top: 10px;
+    margin-left: 79px;
 }
 
-.notifications {
+.privacy-subheader {
 
-    display: flex;
-    margin: 0 auto;
-    margin-top: 10px;
-    background-color: #fefdfd;
-    border-radius: 12px;
-    width: 860px;
-    height: 88px;
-    border: 3px solid #f1f3f7;
-    margin-left: 207px;
+    font-size: 15px;
+    font-family: inter;
+    font-weight: 420;
+    margin-left: 79px;
+    margin-top: 37px;
+    position: absolute;
+
 }
 
-.privacy {
+.privacy-dropdown {
 
-    display: flex;
-    margin: 0 auto;
-    margin-top: 10px;
-    background-color: #fefdfd;
-    border-radius: 12px;
     width: 860px;
-    height: 88px;
-    border: 3px solid #f1f3f7;
-    margin-left: 207px;
+    height: 70px;
+    background-color:#bfccee; 
+    border-radius: 15px;
+    left: 207px;
+    position: relative;
+    top: 507px;
+    
+    
+}
+
+.privacy-arrow {
+
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    font-size: 26px;
+    top: 17px;
+    right: 20px;
+    cursor: pointer;
+
 }

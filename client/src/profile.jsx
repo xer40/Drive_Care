@@ -8,6 +8,8 @@ import { getTokenPayload } from "./auth.js";
 export default function Profile() {
 
   const[accOpen, setAccOpen] = useState(false)
+  const[privOpen, setPrivOpen] = useState(false)
+  
   const userPayload = getTokenPayload()
   
   const username = userPayload?.username || "User"
@@ -18,10 +20,10 @@ export default function Profile() {
 
     if (isOpen) {
 
-      return 'arrow open'
+      return ' ∨ ';
     }
     
-    return 'arrow closed'
+    return ' ❯ ';
   }
 
  
@@ -37,9 +39,10 @@ return (
 
 
     <div className = "pfp-section">
+
+     {username.charAt(0).toUpperCase()}
       
     </div>
-    
 
   <div className = "top-part">
     <button className = "edit-profile-btn">
@@ -60,6 +63,21 @@ return (
      <div className = "username">
 
       <p>@{username}</p>
+   </div>
+
+   <div className = "display-name">
+
+   </div>
+
+   <div className= "email-label">
+    <p> Email </p>
+   </div>
+
+    <div className= "location-label">
+    <p> Location </p>
+   </div>
+
+   <div className = "email">
       <p>{email}</p>
     </div>
 
@@ -68,6 +86,7 @@ return (
     <div className = "bottom-part">
        <svg className="email-icon"
           fill="none"
+          viewBox="0 0 24 24"
           stroke="currentColor" >
     <rect width="20" height="16" x="2" y="4" rx="2" />
     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
@@ -75,6 +94,7 @@ return (
 
     <svg className="location-icon"
           fill="none"
+          viewBox= "0 0 24 24"
           stroke="currentColor" >
     <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
    <circle cx="12" cy="10" r="3" />
@@ -105,50 +125,60 @@ return (
 
     <div>
       <p className="account-info-header">Account Information</p>
+    
+    </div>
+      
+      <div>
       <p className="account-info-subheader">Update your name, email, and password</p>
 
       </div>
-      </div>
-      
 
+      <button className = "account-arrow"
+        onClick={() => setAccOpen(!accOpen)}> 
 
-    <div className="notifications">
-
-      <svg className = "notifications-icon"
-     fill="none"
-     stroke="currentColor" >
-    
-  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-</svg>
-    
-
-      <p className="notif-header">Notifications</p>
-      <p className="notif-subheader">Manage your notification preferences</p>
+        {arrowDir(accOpen)}
+        
+        </button>
 
 
       </div>
+
+      {accOpen && ( <div className = "account-dropdown">
+       
+        </div>
+
+      )}
 
 
       <div className="privacy">
 
         <svg className = "shield-icon"
           fill="none"
-          stroke="currentColor" >
+          stroke="currentColor"
+          viewBox="0 0 24 24" >
 
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-
+            
         </svg>
 
         <p className="privacy-header">Privacy</p>
         <p className="privacy-subheader">Control your account visibility</p>
 
 
-      </div>
+       <button className = "privacy-arrow"
+        onClick={() => setPrivOpen(!privOpen)}> 
 
+        {arrowDir(privOpen)}
+        
+        </button>
+        </div>
 
-    </div>
+          {privOpen && ( <div className = "privacy-dropdown">
+       
+        </div>
 
     
-  )
+  )} </div>
+
+);
 }
