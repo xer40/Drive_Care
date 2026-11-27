@@ -970,6 +970,8 @@
    ========================================================== */
 
 .dc-feed-card {
+  text-align: left;
+
   margin-bottom: 14px;
 
   padding: 16px;

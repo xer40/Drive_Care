@@ -42,18 +42,26 @@ const likeCount = async (postId) => {
 // ---------- Posts ----------
 
 // The feed, newest first. Optional filters: ?topic= (e.g. Brakes, matched ignoring capitals) and
-// ?user_id= (one author's posts). Paging with ?limit= (max 100) and ?offset=
+// ?user_id= (one author's posts), ?sort=trending (likes + comments).
+// Paging with ?limit= (max 100) and ?offset=
 router.get('/posts', async (req, res) => {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 20, 1), 100);
   const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
   const authorId = /^\d{1,15}$/.test(req.query.user_id || '') ? req.query.user_id : null;
   const topic = isBlank(req.query.topic) ? null : String(req.query.topic).trim();
 
+  const orderBy = req.query.sort === 'trending'
+    ? '(like_count + comment_count) DESC, created_at DESC, id DESC'
+    : 'created_at DESC, id DESC';
+
   const result = await pool.query(
-    `${POST_SELECT}
-     WHERE ($2::bigint IS NULL OR p.user_id = $2)
-       AND ($3::text IS NULL OR lower(p.topic) = lower($3))
-     ORDER BY p.created_at DESC, p.id DESC
+    `SELECT *
+     FROM (
+       ${POST_SELECT}
+       WHERE ($2::bigint IS NULL OR p.user_id = $2)
+         AND ($3::text IS NULL OR lower(p.topic) = lower($3))
+     ) AS feed
+     ORDER BY ${orderBy}
      LIMIT $4 OFFSET $5`,
     [req.user.id, authorId, topic, limit, offset]
   );
